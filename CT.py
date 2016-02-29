@@ -4,7 +4,7 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/']
+literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':']
 reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
 tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
@@ -225,7 +225,7 @@ def p_condition(p):
 	pass
 
 def p_dict(p):
-	'''dict : empty'''
+	'''dict : "(" type ":" type ")" '''
 	print("dict")
 	pass
 
