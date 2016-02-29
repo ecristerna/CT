@@ -10,13 +10,21 @@ program a {
 
 		i = ;
 		k[][] = ;
-		p = (unID : otroID);
+		p = (5.89 : "hola");
 
 		if () {
 			if () {
 				j = ;
 			}
 		} else {
+
+		}
+
+		while() {
+
+		}
+
+		for (i = ; ; k[] = ) {
 
 		}
 	}

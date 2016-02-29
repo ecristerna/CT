@@ -200,8 +200,19 @@ def p_cycleInstruction(p):
 	pass
 
 def p_cycle(p):
-	'''cycle : empty'''
+	'''cycle : forCycle
+			| whileCycle '''
 	print("cycle")
+	pass
+
+def p_whileCycle(p):
+	'''whileCycle : WHILE "(" expresion ")" "{" body "}" '''
+	print("while")
+	pass
+
+def p_forCycle(p):
+	'''forCycle : FOR "(" assign ";" expresion ";" assign ")" "{" body "}" '''
+	print("for")
 	pass
 
 def p_assign(p):
@@ -260,7 +271,10 @@ def p_expresion(p):
 	pass
 
 def p_cte(p):
-	'''cte : empty'''
+	'''cte : CTED
+		| CTEF 
+		| TRUE 
+		| FALSE '''
 	print("cte")
 	pass
 
