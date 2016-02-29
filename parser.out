@@ -69,45 +69,48 @@ Rule 53    assignOptions -> initDict
 Rule 54    assignOptions -> [ expresion ] assignMatrix init
 Rule 55    assignMatrix -> [ expresion ]
 Rule 56    assignMatrix -> empty
-Rule 57    funcCall -> empty
-Rule 58    struct -> type [ CTED ] optionalMatrix
-Rule 59    optionalMatrix -> [ CTED ]
-Rule 60    optionalMatrix -> empty
-Rule 61    condition -> IF ( expresion ) { body } optionalElse
-Rule 62    optionalElse -> ELSE { body }
-Rule 63    optionalElse -> empty
-Rule 64    dict -> ( type : type )
-Rule 65    expresion -> empty
-Rule 66    cte -> CTED
-Rule 67    cte -> CTEF
-Rule 68    cte -> TRUE
-Rule 69    cte -> FALSE
-Rule 70    empty -> <empty>
+Rule 57    funcCall -> ID ( opParamCall )
+Rule 58    opParamCall -> expresion cyParamCall
+Rule 59    cyParamCall -> , opParamCall
+Rule 60    cyParamCall -> empty
+Rule 61    struct -> type [ CTED ] optionalMatrix
+Rule 62    optionalMatrix -> [ CTED ]
+Rule 63    optionalMatrix -> empty
+Rule 64    condition -> IF ( expresion ) { body } optionalElse
+Rule 65    optionalElse -> ELSE { body }
+Rule 66    optionalElse -> empty
+Rule 67    dict -> ( type : type )
+Rule 68    expresion -> empty
+Rule 69    cte -> CTED
+Rule 70    cte -> CTEF
+Rule 71    cte -> TRUE
+Rule 72    cte -> FALSE c
+Rule 73    empty -> <empty>
 
 Terminals, with rules where they appear
 
-(                    : 24 32 49 50 61 64
-)                    : 24 32 49 50 61 64
-,                    : 40
-:                    : 24 64
+(                    : 24 32 49 50 57 64 67
+)                    : 24 32 49 50 57 64 67
+,                    : 40 59
+:                    : 24 67
 ;                    : 13 29 37 38 39 50 50
 =                    : 21 24
 AND                  : 
 BOOL                 : 11
-CTED                 : 58 59 66
-CTEF                 : 67
+CTED                 : 61 62 69
+CTEF                 : 70
 CTES                 : 25
 DICT                 : 39
 DIF                  : 
-ELSE                 : 62
+ELSE                 : 65
 EQ                   : 
-FALSE                : 69
+FALSE                : 72
 FLOAT                : 8
 FOR                  : 50
 FUNC                 : 31
 GTOEQ                : 
-ID                   : 1 27 28 31 37 38 39 40 51
-IF                   : 61
+ID                   : 1 27 28 31 37 38 39 40 51 57
+IF                   : 64
 INT                  : 7
 LTOEQ                : 
 MAIN                 : 12
@@ -118,14 +121,14 @@ RETURN               :
 RETURNS              : 35
 STRING               : 9
 STRUCT               : 38
-TRUE                 : 68
+TRUE                 : 71
 VARS                 : 6
 WHILE                : 49
-[                    : 54 55 58 59
-]                    : 54 55 58 59
+[                    : 54 55 61 62
+]                    : 54 55 61 62
 error                : 
-{                    : 1 12 31 49 50 61 62
-}                    : 1 12 31 49 50 61 62
+{                    : 1 12 31 49 50 64 65
+}                    : 1 12 31 49 50 64 65
 
 Nonterminals, with rules where they appear
 
@@ -134,18 +137,19 @@ assign               : 16 50 50
 assignMatrix         : 54
 assignOptions        : 51
 b                    : 1 4
-body                 : 12 31 46 49 50 61 62
-c                    : 13
+body                 : 12 31 46 49 50 64 65
+c                    : 13 72
 condition            : 14
 cte                  : 26
+cyParamCall          : 58
 cycle                : 15
 cycleInstruction     : 44
 d                    : 18
 declare              : 6 42
 dict                 : 39
 e                    : 19
-empty                : 3 5 30 34 36 41 43 45 56 57 60 63 65
-expresion            : 22 49 50 54 55 61
+empty                : 3 5 30 34 36 41 43 45 56 60 63 66 68
+expresion            : 22 49 50 54 55 58 64
 f                    : 20
 forCycle             : 47
 funcCall             : 17 23
@@ -162,12 +166,13 @@ l                    : 31
 m                    : 31
 main                 : 1
 n                    : 32
-optionalElse         : 61
-optionalMatrix       : 58
+opParamCall          : 57 59
+optionalElse         : 64
+optionalMatrix       : 61
 param                : 29 32 33
 program              : 0
 struct               : 38
-type                 : 28 35 37 58 64 64
+type                 : 28 35 37 61 67 67
 vars                 : 2
 whileCycle           : 48
 
@@ -208,11 +213,11 @@ state 4
     (2) a -> . vars
     (3) a -> . empty
     (6) vars -> . VARS declare
-    (70) empty -> .
+    (73) empty -> .
 
     VARS            shift and go to state 6
-    FUNC            reduce using rule 70 (empty -> .)
-    MAIN            reduce using rule 70 (empty -> .)
+    FUNC            reduce using rule 73 (empty -> .)
+    MAIN            reduce using rule 73 (empty -> .)
 
     a                              shift and go to state 5
     vars                           shift and go to state 7
@@ -224,10 +229,10 @@ state 5
     (4) b -> . function b
     (5) b -> . empty
     (31) function -> . FUNC ID l m { a body }
-    (70) empty -> .
+    (73) empty -> .
 
     FUNC            shift and go to state 11
-    MAIN            reduce using rule 70 (empty -> .)
+    MAIN            reduce using rule 73 (empty -> .)
 
     function                       shift and go to state 9
     b                              shift and go to state 10
@@ -273,7 +278,6 @@ state 7
     FOR             reduce using rule 2 (a -> vars .)
     WHILE           reduce using rule 2 (a -> vars .)
     }               reduce using rule 2 (a -> vars .)
-    ;               reduce using rule 2 (a -> vars .)
 
 
 state 8
@@ -287,7 +291,6 @@ state 8
     FOR             reduce using rule 3 (a -> empty .)
     WHILE           reduce using rule 3 (a -> empty .)
     }               reduce using rule 3 (a -> empty .)
-    ;               reduce using rule 3 (a -> empty .)
 
 
 state 9
@@ -296,10 +299,10 @@ state 9
     (4) b -> . function b
     (5) b -> . empty
     (31) function -> . FUNC ID l m { a body }
-    (70) empty -> .
+    (73) empty -> .
 
     FUNC            shift and go to state 11
-    MAIN            reduce using rule 70 (empty -> .)
+    MAIN            reduce using rule 73 (empty -> .)
 
     function                       shift and go to state 9
     b                              shift and go to state 25
@@ -350,7 +353,6 @@ state 14
     FOR             reduce using rule 19 (declare -> e .)
     WHILE           reduce using rule 19 (declare -> e .)
     }               reduce using rule 19 (declare -> e .)
-    ;               reduce using rule 19 (declare -> e .)
 
 
 state 15
@@ -364,7 +366,6 @@ state 15
     FOR             reduce using rule 18 (declare -> d .)
     WHILE           reduce using rule 18 (declare -> d .)
     }               reduce using rule 18 (declare -> d .)
-    ;               reduce using rule 18 (declare -> d .)
 
 
 state 16
@@ -378,7 +379,6 @@ state 16
     FOR             reduce using rule 20 (declare -> f .)
     WHILE           reduce using rule 20 (declare -> f .)
     }               reduce using rule 20 (declare -> f .)
-    ;               reduce using rule 20 (declare -> f .)
 
 
 state 17
@@ -448,7 +448,6 @@ state 23
     FOR             reduce using rule 6 (vars -> VARS declare .)
     WHILE           reduce using rule 6 (vars -> VARS declare .)
     }               reduce using rule 6 (vars -> VARS declare .)
-    ;               reduce using rule 6 (vars -> VARS declare .)
     FUNC            reduce using rule 6 (vars -> VARS declare .)
     MAIN            reduce using rule 6 (vars -> VARS declare .)
 
@@ -493,7 +492,7 @@ state 28
 state 29
 
     (39) f -> DICT ID . dict ; h
-    (64) dict -> . ( type : type )
+    (67) dict -> . ( type : type )
 
     (               shift and go to state 36
 
@@ -504,10 +503,10 @@ state 30
     (37) d -> type ID . g ; h
     (40) g -> . , ID
     (41) g -> . empty
-    (70) empty -> .
+    (73) empty -> .
 
     ,               shift and go to state 39
-    ;               reduce using rule 70 (empty -> .)
+    ;               reduce using rule 73 (empty -> .)
 
     empty                          shift and go to state 40
     g                              shift and go to state 38
@@ -515,7 +514,7 @@ state 30
 state 31
 
     (38) e -> STRUCT ID . struct ; h
-    (58) struct -> . type [ CTED ] optionalMatrix
+    (61) struct -> . type [ CTED ] optionalMatrix
     (7) type -> . INT
     (8) type -> . FLOAT
     (9) type -> . STRING
@@ -537,15 +536,14 @@ state 32
     (2) a -> . vars
     (3) a -> . empty
     (6) vars -> . VARS declare
-    (70) empty -> .
+    (73) empty -> .
 
     VARS            shift and go to state 6
-    IF              reduce using rule 70 (empty -> .)
-    ID              reduce using rule 70 (empty -> .)
-    FOR             reduce using rule 70 (empty -> .)
-    WHILE           reduce using rule 70 (empty -> .)
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    IF              reduce using rule 73 (empty -> .)
+    ID              reduce using rule 73 (empty -> .)
+    FOR             reduce using rule 73 (empty -> .)
+    WHILE           reduce using rule 73 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
 
     a                              shift and go to state 43
     empty                          shift and go to state 8
@@ -582,17 +580,17 @@ state 35
     (31) function -> FUNC ID l . m { a body }
     (35) m -> . RETURNS type
     (36) m -> . empty
-    (70) empty -> .
+    (73) empty -> .
 
     RETURNS         shift and go to state 47
-    {               reduce using rule 70 (empty -> .)
+    {               reduce using rule 73 (empty -> .)
 
     m                              shift and go to state 46
     empty                          shift and go to state 48
 
 state 36
 
-    (64) dict -> ( . type : type )
+    (67) dict -> ( . type : type )
     (7) type -> . INT
     (8) type -> . FLOAT
     (9) type -> . STRING
@@ -650,7 +648,7 @@ state 41
 
 state 42
 
-    (58) struct -> type . [ CTED ] optionalMatrix
+    (61) struct -> type . [ CTED ] optionalMatrix
 
     [               shift and go to state 54
 
@@ -661,22 +659,21 @@ state 43
     (44) body -> . cycleInstruction
     (45) body -> . empty
     (46) cycleInstruction -> . instr body
-    (70) empty -> .
+    (73) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
     (16) c -> . assign
     (17) c -> . funcCall
-    (61) condition -> . IF ( expresion ) { body } optionalElse
+    (64) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
     (51) assign -> . ID assignOptions
-    (57) funcCall -> . empty
+    (57) funcCall -> . ID ( opParamCall )
     (50) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     IF              shift and go to state 66
     ID              shift and go to state 64
     FOR             shift and go to state 63
@@ -700,14 +697,14 @@ state 44
     (33) n -> . param
     (34) n -> . empty
     (28) param -> . type ID g k
-    (70) empty -> .
+    (73) empty -> .
     (7) type -> . INT
     (8) type -> . FLOAT
     (9) type -> . STRING
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    )               reduce using rule 70 (empty -> .)
+    )               reduce using rule 73 (empty -> .)
     INT             shift and go to state 17
     FLOAT           shift and go to state 18
     STRING          shift and go to state 19
@@ -759,7 +756,7 @@ state 48
 
 state 49
 
-    (64) dict -> ( type . : type )
+    (67) dict -> ( type . : type )
 
     :               shift and go to state 76
 
@@ -772,7 +769,7 @@ state 50
     (18) declare -> . d
     (19) declare -> . e
     (20) declare -> . f
-    (70) empty -> .
+    (73) empty -> .
     (37) d -> . type ID g ; h
     (38) e -> . STRUCT ID struct ; h
     (39) f -> . DICT ID dict ; h
@@ -782,14 +779,13 @@ state 50
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    FUNC            reduce using rule 70 (empty -> .)
-    MAIN            reduce using rule 70 (empty -> .)
-    IF              reduce using rule 70 (empty -> .)
-    ID              reduce using rule 70 (empty -> .)
-    FOR             reduce using rule 70 (empty -> .)
-    WHILE           reduce using rule 70 (empty -> .)
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    FUNC            reduce using rule 73 (empty -> .)
+    MAIN            reduce using rule 73 (empty -> .)
+    IF              reduce using rule 73 (empty -> .)
+    ID              reduce using rule 73 (empty -> .)
+    FOR             reduce using rule 73 (empty -> .)
+    WHILE           reduce using rule 73 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     STRUCT          shift and go to state 24
     DICT            shift and go to state 20
     INT             shift and go to state 17
@@ -814,7 +810,7 @@ state 51
     (18) declare -> . d
     (19) declare -> . e
     (20) declare -> . f
-    (70) empty -> .
+    (73) empty -> .
     (37) d -> . type ID g ; h
     (38) e -> . STRUCT ID struct ; h
     (39) f -> . DICT ID dict ; h
@@ -824,14 +820,13 @@ state 51
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    FUNC            reduce using rule 70 (empty -> .)
-    MAIN            reduce using rule 70 (empty -> .)
-    IF              reduce using rule 70 (empty -> .)
-    ID              reduce using rule 70 (empty -> .)
-    FOR             reduce using rule 70 (empty -> .)
-    WHILE           reduce using rule 70 (empty -> .)
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    FUNC            reduce using rule 73 (empty -> .)
+    MAIN            reduce using rule 73 (empty -> .)
+    IF              reduce using rule 73 (empty -> .)
+    ID              reduce using rule 73 (empty -> .)
+    FOR             reduce using rule 73 (empty -> .)
+    WHILE           reduce using rule 73 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     STRUCT          shift and go to state 24
     DICT            shift and go to state 20
     INT             shift and go to state 17
@@ -869,7 +864,7 @@ state 53
     (18) declare -> . d
     (19) declare -> . e
     (20) declare -> . f
-    (70) empty -> .
+    (73) empty -> .
     (37) d -> . type ID g ; h
     (38) e -> . STRUCT ID struct ; h
     (39) f -> . DICT ID dict ; h
@@ -879,14 +874,13 @@ state 53
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    FUNC            reduce using rule 70 (empty -> .)
-    MAIN            reduce using rule 70 (empty -> .)
-    IF              reduce using rule 70 (empty -> .)
-    ID              reduce using rule 70 (empty -> .)
-    FOR             reduce using rule 70 (empty -> .)
-    WHILE           reduce using rule 70 (empty -> .)
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    FUNC            reduce using rule 73 (empty -> .)
+    MAIN            reduce using rule 73 (empty -> .)
+    IF              reduce using rule 73 (empty -> .)
+    ID              reduce using rule 73 (empty -> .)
+    FOR             reduce using rule 73 (empty -> .)
+    WHILE           reduce using rule 73 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     STRUCT          shift and go to state 24
     DICT            shift and go to state 20
     INT             shift and go to state 17
@@ -905,7 +899,7 @@ state 53
 
 state 54
 
-    (58) struct -> type [ . CTED ] optionalMatrix
+    (61) struct -> type [ . CTED ] optionalMatrix
 
     CTED            shift and go to state 82
 
@@ -916,22 +910,21 @@ state 55
     (44) body -> . cycleInstruction
     (45) body -> . empty
     (46) cycleInstruction -> . instr body
-    (70) empty -> .
+    (73) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
     (16) c -> . assign
     (17) c -> . funcCall
-    (61) condition -> . IF ( expresion ) { body } optionalElse
+    (64) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
     (51) assign -> . ID assignOptions
-    (57) funcCall -> . empty
+    (57) funcCall -> . ID ( opParamCall )
     (50) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     IF              shift and go to state 66
     ID              shift and go to state 64
     FOR             shift and go to state 63
@@ -957,7 +950,6 @@ state 56
     ID              reduce using rule 48 (cycle -> whileCycle .)
     FOR             reduce using rule 48 (cycle -> whileCycle .)
     WHILE           reduce using rule 48 (cycle -> whileCycle .)
-    ;               reduce using rule 48 (cycle -> whileCycle .)
     }               reduce using rule 48 (cycle -> whileCycle .)
 
 
@@ -976,7 +968,6 @@ state 58
     ID              reduce using rule 47 (cycle -> forCycle .)
     FOR             reduce using rule 47 (cycle -> forCycle .)
     WHILE           reduce using rule 47 (cycle -> forCycle .)
-    ;               reduce using rule 47 (cycle -> forCycle .)
     }               reduce using rule 47 (cycle -> forCycle .)
 
 
@@ -995,17 +986,14 @@ state 60
     ID              reduce using rule 15 (instr -> cycle .)
     FOR             reduce using rule 15 (instr -> cycle .)
     WHILE           reduce using rule 15 (instr -> cycle .)
-    ;               reduce using rule 15 (instr -> cycle .)
     }               reduce using rule 15 (instr -> cycle .)
 
 
 state 61
 
     (45) body -> empty .
-    (57) funcCall -> empty .
 
     }               reduce using rule 45 (body -> empty .)
-    ;               reduce using rule 57 (funcCall -> empty .)
 
 
 state 62
@@ -1025,18 +1013,20 @@ state 63
 state 64
 
     (51) assign -> ID . assignOptions
+    (57) funcCall -> ID . ( opParamCall )
     (52) assignOptions -> . init
     (53) assignOptions -> . initDict
     (54) assignOptions -> . [ expresion ] assignMatrix init
     (21) init -> . = i
     (24) initDict -> . = ( j : j )
 
-    [               shift and go to state 91
-    =               shift and go to state 87
+    (               shift and go to state 87
+    [               shift and go to state 92
+    =               shift and go to state 89
 
     initDict                       shift and go to state 88
-    assignOptions                  shift and go to state 89
-    init                           shift and go to state 90
+    assignOptions                  shift and go to state 90
+    init                           shift and go to state 91
 
 state 65
 
@@ -1046,22 +1036,21 @@ state 65
     ID              reduce using rule 14 (instr -> condition .)
     FOR             reduce using rule 14 (instr -> condition .)
     WHILE           reduce using rule 14 (instr -> condition .)
-    ;               reduce using rule 14 (instr -> condition .)
     }               reduce using rule 14 (instr -> condition .)
 
 
 state 66
 
-    (61) condition -> IF . ( expresion ) { body } optionalElse
+    (64) condition -> IF . ( expresion ) { body } optionalElse
 
-    (               shift and go to state 92
+    (               shift and go to state 93
 
 
 state 67
 
     (13) instr -> c . ;
 
-    ;               shift and go to state 93
+    ;               shift and go to state 94
 
 
 state 68
@@ -1069,6 +1058,8 @@ state 68
     (17) c -> funcCall .
 
     ;               reduce using rule 17 (c -> funcCall .)
+    :               reduce using rule 17 (c -> funcCall .)
+    )               reduce using rule 17 (c -> funcCall .)
 
 
 state 69
@@ -1076,6 +1067,8 @@ state 69
     (16) c -> assign .
 
     ;               reduce using rule 16 (c -> assign .)
+    :               reduce using rule 16 (c -> assign .)
+    )               reduce using rule 16 (c -> assign .)
 
 
 state 70
@@ -1089,7 +1082,7 @@ state 71
 
     (32) l -> ( param n . )
 
-    )               shift and go to state 94
+    )               shift and go to state 95
 
 
 state 72
@@ -1104,19 +1097,19 @@ state 73
     (28) param -> type ID . g k
     (40) g -> . , ID
     (41) g -> . empty
-    (70) empty -> .
+    (73) empty -> .
 
     ,               shift and go to state 39
-    ;               reduce using rule 70 (empty -> .)
-    INT             reduce using rule 70 (empty -> .)
-    FLOAT           reduce using rule 70 (empty -> .)
-    STRING          reduce using rule 70 (empty -> .)
-    OBJECT          reduce using rule 70 (empty -> .)
-    BOOL            reduce using rule 70 (empty -> .)
-    )               reduce using rule 70 (empty -> .)
+    ;               reduce using rule 73 (empty -> .)
+    INT             reduce using rule 73 (empty -> .)
+    FLOAT           reduce using rule 73 (empty -> .)
+    STRING          reduce using rule 73 (empty -> .)
+    OBJECT          reduce using rule 73 (empty -> .)
+    BOOL            reduce using rule 73 (empty -> .)
+    )               reduce using rule 73 (empty -> .)
 
     empty                          shift and go to state 40
-    g                              shift and go to state 95
+    g                              shift and go to state 96
 
 state 74
 
@@ -1124,17 +1117,16 @@ state 74
     (2) a -> . vars
     (3) a -> . empty
     (6) vars -> . VARS declare
-    (70) empty -> .
+    (73) empty -> .
 
     VARS            shift and go to state 6
-    IF              reduce using rule 70 (empty -> .)
-    ID              reduce using rule 70 (empty -> .)
-    FOR             reduce using rule 70 (empty -> .)
-    WHILE           reduce using rule 70 (empty -> .)
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    IF              reduce using rule 73 (empty -> .)
+    ID              reduce using rule 73 (empty -> .)
+    FOR             reduce using rule 73 (empty -> .)
+    WHILE           reduce using rule 73 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
 
-    a                              shift and go to state 96
+    a                              shift and go to state 97
     vars                           shift and go to state 7
     empty                          shift and go to state 8
 
@@ -1147,7 +1139,7 @@ state 75
 
 state 76
 
-    (64) dict -> ( type : . type )
+    (67) dict -> ( type : . type )
     (7) type -> . INT
     (8) type -> . FLOAT
     (9) type -> . STRING
@@ -1160,7 +1152,7 @@ state 76
     OBJECT          shift and go to state 13
     BOOL            shift and go to state 21
 
-    type                           shift and go to state 97
+    type                           shift and go to state 98
 
 state 77
 
@@ -1173,7 +1165,6 @@ state 77
     FOR             reduce using rule 39 (f -> DICT ID dict ; h .)
     WHILE           reduce using rule 39 (f -> DICT ID dict ; h .)
     }               reduce using rule 39 (f -> DICT ID dict ; h .)
-    ;               reduce using rule 39 (f -> DICT ID dict ; h .)
 
 
 state 78
@@ -1187,7 +1178,6 @@ state 78
     FOR             reduce using rule 42 (h -> declare .)
     WHILE           reduce using rule 42 (h -> declare .)
     }               reduce using rule 42 (h -> declare .)
-    ;               reduce using rule 42 (h -> declare .)
 
 
 state 79
@@ -1201,7 +1191,6 @@ state 79
     FOR             reduce using rule 43 (h -> empty .)
     WHILE           reduce using rule 43 (h -> empty .)
     }               reduce using rule 43 (h -> empty .)
-    ;               reduce using rule 43 (h -> empty .)
 
 
 state 80
@@ -1215,7 +1204,6 @@ state 80
     FOR             reduce using rule 37 (d -> type ID g ; h .)
     WHILE           reduce using rule 37 (d -> type ID g ; h .)
     }               reduce using rule 37 (d -> type ID g ; h .)
-    ;               reduce using rule 37 (d -> type ID g ; h .)
 
 
 state 81
@@ -1229,14 +1217,13 @@ state 81
     FOR             reduce using rule 38 (e -> STRUCT ID struct ; h .)
     WHILE           reduce using rule 38 (e -> STRUCT ID struct ; h .)
     }               reduce using rule 38 (e -> STRUCT ID struct ; h .)
-    ;               reduce using rule 38 (e -> STRUCT ID struct ; h .)
 
 
 state 82
 
-    (58) struct -> type [ CTED . ] optionalMatrix
+    (61) struct -> type [ CTED . ] optionalMatrix
 
-    ]               shift and go to state 98
+    ]               shift and go to state 99
 
 
 state 83
@@ -1249,13 +1236,13 @@ state 83
 state 84
 
     (49) whileCycle -> WHILE ( . expresion ) { body }
-    (65) expresion -> . empty
-    (70) empty -> .
+    (68) expresion -> . empty
+    (73) empty -> .
 
-    )               reduce using rule 70 (empty -> .)
+    )               reduce using rule 73 (empty -> .)
 
-    expresion                      shift and go to state 99
-    empty                          shift and go to state 100
+    expresion                      shift and go to state 100
+    empty                          shift and go to state 101
 
 state 85
 
@@ -1269,76 +1256,95 @@ state 86
     (50) forCycle -> FOR ( . assign ; expresion ; assign ) { body }
     (51) assign -> . ID assignOptions
 
-    ID              shift and go to state 64
+    ID              shift and go to state 102
 
-    assign                         shift and go to state 101
+    assign                         shift and go to state 103
 
 state 87
 
-    (21) init -> = . i
-    (24) initDict -> = . ( j : j )
-    (22) i -> . expresion
-    (23) i -> . funcCall
-    (65) expresion -> . empty
-    (57) funcCall -> . empty
-    (70) empty -> .
+    (57) funcCall -> ID ( . opParamCall )
+    (58) opParamCall -> . expresion cyParamCall
+    (68) expresion -> . empty
+    (73) empty -> .
 
-    (               shift and go to state 105
-    ;               reduce using rule 70 (empty -> .)
-    )               reduce using rule 70 (empty -> .)
+    ,               reduce using rule 73 (empty -> .)
+    )               reduce using rule 73 (empty -> .)
 
-    i                              shift and go to state 104
-    expresion                      shift and go to state 102
-    empty                          shift and go to state 106
-    funcCall                       shift and go to state 103
+    expresion                      shift and go to state 104
+    empty                          shift and go to state 101
+    opParamCall                    shift and go to state 105
 
 state 88
 
     (53) assignOptions -> initDict .
 
     ;               reduce using rule 53 (assignOptions -> initDict .)
+    :               reduce using rule 53 (assignOptions -> initDict .)
     )               reduce using rule 53 (assignOptions -> initDict .)
 
 
 state 89
 
+    (21) init -> = . i
+    (24) initDict -> = . ( j : j )
+    (22) i -> . expresion
+    (23) i -> . funcCall
+    (68) expresion -> . empty
+    (57) funcCall -> . ID ( opParamCall )
+    (73) empty -> .
+
+    (               shift and go to state 109
+    ID              shift and go to state 110
+    ;               reduce using rule 73 (empty -> .)
+    :               reduce using rule 73 (empty -> .)
+    )               reduce using rule 73 (empty -> .)
+
+    expresion                      shift and go to state 106
+    funcCall                       shift and go to state 107
+    i                              shift and go to state 108
+    empty                          shift and go to state 101
+
+state 90
+
     (51) assign -> ID assignOptions .
 
     ;               reduce using rule 51 (assign -> ID assignOptions .)
     )               reduce using rule 51 (assign -> ID assignOptions .)
-
-
-state 90
-
-    (52) assignOptions -> init .
-
-    ;               reduce using rule 52 (assignOptions -> init .)
-    )               reduce using rule 52 (assignOptions -> init .)
+    :               reduce using rule 51 (assign -> ID assignOptions .)
 
 
 state 91
 
-    (54) assignOptions -> [ . expresion ] assignMatrix init
-    (65) expresion -> . empty
-    (70) empty -> .
+    (52) assignOptions -> init .
 
-    ]               reduce using rule 70 (empty -> .)
+    ;               reduce using rule 52 (assignOptions -> init .)
+    :               reduce using rule 52 (assignOptions -> init .)
+    )               reduce using rule 52 (assignOptions -> init .)
 
-    expresion                      shift and go to state 107
-    empty                          shift and go to state 100
 
 state 92
 
-    (61) condition -> IF ( . expresion ) { body } optionalElse
-    (65) expresion -> . empty
-    (70) empty -> .
+    (54) assignOptions -> [ . expresion ] assignMatrix init
+    (68) expresion -> . empty
+    (73) empty -> .
 
-    )               reduce using rule 70 (empty -> .)
+    ]               reduce using rule 73 (empty -> .)
 
-    expresion                      shift and go to state 108
-    empty                          shift and go to state 100
+    expresion                      shift and go to state 111
+    empty                          shift and go to state 101
 
 state 93
+
+    (64) condition -> IF ( . expresion ) { body } optionalElse
+    (68) expresion -> . empty
+    (73) empty -> .
+
+    )               reduce using rule 73 (empty -> .)
+
+    expresion                      shift and go to state 112
+    empty                          shift and go to state 101
+
+state 94
 
     (13) instr -> c ; .
 
@@ -1346,11 +1352,10 @@ state 93
     ID              reduce using rule 13 (instr -> c ; .)
     FOR             reduce using rule 13 (instr -> c ; .)
     WHILE           reduce using rule 13 (instr -> c ; .)
-    ;               reduce using rule 13 (instr -> c ; .)
     }               reduce using rule 13 (instr -> c ; .)
 
 
-state 94
+state 95
 
     (32) l -> ( param n ) .
 
@@ -1358,52 +1363,51 @@ state 94
     {               reduce using rule 32 (l -> ( param n ) .)
 
 
-state 95
+state 96
 
     (28) param -> type ID g . k
     (29) k -> . ; param
     (30) k -> . empty
-    (70) empty -> .
+    (73) empty -> .
 
-    ;               shift and go to state 110
-    INT             reduce using rule 70 (empty -> .)
-    FLOAT           reduce using rule 70 (empty -> .)
-    STRING          reduce using rule 70 (empty -> .)
-    OBJECT          reduce using rule 70 (empty -> .)
-    BOOL            reduce using rule 70 (empty -> .)
-    )               reduce using rule 70 (empty -> .)
+    ;               shift and go to state 114
+    INT             reduce using rule 73 (empty -> .)
+    FLOAT           reduce using rule 73 (empty -> .)
+    STRING          reduce using rule 73 (empty -> .)
+    OBJECT          reduce using rule 73 (empty -> .)
+    BOOL            reduce using rule 73 (empty -> .)
+    )               reduce using rule 73 (empty -> .)
 
-    k                              shift and go to state 109
-    empty                          shift and go to state 111
+    k                              shift and go to state 113
+    empty                          shift and go to state 115
 
-state 96
+state 97
 
     (31) function -> FUNC ID l m { a . body }
     (44) body -> . cycleInstruction
     (45) body -> . empty
     (46) cycleInstruction -> . instr body
-    (70) empty -> .
+    (73) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
     (16) c -> . assign
     (17) c -> . funcCall
-    (61) condition -> . IF ( expresion ) { body } optionalElse
+    (64) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
     (51) assign -> . ID assignOptions
-    (57) funcCall -> . empty
+    (57) funcCall -> . ID ( opParamCall )
     (50) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     IF              shift and go to state 66
     ID              shift and go to state 64
     FOR             shift and go to state 63
     WHILE           shift and go to state 57
 
-    body                           shift and go to state 112
+    body                           shift and go to state 116
     c                              shift and go to state 67
     funcCall                       shift and go to state 68
     cycleInstruction               shift and go to state 59
@@ -1415,123 +1419,157 @@ state 96
     empty                          shift and go to state 61
     cycle                          shift and go to state 60
 
-state 97
-
-    (64) dict -> ( type : type . )
-
-    )               shift and go to state 113
-
-
 state 98
 
-    (58) struct -> type [ CTED ] . optionalMatrix
-    (59) optionalMatrix -> . [ CTED ]
-    (60) optionalMatrix -> . empty
-    (70) empty -> .
-
-    [               shift and go to state 115
-    ;               reduce using rule 70 (empty -> .)
-
-    optionalMatrix                 shift and go to state 114
-    empty                          shift and go to state 116
-
-state 99
-
-    (49) whileCycle -> WHILE ( expresion . ) { body }
+    (67) dict -> ( type : type . )
 
     )               shift and go to state 117
 
 
+state 99
+
+    (61) struct -> type [ CTED ] . optionalMatrix
+    (62) optionalMatrix -> . [ CTED ]
+    (63) optionalMatrix -> . empty
+    (73) empty -> .
+
+    [               shift and go to state 119
+    ;               reduce using rule 73 (empty -> .)
+
+    optionalMatrix                 shift and go to state 118
+    empty                          shift and go to state 120
+
 state 100
 
-    (65) expresion -> empty .
+    (49) whileCycle -> WHILE ( expresion . ) { body }
 
-    ]               reduce using rule 65 (expresion -> empty .)
-    )               reduce using rule 65 (expresion -> empty .)
-    ;               reduce using rule 65 (expresion -> empty .)
+    )               shift and go to state 121
 
 
 state 101
 
-    (50) forCycle -> FOR ( assign . ; expresion ; assign ) { body }
+    (68) expresion -> empty .
 
-    ;               shift and go to state 118
+    ;               reduce using rule 68 (expresion -> empty .)
+    :               reduce using rule 68 (expresion -> empty .)
+    )               reduce using rule 68 (expresion -> empty .)
+    ,               reduce using rule 68 (expresion -> empty .)
+    ]               reduce using rule 68 (expresion -> empty .)
 
 
 state 102
 
-    (22) i -> expresion .
+    (51) assign -> ID . assignOptions
+    (52) assignOptions -> . init
+    (53) assignOptions -> . initDict
+    (54) assignOptions -> . [ expresion ] assignMatrix init
+    (21) init -> . = i
+    (24) initDict -> . = ( j : j )
 
-    ;               reduce using rule 22 (i -> expresion .)
-    )               reduce using rule 22 (i -> expresion .)
+    [               shift and go to state 92
+    =               shift and go to state 89
 
+    initDict                       shift and go to state 88
+    assignOptions                  shift and go to state 90
+    init                           shift and go to state 91
 
 state 103
 
-    (23) i -> funcCall .
+    (50) forCycle -> FOR ( assign . ; expresion ; assign ) { body }
 
-    ;               reduce using rule 23 (i -> funcCall .)
-    )               reduce using rule 23 (i -> funcCall .)
+    ;               shift and go to state 122
 
 
 state 104
 
+    (58) opParamCall -> expresion . cyParamCall
+    (59) cyParamCall -> . , opParamCall
+    (60) cyParamCall -> . empty
+    (73) empty -> .
+
+    ,               shift and go to state 124
+    )               reduce using rule 73 (empty -> .)
+
+    cyParamCall                    shift and go to state 123
+    empty                          shift and go to state 125
+
+state 105
+
+    (57) funcCall -> ID ( opParamCall . )
+
+    )               shift and go to state 126
+
+
+state 106
+
+    (22) i -> expresion .
+
+    ;               reduce using rule 22 (i -> expresion .)
+    :               reduce using rule 22 (i -> expresion .)
+    )               reduce using rule 22 (i -> expresion .)
+
+
+state 107
+
+    (23) i -> funcCall .
+
+    ;               reduce using rule 23 (i -> funcCall .)
+    :               reduce using rule 23 (i -> funcCall .)
+    )               reduce using rule 23 (i -> funcCall .)
+
+
+state 108
+
     (21) init -> = i .
 
     ;               reduce using rule 21 (init -> = i .)
+    :               reduce using rule 21 (init -> = i .)
     )               reduce using rule 21 (init -> = i .)
 
 
-state 105
+state 109
 
     (24) initDict -> = ( . j : j )
     (25) j -> . CTES
     (26) j -> . cte
     (27) j -> . ID
-    (66) cte -> . CTED
-    (67) cte -> . CTEF
-    (68) cte -> . TRUE
-    (69) cte -> . FALSE
+    (69) cte -> . CTED
+    (70) cte -> . CTEF
+    (71) cte -> . TRUE
+    (72) cte -> . FALSE c
 
-    CTES            shift and go to state 119
-    ID              shift and go to state 125
-    CTED            shift and go to state 124
-    CTEF            shift and go to state 123
-    TRUE            shift and go to state 126
-    FALSE           shift and go to state 120
+    CTES            shift and go to state 127
+    ID              shift and go to state 133
+    CTED            shift and go to state 132
+    CTEF            shift and go to state 131
+    TRUE            shift and go to state 134
+    FALSE           shift and go to state 128
 
-    cte                            shift and go to state 122
-    j                              shift and go to state 121
+    cte                            shift and go to state 130
+    j                              shift and go to state 129
 
-state 106
+state 110
 
-    (65) expresion -> empty .
-    (57) funcCall -> empty .
+    (57) funcCall -> ID . ( opParamCall )
 
-  ! reduce/reduce conflict for ; resolved using rule 57 (funcCall -> empty .)
-  ! reduce/reduce conflict for ) resolved using rule 57 (funcCall -> empty .)
-    ;               reduce using rule 57 (funcCall -> empty .)
-    )               reduce using rule 57 (funcCall -> empty .)
-
-  ! ;               [ reduce using rule 65 (expresion -> empty .) ]
-  ! )               [ reduce using rule 65 (expresion -> empty .) ]
+    (               shift and go to state 87
 
 
-state 107
+state 111
 
     (54) assignOptions -> [ expresion . ] assignMatrix init
 
-    ]               shift and go to state 127
+    ]               shift and go to state 135
 
 
-state 108
+state 112
 
-    (61) condition -> IF ( expresion . ) { body } optionalElse
+    (64) condition -> IF ( expresion . ) { body } optionalElse
 
-    )               shift and go to state 128
+    )               shift and go to state 136
 
 
-state 109
+state 113
 
     (28) param -> type ID g k .
 
@@ -1543,7 +1581,7 @@ state 109
     )               reduce using rule 28 (param -> type ID g k .)
 
 
-state 110
+state 114
 
     (29) k -> ; . param
     (28) param -> . type ID g k
@@ -1560,9 +1598,9 @@ state 110
     BOOL            shift and go to state 21
 
     type                           shift and go to state 45
-    param                          shift and go to state 129
+    param                          shift and go to state 137
 
-state 111
+state 115
 
     (30) k -> empty .
 
@@ -1574,143 +1612,186 @@ state 111
     )               reduce using rule 30 (k -> empty .)
 
 
-state 112
+state 116
 
     (31) function -> FUNC ID l m { a body . }
 
-    }               shift and go to state 130
-
-
-state 113
-
-    (64) dict -> ( type : type ) .
-
-    ;               reduce using rule 64 (dict -> ( type : type ) .)
-
-
-state 114
-
-    (58) struct -> type [ CTED ] optionalMatrix .
-
-    ;               reduce using rule 58 (struct -> type [ CTED ] optionalMatrix .)
-
-
-state 115
-
-    (59) optionalMatrix -> [ . CTED ]
-
-    CTED            shift and go to state 131
-
-
-state 116
-
-    (60) optionalMatrix -> empty .
-
-    ;               reduce using rule 60 (optionalMatrix -> empty .)
+    }               shift and go to state 138
 
 
 state 117
 
-    (49) whileCycle -> WHILE ( expresion ) . { body }
+    (67) dict -> ( type : type ) .
 
-    {               shift and go to state 132
+    ;               reduce using rule 67 (dict -> ( type : type ) .)
 
 
 state 118
 
-    (50) forCycle -> FOR ( assign ; . expresion ; assign ) { body }
-    (65) expresion -> . empty
-    (70) empty -> .
+    (61) struct -> type [ CTED ] optionalMatrix .
 
-    ;               reduce using rule 70 (empty -> .)
+    ;               reduce using rule 61 (struct -> type [ CTED ] optionalMatrix .)
 
-    expresion                      shift and go to state 133
-    empty                          shift and go to state 100
 
 state 119
 
-    (25) j -> CTES .
+    (62) optionalMatrix -> [ . CTED ]
 
-    )               reduce using rule 25 (j -> CTES .)
-    :               reduce using rule 25 (j -> CTES .)
+    CTED            shift and go to state 139
 
 
 state 120
 
-    (69) cte -> FALSE .
+    (63) optionalMatrix -> empty .
 
-    :               reduce using rule 69 (cte -> FALSE .)
-    )               reduce using rule 69 (cte -> FALSE .)
+    ;               reduce using rule 63 (optionalMatrix -> empty .)
 
 
 state 121
 
-    (24) initDict -> = ( j . : j )
+    (49) whileCycle -> WHILE ( expresion ) . { body }
 
-    :               shift and go to state 134
+    {               shift and go to state 140
 
 
 state 122
 
-    (26) j -> cte .
+    (50) forCycle -> FOR ( assign ; . expresion ; assign ) { body }
+    (68) expresion -> . empty
+    (73) empty -> .
 
-    )               reduce using rule 26 (j -> cte .)
-    :               reduce using rule 26 (j -> cte .)
+    ;               reduce using rule 73 (empty -> .)
 
+    expresion                      shift and go to state 141
+    empty                          shift and go to state 101
 
 state 123
 
-    (67) cte -> CTEF .
+    (58) opParamCall -> expresion cyParamCall .
 
-    :               reduce using rule 67 (cte -> CTEF .)
-    )               reduce using rule 67 (cte -> CTEF .)
+    )               reduce using rule 58 (opParamCall -> expresion cyParamCall .)
 
 
 state 124
 
-    (66) cte -> CTED .
+    (59) cyParamCall -> , . opParamCall
+    (58) opParamCall -> . expresion cyParamCall
+    (68) expresion -> . empty
+    (73) empty -> .
 
-    :               reduce using rule 66 (cte -> CTED .)
-    )               reduce using rule 66 (cte -> CTED .)
+    ,               reduce using rule 73 (empty -> .)
+    )               reduce using rule 73 (empty -> .)
 
+    expresion                      shift and go to state 104
+    empty                          shift and go to state 101
+    opParamCall                    shift and go to state 142
 
 state 125
 
-    (27) j -> ID .
+    (60) cyParamCall -> empty .
 
-    )               reduce using rule 27 (j -> ID .)
-    :               reduce using rule 27 (j -> ID .)
+    )               reduce using rule 60 (cyParamCall -> empty .)
 
 
 state 126
 
-    (68) cte -> TRUE .
+    (57) funcCall -> ID ( opParamCall ) .
 
-    :               reduce using rule 68 (cte -> TRUE .)
-    )               reduce using rule 68 (cte -> TRUE .)
+    ;               reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
+    :               reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
+    )               reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
 
 
 state 127
 
-    (54) assignOptions -> [ expresion ] . assignMatrix init
-    (55) assignMatrix -> . [ expresion ]
-    (56) assignMatrix -> . empty
-    (70) empty -> .
+    (25) j -> CTES .
 
-    [               shift and go to state 136
-    =               reduce using rule 70 (empty -> .)
+    :               reduce using rule 25 (j -> CTES .)
+    )               reduce using rule 25 (j -> CTES .)
 
-    assignMatrix                   shift and go to state 135
-    empty                          shift and go to state 137
 
 state 128
 
-    (61) condition -> IF ( expresion ) . { body } optionalElse
+    (72) cte -> FALSE . c
+    (16) c -> . assign
+    (17) c -> . funcCall
+    (51) assign -> . ID assignOptions
+    (57) funcCall -> . ID ( opParamCall )
 
-    {               shift and go to state 138
+    ID              shift and go to state 64
 
+    c                              shift and go to state 143
+    assign                         shift and go to state 69
+    funcCall                       shift and go to state 68
 
 state 129
+
+    (24) initDict -> = ( j . : j )
+
+    :               shift and go to state 144
+
+
+state 130
+
+    (26) j -> cte .
+
+    :               reduce using rule 26 (j -> cte .)
+    )               reduce using rule 26 (j -> cte .)
+
+
+state 131
+
+    (70) cte -> CTEF .
+
+    :               reduce using rule 70 (cte -> CTEF .)
+    )               reduce using rule 70 (cte -> CTEF .)
+
+
+state 132
+
+    (69) cte -> CTED .
+
+    :               reduce using rule 69 (cte -> CTED .)
+    )               reduce using rule 69 (cte -> CTED .)
+
+
+state 133
+
+    (27) j -> ID .
+
+    :               reduce using rule 27 (j -> ID .)
+    )               reduce using rule 27 (j -> ID .)
+
+
+state 134
+
+    (71) cte -> TRUE .
+
+    :               reduce using rule 71 (cte -> TRUE .)
+    )               reduce using rule 71 (cte -> TRUE .)
+
+
+state 135
+
+    (54) assignOptions -> [ expresion ] . assignMatrix init
+    (55) assignMatrix -> . [ expresion ]
+    (56) assignMatrix -> . empty
+    (73) empty -> .
+
+    [               shift and go to state 146
+    =               reduce using rule 73 (empty -> .)
+
+    assignMatrix                   shift and go to state 145
+    empty                          shift and go to state 147
+
+state 136
+
+    (64) condition -> IF ( expresion ) . { body } optionalElse
+
+    {               shift and go to state 148
+
+
+state 137
 
     (29) k -> ; param .
 
@@ -1722,7 +1803,7 @@ state 129
     )               reduce using rule 29 (k -> ; param .)
 
 
-state 130
+state 138
 
     (31) function -> FUNC ID l m { a body } .
 
@@ -1730,41 +1811,40 @@ state 130
     MAIN            reduce using rule 31 (function -> FUNC ID l m { a body } .)
 
 
-state 131
+state 139
 
-    (59) optionalMatrix -> [ CTED . ]
+    (62) optionalMatrix -> [ CTED . ]
 
-    ]               shift and go to state 139
+    ]               shift and go to state 149
 
 
-state 132
+state 140
 
     (49) whileCycle -> WHILE ( expresion ) { . body }
     (44) body -> . cycleInstruction
     (45) body -> . empty
     (46) cycleInstruction -> . instr body
-    (70) empty -> .
+    (73) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
     (16) c -> . assign
     (17) c -> . funcCall
-    (61) condition -> . IF ( expresion ) { body } optionalElse
+    (64) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
     (51) assign -> . ID assignOptions
-    (57) funcCall -> . empty
+    (57) funcCall -> . ID ( opParamCall )
     (50) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     IF              shift and go to state 66
     ID              shift and go to state 64
     FOR             shift and go to state 63
     WHILE           shift and go to state 57
 
-    body                           shift and go to state 140
+    body                           shift and go to state 150
     c                              shift and go to state 67
     funcCall                       shift and go to state 68
     cycleInstruction               shift and go to state 59
@@ -1776,89 +1856,103 @@ state 132
     empty                          shift and go to state 61
     cycle                          shift and go to state 60
 
-state 133
+state 141
 
     (50) forCycle -> FOR ( assign ; expresion . ; assign ) { body }
 
-    ;               shift and go to state 141
+    ;               shift and go to state 151
 
 
-state 134
+state 142
+
+    (59) cyParamCall -> , opParamCall .
+
+    )               reduce using rule 59 (cyParamCall -> , opParamCall .)
+
+
+state 143
+
+    (72) cte -> FALSE c .
+
+    :               reduce using rule 72 (cte -> FALSE c .)
+    )               reduce using rule 72 (cte -> FALSE c .)
+
+
+state 144
 
     (24) initDict -> = ( j : . j )
     (25) j -> . CTES
     (26) j -> . cte
     (27) j -> . ID
-    (66) cte -> . CTED
-    (67) cte -> . CTEF
-    (68) cte -> . TRUE
-    (69) cte -> . FALSE
+    (69) cte -> . CTED
+    (70) cte -> . CTEF
+    (71) cte -> . TRUE
+    (72) cte -> . FALSE c
 
-    CTES            shift and go to state 119
-    ID              shift and go to state 125
-    CTED            shift and go to state 124
-    CTEF            shift and go to state 123
-    TRUE            shift and go to state 126
-    FALSE           shift and go to state 120
+    CTES            shift and go to state 127
+    ID              shift and go to state 133
+    CTED            shift and go to state 132
+    CTEF            shift and go to state 131
+    TRUE            shift and go to state 134
+    FALSE           shift and go to state 128
 
-    cte                            shift and go to state 122
-    j                              shift and go to state 142
+    cte                            shift and go to state 130
+    j                              shift and go to state 152
 
-state 135
+state 145
 
     (54) assignOptions -> [ expresion ] assignMatrix . init
     (21) init -> . = i
 
-    =               shift and go to state 144
+    =               shift and go to state 154
 
-    init                           shift and go to state 143
+    init                           shift and go to state 153
 
-state 136
+state 146
 
     (55) assignMatrix -> [ . expresion ]
-    (65) expresion -> . empty
-    (70) empty -> .
+    (68) expresion -> . empty
+    (73) empty -> .
 
-    ]               reduce using rule 70 (empty -> .)
+    ]               reduce using rule 73 (empty -> .)
 
-    expresion                      shift and go to state 145
-    empty                          shift and go to state 100
+    expresion                      shift and go to state 155
+    empty                          shift and go to state 101
 
-state 137
+state 147
 
     (56) assignMatrix -> empty .
 
     =               reduce using rule 56 (assignMatrix -> empty .)
 
 
-state 138
+state 148
 
-    (61) condition -> IF ( expresion ) { . body } optionalElse
+    (64) condition -> IF ( expresion ) { . body } optionalElse
     (44) body -> . cycleInstruction
     (45) body -> . empty
     (46) cycleInstruction -> . instr body
-    (70) empty -> .
+    (73) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
     (16) c -> . assign
     (17) c -> . funcCall
-    (61) condition -> . IF ( expresion ) { body } optionalElse
+    (64) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
     (51) assign -> . ID assignOptions
-    (57) funcCall -> . empty
+    (57) funcCall -> . ID ( opParamCall )
     (50) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     IF              shift and go to state 66
     ID              shift and go to state 64
     FOR             shift and go to state 63
     WHILE           shift and go to state 57
 
-    body                           shift and go to state 146
+    body                           shift and go to state 156
     c                              shift and go to state 67
     funcCall                       shift and go to state 68
     cycleInstruction               shift and go to state 59
@@ -1870,76 +1964,79 @@ state 138
     empty                          shift and go to state 61
     cycle                          shift and go to state 60
 
-state 139
+state 149
 
-    (59) optionalMatrix -> [ CTED ] .
+    (62) optionalMatrix -> [ CTED ] .
 
-    ;               reduce using rule 59 (optionalMatrix -> [ CTED ] .)
+    ;               reduce using rule 62 (optionalMatrix -> [ CTED ] .)
 
 
-state 140
+state 150
 
     (49) whileCycle -> WHILE ( expresion ) { body . }
 
-    }               shift and go to state 147
+    }               shift and go to state 157
 
 
-state 141
+state 151
 
     (50) forCycle -> FOR ( assign ; expresion ; . assign ) { body }
     (51) assign -> . ID assignOptions
 
-    ID              shift and go to state 64
+    ID              shift and go to state 102
 
-    assign                         shift and go to state 148
+    assign                         shift and go to state 158
 
-state 142
+state 152
 
     (24) initDict -> = ( j : j . )
 
-    )               shift and go to state 149
+    )               shift and go to state 159
 
 
-state 143
+state 153
 
     (54) assignOptions -> [ expresion ] assignMatrix init .
 
     ;               reduce using rule 54 (assignOptions -> [ expresion ] assignMatrix init .)
+    :               reduce using rule 54 (assignOptions -> [ expresion ] assignMatrix init .)
     )               reduce using rule 54 (assignOptions -> [ expresion ] assignMatrix init .)
 
 
-state 144
+state 154
 
     (21) init -> = . i
     (22) i -> . expresion
     (23) i -> . funcCall
-    (65) expresion -> . empty
-    (57) funcCall -> . empty
-    (70) empty -> .
+    (68) expresion -> . empty
+    (57) funcCall -> . ID ( opParamCall )
+    (73) empty -> .
 
-    ;               reduce using rule 70 (empty -> .)
-    )               reduce using rule 70 (empty -> .)
+    ID              shift and go to state 110
+    ;               reduce using rule 73 (empty -> .)
+    :               reduce using rule 73 (empty -> .)
+    )               reduce using rule 73 (empty -> .)
 
-    i                              shift and go to state 104
-    expresion                      shift and go to state 102
-    empty                          shift and go to state 106
-    funcCall                       shift and go to state 103
+    i                              shift and go to state 108
+    expresion                      shift and go to state 106
+    empty                          shift and go to state 101
+    funcCall                       shift and go to state 107
 
-state 145
+state 155
 
     (55) assignMatrix -> [ expresion . ]
 
-    ]               shift and go to state 150
+    ]               shift and go to state 160
 
 
-state 146
+state 156
 
-    (61) condition -> IF ( expresion ) { body . } optionalElse
+    (64) condition -> IF ( expresion ) { body . } optionalElse
 
-    }               shift and go to state 151
+    }               shift and go to state 161
 
 
-state 147
+state 157
 
     (49) whileCycle -> WHILE ( expresion ) { body } .
 
@@ -1947,116 +2044,112 @@ state 147
     ID              reduce using rule 49 (whileCycle -> WHILE ( expresion ) { body } .)
     FOR             reduce using rule 49 (whileCycle -> WHILE ( expresion ) { body } .)
     WHILE           reduce using rule 49 (whileCycle -> WHILE ( expresion ) { body } .)
-    ;               reduce using rule 49 (whileCycle -> WHILE ( expresion ) { body } .)
     }               reduce using rule 49 (whileCycle -> WHILE ( expresion ) { body } .)
 
 
-state 148
+state 158
 
     (50) forCycle -> FOR ( assign ; expresion ; assign . ) { body }
 
-    )               shift and go to state 152
+    )               shift and go to state 162
 
 
-state 149
+state 159
 
     (24) initDict -> = ( j : j ) .
 
     ;               reduce using rule 24 (initDict -> = ( j : j ) .)
     )               reduce using rule 24 (initDict -> = ( j : j ) .)
+    :               reduce using rule 24 (initDict -> = ( j : j ) .)
 
 
-state 150
+state 160
 
     (55) assignMatrix -> [ expresion ] .
 
     =               reduce using rule 55 (assignMatrix -> [ expresion ] .)
 
 
-state 151
+state 161
 
-    (61) condition -> IF ( expresion ) { body } . optionalElse
-    (62) optionalElse -> . ELSE { body }
-    (63) optionalElse -> . empty
-    (70) empty -> .
+    (64) condition -> IF ( expresion ) { body } . optionalElse
+    (65) optionalElse -> . ELSE { body }
+    (66) optionalElse -> . empty
+    (73) empty -> .
 
-    ELSE            shift and go to state 153
-    IF              reduce using rule 70 (empty -> .)
-    ID              reduce using rule 70 (empty -> .)
-    FOR             reduce using rule 70 (empty -> .)
-    WHILE           reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
-    }               reduce using rule 70 (empty -> .)
+    ELSE            shift and go to state 163
+    IF              reduce using rule 73 (empty -> .)
+    ID              reduce using rule 73 (empty -> .)
+    FOR             reduce using rule 73 (empty -> .)
+    WHILE           reduce using rule 73 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
 
-    optionalElse                   shift and go to state 154
-    empty                          shift and go to state 155
+    optionalElse                   shift and go to state 164
+    empty                          shift and go to state 165
 
-state 152
+state 162
 
     (50) forCycle -> FOR ( assign ; expresion ; assign ) . { body }
 
-    {               shift and go to state 156
+    {               shift and go to state 166
 
 
-state 153
+state 163
 
-    (62) optionalElse -> ELSE . { body }
+    (65) optionalElse -> ELSE . { body }
 
-    {               shift and go to state 157
-
-
-state 154
-
-    (61) condition -> IF ( expresion ) { body } optionalElse .
-
-    IF              reduce using rule 61 (condition -> IF ( expresion ) { body } optionalElse .)
-    ID              reduce using rule 61 (condition -> IF ( expresion ) { body } optionalElse .)
-    FOR             reduce using rule 61 (condition -> IF ( expresion ) { body } optionalElse .)
-    WHILE           reduce using rule 61 (condition -> IF ( expresion ) { body } optionalElse .)
-    ;               reduce using rule 61 (condition -> IF ( expresion ) { body } optionalElse .)
-    }               reduce using rule 61 (condition -> IF ( expresion ) { body } optionalElse .)
+    {               shift and go to state 167
 
 
-state 155
+state 164
 
-    (63) optionalElse -> empty .
+    (64) condition -> IF ( expresion ) { body } optionalElse .
 
-    IF              reduce using rule 63 (optionalElse -> empty .)
-    ID              reduce using rule 63 (optionalElse -> empty .)
-    FOR             reduce using rule 63 (optionalElse -> empty .)
-    WHILE           reduce using rule 63 (optionalElse -> empty .)
-    ;               reduce using rule 63 (optionalElse -> empty .)
-    }               reduce using rule 63 (optionalElse -> empty .)
+    IF              reduce using rule 64 (condition -> IF ( expresion ) { body } optionalElse .)
+    ID              reduce using rule 64 (condition -> IF ( expresion ) { body } optionalElse .)
+    FOR             reduce using rule 64 (condition -> IF ( expresion ) { body } optionalElse .)
+    WHILE           reduce using rule 64 (condition -> IF ( expresion ) { body } optionalElse .)
+    }               reduce using rule 64 (condition -> IF ( expresion ) { body } optionalElse .)
 
 
-state 156
+state 165
+
+    (66) optionalElse -> empty .
+
+    IF              reduce using rule 66 (optionalElse -> empty .)
+    ID              reduce using rule 66 (optionalElse -> empty .)
+    FOR             reduce using rule 66 (optionalElse -> empty .)
+    WHILE           reduce using rule 66 (optionalElse -> empty .)
+    }               reduce using rule 66 (optionalElse -> empty .)
+
+
+state 166
 
     (50) forCycle -> FOR ( assign ; expresion ; assign ) { . body }
     (44) body -> . cycleInstruction
     (45) body -> . empty
     (46) cycleInstruction -> . instr body
-    (70) empty -> .
+    (73) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
     (16) c -> . assign
     (17) c -> . funcCall
-    (61) condition -> . IF ( expresion ) { body } optionalElse
+    (64) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
     (51) assign -> . ID assignOptions
-    (57) funcCall -> . empty
+    (57) funcCall -> . ID ( opParamCall )
     (50) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     IF              shift and go to state 66
     ID              shift and go to state 64
     FOR             shift and go to state 63
     WHILE           shift and go to state 57
 
-    body                           shift and go to state 158
+    body                           shift and go to state 168
     c                              shift and go to state 67
     funcCall                       shift and go to state 68
     cycleInstruction               shift and go to state 59
@@ -2068,34 +2161,33 @@ state 156
     empty                          shift and go to state 61
     cycle                          shift and go to state 60
 
-state 157
+state 167
 
-    (62) optionalElse -> ELSE { . body }
+    (65) optionalElse -> ELSE { . body }
     (44) body -> . cycleInstruction
     (45) body -> . empty
     (46) cycleInstruction -> . instr body
-    (70) empty -> .
+    (73) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
     (16) c -> . assign
     (17) c -> . funcCall
-    (61) condition -> . IF ( expresion ) { body } optionalElse
+    (64) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
     (51) assign -> . ID assignOptions
-    (57) funcCall -> . empty
+    (57) funcCall -> . ID ( opParamCall )
     (50) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 70 (empty -> .)
-    ;               reduce using rule 70 (empty -> .)
+    }               reduce using rule 73 (empty -> .)
     IF              shift and go to state 66
     ID              shift and go to state 64
     FOR             shift and go to state 63
     WHILE           shift and go to state 57
 
-    body                           shift and go to state 159
+    body                           shift and go to state 169
     c                              shift and go to state 67
     funcCall                       shift and go to state 68
     cycleInstruction               shift and go to state 59
@@ -2107,21 +2199,21 @@ state 157
     condition                      shift and go to state 65
     cycle                          shift and go to state 60
 
-state 158
+state 168
 
     (50) forCycle -> FOR ( assign ; expresion ; assign ) { body . }
 
-    }               shift and go to state 160
+    }               shift and go to state 170
 
 
-state 159
+state 169
 
-    (62) optionalElse -> ELSE { body . }
+    (65) optionalElse -> ELSE { body . }
 
-    }               shift and go to state 161
+    }               shift and go to state 171
 
 
-state 160
+state 170
 
     (50) forCycle -> FOR ( assign ; expresion ; assign ) { body } .
 
@@ -2129,23 +2221,16 @@ state 160
     ID              reduce using rule 50 (forCycle -> FOR ( assign ; expresion ; assign ) { body } .)
     FOR             reduce using rule 50 (forCycle -> FOR ( assign ; expresion ; assign ) { body } .)
     WHILE           reduce using rule 50 (forCycle -> FOR ( assign ; expresion ; assign ) { body } .)
-    ;               reduce using rule 50 (forCycle -> FOR ( assign ; expresion ; assign ) { body } .)
     }               reduce using rule 50 (forCycle -> FOR ( assign ; expresion ; assign ) { body } .)
 
 
-state 161
+state 171
 
-    (62) optionalElse -> ELSE { body } .
+    (65) optionalElse -> ELSE { body } .
 
-    IF              reduce using rule 62 (optionalElse -> ELSE { body } .)
-    ID              reduce using rule 62 (optionalElse -> ELSE { body } .)
-    FOR             reduce using rule 62 (optionalElse -> ELSE { body } .)
-    WHILE           reduce using rule 62 (optionalElse -> ELSE { body } .)
-    ;               reduce using rule 62 (optionalElse -> ELSE { body } .)
-    }               reduce using rule 62 (optionalElse -> ELSE { body } .)
+    IF              reduce using rule 65 (optionalElse -> ELSE { body } .)
+    ID              reduce using rule 65 (optionalElse -> ELSE { body } .)
+    FOR             reduce using rule 65 (optionalElse -> ELSE { body } .)
+    WHILE           reduce using rule 65 (optionalElse -> ELSE { body } .)
+    }               reduce using rule 65 (optionalElse -> ELSE { body } .)
 
-WARNING: 
-WARNING: Conflicts:
-WARNING: 
-WARNING: reduce/reduce conflict in state 106 resolved using rule (funcCall -> empty)
-WARNING: rejected rule (expresion -> empty) in state 106

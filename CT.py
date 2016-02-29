@@ -234,8 +234,19 @@ def p_assignMatrix(p):
 	pass
 
 def p_funcCall(p):
-	'''funcCall : empty'''
+	'''funcCall : ID "(" opParamCall ")" '''
 	print("funcCall")
+	pass
+
+def p_opParamCall(p):
+	'''opParamCall : expresion cyParamCall '''
+	print("function parameter")
+	pass
+
+def p_cyParamCall(p):
+	'''cyParamCall : "," opParamCall
+				| empty '''
+	print("cycle parameter call")
 	pass
 
 def p_struct(p):
@@ -274,7 +285,7 @@ def p_cte(p):
 	'''cte : CTED
 		| CTEF 
 		| TRUE 
-		| FALSE '''
+		| FALSE c'''
 	print("cte")
 	pass
 
