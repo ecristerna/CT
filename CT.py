@@ -189,8 +189,14 @@ def p_h(p):
 	pass
 
 def p_body(p):
-	'''body : empty'''
+	'''body : cycleInstruction
+			| empty '''
 	print("body")
+	pass
+
+def p_cycleInstruction(p):
+	'''cycleInstruction : instr body '''
+	print("cycleInstruction")
 	pass
 
 def p_cycle(p):
@@ -199,8 +205,21 @@ def p_cycle(p):
 	pass
 
 def p_assign(p):
-	'''assign : empty'''
+	'''assign : ID assignOptions '''
 	print("assign")
+	pass
+
+def p_assignOptions(p):
+	'''assignOptions : init
+					| initDict
+					| "[" expresion "]" assignMatrix init '''
+	print("assignOptions")
+	pass
+
+def p_assignMatrix(p):
+	'''assignMatrix : "[" expresion "]"
+					| empty '''
+	print("assignMatrix")
 	pass
 
 def p_funcCall(p):
