@@ -4,7 +4,7 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/']
+literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':']
 reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
 tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
@@ -140,25 +140,20 @@ def p_k(p):
 	pass
 
 def p_function(p):
-	'''function : FUNC ID l m "{" a body "}" '''
+	'''function : FUNC ID opParameters opReturns "{" a body "}" '''
 	print("function")
 	pass
 
-def p_l(p):
-	'''l : "(" param n ")" '''
-	print("l")
+def p_opParameters(p):
+	'''opParameters : "(" param ")"
+					| empty '''
+	print("optional parameters")
 	pass
 
-def p_n(p):
-	'''n : param
+def p_opReturns(p):
+	'''opReturns : RETURNS type
 		| empty '''
-	print("n")
-	pass
-
-def p_m(p):
-	'''m : RETURNS type
-		| empty '''
-	print("m")
+	print("returns")
 	pass
 
 def p_d(p):
@@ -189,38 +184,173 @@ def p_h(p):
 	pass
 
 def p_body(p):
-	'''body : empty'''
+	'''body : cycleInstruction
+			| empty '''
 	print("body")
 	pass
 
+def p_cycleInstruction(p):
+	'''cycleInstruction : instr body '''
+	print("cycleInstruction")
+	pass
+
 def p_cycle(p):
-	'''cycle : empty'''
+	'''cycle : forCycle
+			| whileCycle '''
 	print("cycle")
 	pass
 
+def p_whileCycle(p):
+	'''whileCycle : WHILE "(" expresion ")" "{" body "}" '''
+	print("while")
+	pass
+
+def p_forCycle(p):
+	'''forCycle : FOR "(" assign ";" expresion ";" assign ")" "{" body "}" '''
+	print("for")
+	pass
+
 def p_assign(p):
-	'''assign : empty'''
+	'''assign : ID assignOptions '''
 	print("assign")
 	pass
 
+def p_assignOptions(p):
+	'''assignOptions : init
+					| initDict
+					| "[" expresion "]" assignMatrix init '''
+	print("assignOptions")
+	pass
+
+def p_assignMatrix(p):
+	'''assignMatrix : "[" expresion "]"
+					| empty '''
+	print("assignMatrix")
+	pass
+
 def p_funcCall(p):
-	'''funcCall : empty'''
+	'''funcCall : ID "(" opParamCall ")" '''
 	print("funcCall")
 	pass
 
+def p_opParamCall(p):
+	'''opParamCall : expresion cyParamCall '''
+	print("function parameter")
+	pass
+
+def p_cyParamCall(p):
+	'''cyParamCall : "," opParamCall
+				| empty '''
+	print("cycle parameter call")
+	pass
+
 def p_struct(p):
-	'''struct : empty'''
+	'''struct : type "[" CTED "]" optionalMatrix '''
 	print("struct")
 	pass
 
+def p_optionalMatrix(p):
+	'''optionalMatrix : "[" CTED "]"
+					| empty '''
+	print("matrix")
+	pass
+
 def p_condition(p):
-	'''condition : empty'''
+	'''condition : IF "(" expresion ")" "{" body "}" optionalElse '''
 	print("condition")
 	pass
 
+def p_optionalElse(p):
+	'''optionalElse : ELSE "{" body "}"
+					| empty '''
+	print("else")
+	pass
+
 def p_dict(p):
-	'''dict : empty'''
+	'''dict : "(" type ":" type ")" '''
 	print("dict")
+	pass
+
+def p_expresion(p):
+	'''expresion : sExp cyExpresion '''
+	print("expresion")
+	pass
+
+def p_cyExpresion(p):
+	'''cyExpresion : AND expresion
+				| OR expresion
+				| empty '''
+	print("cycle expresion")
+	pass
+
+def p_sExp(p):
+	'''sExp : exp cySExp '''
+	print("super expresion")
+	pass
+
+def p_cySExp(p):
+	'''cySExp : EQ sExp
+			| DIF sExp
+			| LTOEQ sExp
+			| GTOEQ sExp
+			| ">" sExp
+			| "<" sExp
+			| empty '''
+	print("cycle super expresion")
+	pass
+
+def p_exp(p):
+	'''exp : term cyExp '''
+	print("exp")
+	pass
+
+def p_cyExp(p):
+	'''cyExp : "+" term
+			| "-" term
+			| empty '''
+	print("cycle exp")
+	pass
+
+def p_term(p):
+	'''term : fact cyTerm '''
+	print("term")
+	pass
+
+def p_cyTerm(p):
+	'''cyTerm : "*" fact
+			| "/" fact
+			| empty '''
+	print("cycle term")
+	pass
+
+def p_fact(p):
+	'''fact : CTES
+			| cte
+			| funcCall
+			| "(" expresion ")"
+			| ID opStruct
+			| empty '''
+	print("fact")
+	pass	
+
+def p_opStruct(p):
+	'''opStruct : "[" expresion "]" opMatrix
+				| empty '''
+	print("optional struct")
+	pass
+
+def p_opMatrix(p):
+	'''opMatrix : "[" expresion "]"
+				| empty '''
+	print("optional matrix")
+	pass
+
+def p_cte(p):
+	'''cte : CTED
+		| CTEF 
+		| TRUE 
+		| FALSE c'''
+	print("cte")
 	pass
 
 def p_empty(p):
