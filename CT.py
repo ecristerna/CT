@@ -140,25 +140,20 @@ def p_k(p):
 	pass
 
 def p_function(p):
-	'''function : FUNC ID l m "{" a body "}" '''
+	'''function : FUNC ID opParameters opReturns "{" a body "}" '''
 	print("function")
 	pass
 
-def p_l(p):
-	'''l : "(" param n ")" '''
-	print("l")
+def p_opParameters(p):
+	'''opParameters : "(" param ")"
+					| empty '''
+	print("optional parameters")
 	pass
 
-def p_n(p):
-	'''n : param
+def p_opReturns(p):
+	'''opReturns : RETURNS type
 		| empty '''
-	print("n")
-	pass
-
-def p_m(p):
-	'''m : RETURNS type
-		| empty '''
-	print("m")
+	print("returns")
 	pass
 
 def p_d(p):
@@ -277,8 +272,77 @@ def p_dict(p):
 	pass
 
 def p_expresion(p):
-	'''expresion : empty'''
+	'''expresion : sExp cyExpresion '''
 	print("expresion")
+	pass
+
+def p_cyExpresion(p):
+	'''cyExpresion : AND expresion
+				| OR expresion
+				| empty '''
+	print("cycle expresion")
+	pass
+
+def p_sExp(p):
+	'''sExp : exp cySExp '''
+	print("super expresion")
+	pass
+
+def p_cySExp(p):
+	'''cySExp : EQ sExp
+			| DIF sExp
+			| LTOEQ sExp
+			| GTOEQ sExp
+			| ">" sExp
+			| "<" sExp
+			| empty '''
+	print("cycle super expresion")
+	pass
+
+def p_exp(p):
+	'''exp : term cyExp '''
+	print("exp")
+	pass
+
+def p_cyExp(p):
+	'''cyExp : "+" term
+			| "-" term
+			| empty '''
+	print("cycle exp")
+	pass
+
+def p_term(p):
+	'''term : fact cyTerm '''
+	print("term")
+	pass
+
+def p_cyTerm(p):
+	'''cyTerm : "*" fact
+			| "/" fact
+			| empty '''
+	print("cycle term")
+	pass
+
+def p_fact(p):
+	'''fact : CTES
+			| cte
+			| funcCall
+			| "(" expresion ")"
+			| ID opStruct
+			| empty '''
+	print("fact")
+	pass	
+
+def p_opStruct(p):
+	'''opStruct : "[" expresion "]" opMatrix
+				| empty '''
+	print("optional struct")
+	pass
+
+def p_opMatrix(p):
+	'''opMatrix : "[" expresion "]"
+				| empty '''
+	print("optional matrix")
 	pass
 
 def p_cte(p):
