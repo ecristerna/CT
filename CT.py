@@ -239,8 +239,14 @@ def p_optionalMatrix(p):
 	pass
 
 def p_condition(p):
-	'''condition : empty'''
+	'''condition : IF "(" expresion ")" "{" body "}" optionalElse '''
 	print("condition")
+	pass
+
+def p_optionalElse(p):
+	'''optionalElse : ELSE "{" body "}"
+					| empty '''
+	print("else")
 	pass
 
 def p_dict(p):
