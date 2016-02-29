@@ -209,8 +209,14 @@ def p_funcCall(p):
 	pass
 
 def p_struct(p):
-	'''struct : empty'''
+	'''struct : type "[" CTED "]" optionalMatrix '''
 	print("struct")
+	pass
+
+def p_optionalMatrix(p):
+	'''optionalMatrix : "[" CTED "]"
+					| empty '''
+	print("matrix")
 	pass
 
 def p_condition(p):
@@ -221,6 +227,16 @@ def p_condition(p):
 def p_dict(p):
 	'''dict : empty'''
 	print("dict")
+	pass
+
+def p_expresion(p):
+	'''expresion : empty'''
+	print("expresion")
+	pass
+
+def p_cte(p):
+	'''cte : empty'''
+	print("cte")
 	pass
 
 def p_empty(p):
