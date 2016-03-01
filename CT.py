@@ -53,19 +53,19 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : PROGRAM ID "{" a b main "}"'''
+    '''program : PROGRAM ID "{" opVars opFunctions main "}"'''
     print("program")
     pass
 
-def p_a(p):
-	'''a : vars
-		| empty'''
-	print("a")
+def p_opVars(p):
+	'''opVars : vars
+			| empty'''
+	print("optional vars")
 	pass
 
-def p_b(p):
-	'''b : function b
-		| empty'''
+def p_opFunctions(p):
+	'''opFunctions : function opFunctions
+				| empty'''
 	pass
 
 def p_vars(p):
@@ -75,15 +75,15 @@ def p_vars(p):
 
 def p_type(p):
 	'''type : INT
-		| FLOAT
-		| STRING
-		| OBJECT
-		| BOOL'''
+			| FLOAT
+			| STRING
+			| OBJECT
+			| BOOL'''
 	print("type")
 	pass
 
 def p_main(p):
-	'''main : MAIN "{" a body "}"'''
+	'''main : MAIN "{" opVars body "}"'''
 	print("main")
 	pass
 
@@ -140,7 +140,7 @@ def p_k(p):
 	pass
 
 def p_function(p):
-	'''function : FUNC ID opParameters opReturns "{" a body "}" '''
+	'''function : FUNC ID opParameters opReturns "{" opVars body "}" '''
 	print("function")
 	pass
 
@@ -184,13 +184,13 @@ def p_h(p):
 	pass
 
 def p_body(p):
-	'''body : cycleInstruction
+	'''body : cyInstruction
 			| empty '''
 	print("body")
 	pass
 
-def p_cycleInstruction(p):
-	'''cycleInstruction : instr body '''
+def p_cyInstruction(p):
+	'''cyInstruction : instr body '''
 	print("cycleInstruction")
 	pass
 
@@ -234,12 +234,13 @@ def p_funcCall(p):
 	pass
 
 def p_opParamCall(p):
-	'''opParamCall : expresion cyParamCall '''
+	'''opParamCall : expresion cyParamCall
+				| empty '''
 	print("function parameter")
 	pass
 
 def p_cyParamCall(p):
-	'''cyParamCall : "," opParamCall
+	'''cyParamCall : "," expresion cyParamCall
 				| empty '''
 	print("cycle parameter call")
 	pass
@@ -284,17 +285,17 @@ def p_cyExpresion(p):
 	pass
 
 def p_sExp(p):
-	'''sExp : exp cySExp '''
+	'''sExp : exp opSExp '''
 	print("super expresion")
 	pass
 
-def p_cySExp(p):
-	'''cySExp : EQ sExp
-			| DIF sExp
-			| LTOEQ sExp
-			| GTOEQ sExp
-			| ">" sExp
-			| "<" sExp
+def p_opSExp(p):
+	'''opSExp : EQ exp
+			| DIF exp
+			| LTOEQ exp
+			| GTOEQ exp
+			| ">" exp
+			| "<" exp
 			| empty '''
 	print("cycle super expresion")
 	pass
@@ -328,8 +329,7 @@ def p_fact(p):
 			| cte
 			| funcCall
 			| "(" expresion ")"
-			| ID opAccess
-			| empty '''
+			| ID opAccess '''
 	print("fact")
 	pass	
 
@@ -366,7 +366,7 @@ def p_cte(p):
 	'''cte : CTED
 		| CTEF 
 		| TRUE 
-		| FALSE c'''
+		| FALSE '''
 	print("cte")
 	pass
 

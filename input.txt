@@ -1,7 +1,5 @@
 program a {
-	vars int i, j;
-		struct k float[4][3];
-		dict p (float : bool);
+
 
 	func g(int i, j; float h) {
 		vars int i, j;
@@ -29,12 +27,13 @@ program a {
 		vars int i, j;
 			struct k float[4][3];
 			dict p (float : bool);
+			struct r dict(int : int)[4];
 
 		i = 3 * 3;
 		k[i][0] = i;
 		p = (5.89 : "hola");
 
-		if (a > 7) {
+		if (a > 7 and (8 <= 9 or j != o)) {
 			if (8 != i) {
 				j = f(id, "no");
 			}
@@ -49,6 +48,7 @@ program a {
 		for (i = 0; i < 10; k[i] = k[i] + 1) {
 			g(parameter);
 			i = p.first;
+			i = p.last;
 		}
 	}
 }
