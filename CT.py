@@ -88,55 +88,55 @@ def p_main(p):
 	pass
 
 def p_instr(p):
-	'''instr : c ";"
+	'''instr : basicStatements ";"
 			| condition
 			| cycle '''
 	print("instr")
 	pass
-def p_c(p):
-	'''c : assign
-		| funcCall '''
+def p_basicStatements(p):
+	'''basicStatements : assign
+					| funcCall '''
 	pass
 
 def p_declare(p):
-	'''declare : d
-			| e
-			| f '''
+	'''declare : basicDeclare
+			| structDeclare
+			| dictDeclare '''
 	print("declare")
 	pass
 
 def p_init(p):
-	'''init : "=" i '''
+	'''init : "=" initWith '''
 	print("init")
 	pass
 
-def p_i(p):
-	'''i : expresion
+def p_initWith(p):
+	'''initWith : expresion
 		| funcCall '''
-	print("i")
+	print("init with")
 	pass
 
 def p_initDict(p):
-	'''initDict : "=" "(" j ":" j ")" '''
+	'''initDict : "=" "(" dictType ":" dictType ")" '''
 	print("initDict")
 	pass
 
-def p_j(p):
-	'''j : CTES
-		| cte
-		| ID '''
-	print("j")
+def p_dictType(p):
+	'''dictType : CTES
+				| cte
+				| ID '''
+	print("dict type")
 	pass
 
 def p_param(p):
-	'''param : type ID g k '''
+	'''param : type ID cyTypeParam cyParam '''
 	print("param")
 	pass
 
-def p_k(p):
-	'''k : ";" param
+def p_cyParam(p):
+	'''cyParam : ";" param
 		| empty '''
-	print("k")
+	print("cycle param")
 	pass
 
 def p_function(p):
@@ -161,31 +161,31 @@ def p_opReturns(p):
 	print("returns")
 	pass
 
-def p_d(p):
-	'''d : type ID g ";" h '''
-	print("d")
+def p_basicDeclare(p):
+	'''basicDeclare : type ID cyTypeParam ";" cyDeclare '''
+	print("basic declare")
 	pass
 
-def p_e(p):
-	'''e : STRUCT ID struct ";" h '''
-	print("e")
+def p_structDeclare(p):
+	'''structDeclare : STRUCT ID struct ";" cyDeclare '''
+	print("struct declare")
 	pass
 
-def p_f(p):
-	'''f : DICT ID dict ";" h '''
-	print("f")
+def p_dictDeclare(p):
+	'''dictDeclare : DICT ID dict ";" cyDeclare '''
+	print("dict declare")
 	pass
 
-def p_g(p):
-	'''g : "," ID
+def p_cyTypeParam(p):
+	'''cyTypeParam : "," ID
 		| empty '''
-	print("g")
+	print("cycle type param")
 	pass
 
-def p_h(p):
-	'''h : declare
+def p_cyDeclare(p):
+	'''cyDeclare : declare
 		| empty '''
-	print("h")
+	print("cycle declare")
 	pass
 
 def p_body(p):

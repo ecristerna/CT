@@ -15,37 +15,37 @@ Rule 9     type -> STRING
 Rule 10    type -> OBJECT
 Rule 11    type -> BOOL
 Rule 12    main -> MAIN { opVars body }
-Rule 13    instr -> c ;
+Rule 13    instr -> basicStatements ;
 Rule 14    instr -> condition
 Rule 15    instr -> cycle
-Rule 16    c -> assign
-Rule 17    c -> funcCall
-Rule 18    declare -> d
-Rule 19    declare -> e
-Rule 20    declare -> f
-Rule 21    init -> = i
-Rule 22    i -> expresion
-Rule 23    i -> funcCall
-Rule 24    initDict -> = ( j : j )
-Rule 25    j -> CTES
-Rule 26    j -> cte
-Rule 27    j -> ID
-Rule 28    param -> type ID g k
-Rule 29    k -> ; param
-Rule 30    k -> empty
+Rule 16    basicStatements -> assign
+Rule 17    basicStatements -> funcCall
+Rule 18    declare -> basicDeclare
+Rule 19    declare -> structDeclare
+Rule 20    declare -> dictDeclare
+Rule 21    init -> = initWith
+Rule 22    initWith -> expresion
+Rule 23    initWith -> funcCall
+Rule 24    initDict -> = ( dictType : dictType )
+Rule 25    dictType -> CTES
+Rule 26    dictType -> cte
+Rule 27    dictType -> ID
+Rule 28    param -> type ID cyTypeParam cyParam
+Rule 29    cyParam -> ; param
+Rule 30    cyParam -> empty
 Rule 31    function -> FUNC ID opParameters opReturns }
 Rule 32    return -> RETURN expresion ;
 Rule 33    opParameters -> ( param )
 Rule 34    opParameters -> empty
 Rule 35    opReturns -> RETURNS type { opVars body return
 Rule 36    opReturns -> { opVars body
-Rule 37    d -> type ID g ; h
-Rule 38    e -> STRUCT ID struct ; h
-Rule 39    f -> DICT ID dict ; h
-Rule 40    g -> , ID
-Rule 41    g -> empty
-Rule 42    h -> declare
-Rule 43    h -> empty
+Rule 37    basicDeclare -> type ID cyTypeParam ; cyDeclare
+Rule 38    structDeclare -> STRUCT ID struct ; cyDeclare
+Rule 39    dictDeclare -> DICT ID dict ; cyDeclare
+Rule 40    cyTypeParam -> , ID
+Rule 41    cyTypeParam -> empty
+Rule 42    cyDeclare -> declare
+Rule 43    cyDeclare -> empty
 Rule 44    body -> cyInstruction
 Rule 45    body -> empty
 Rule 46    cyInstruction -> instr body
@@ -170,37 +170,36 @@ Nonterminals, with rules where they appear
 assign               : 16 50 50
 assignMatrix         : 54
 assignOptions        : 51
+basicDeclare         : 18
+basicStatements      : 13
 body                 : 12 35 36 46 49 50 67 68
-c                    : 13
 condition            : 14
 cte                  : 26 92
+cyDeclare            : 37 38 39
 cyExp                : 83
 cyExpresion          : 71
 cyInstruction        : 44
+cyParam              : 28
 cyParamCall          : 58 60
 cyTerm               : 87
+cyTypeParam          : 28 37
 cycle                : 15
-d                    : 18
 declare              : 6 42
 dict                 : 39 64
+dictDeclare          : 20
 dictIndex            : 102
-e                    : 19
+dictType             : 24 24
 empty                : 3 5 30 34 41 43 45 56 59 61 66 69 74 82 86 90 98 101
 exp                  : 75 76 77 78 79 80 81
 expresion            : 22 32 49 50 54 55 58 60 67 72 73 94 99 100
-f                    : 20
 fact                 : 87 88 89
 forCycle             : 47
 funcCall             : 17 23 93
 function             : 4
-g                    : 28 37
-h                    : 37 38 39
-i                    : 21
 init                 : 52 54
 initDict             : 53
+initWith             : 21
 instr                : 46
-j                    : 24 24
-k                    : 28
 main                 : 1
 opAccess             : 95
 opDictionary         : 97
@@ -219,6 +218,7 @@ program              : 0
 return               : 35
 sExp                 : 71
 struct               : 38
+structDeclare        : 19
 structType           : 62
 term                 : 83 84 85
 type                 : 28 35 37 63 70 70
@@ -275,31 +275,31 @@ state 4
 state 5
 
     (6) vars -> VARS . declare
-    (18) declare -> . d
-    (19) declare -> . e
-    (20) declare -> . f
-    (37) d -> . type ID g ; h
-    (38) e -> . STRUCT ID struct ; h
-    (39) f -> . DICT ID dict ; h
+    (18) declare -> . basicDeclare
+    (19) declare -> . structDeclare
+    (20) declare -> . dictDeclare
+    (37) basicDeclare -> . type ID cyTypeParam ; cyDeclare
+    (38) structDeclare -> . STRUCT ID struct ; cyDeclare
+    (39) dictDeclare -> . DICT ID dict ; cyDeclare
     (7) type -> . INT
     (8) type -> . FLOAT
     (9) type -> . STRING
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    STRUCT          shift and go to state 20
+    STRUCT          shift and go to state 10
     DICT            shift and go to state 16
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
     STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
+    OBJECT          shift and go to state 14
     BOOL            shift and go to state 17
 
-    e                              shift and go to state 10
-    d                              shift and go to state 11
-    f                              shift and go to state 12
-    type                           shift and go to state 18
-    declare                        shift and go to state 19
+    dictDeclare                    shift and go to state 9
+    type                           shift and go to state 12
+    structDeclare                  shift and go to state 18
+    basicDeclare                   shift and go to state 19
+    declare                        shift and go to state 20
 
 state 6
 
@@ -346,77 +346,63 @@ state 8
 
 state 9
 
-    (10) type -> OBJECT .
+    (20) declare -> dictDeclare .
 
-    ID              reduce using rule 10 (type -> OBJECT .)
-    {               reduce using rule 10 (type -> OBJECT .)
-    [               reduce using rule 10 (type -> OBJECT .)
-    :               reduce using rule 10 (type -> OBJECT .)
-    )               reduce using rule 10 (type -> OBJECT .)
+    FUNC            reduce using rule 20 (declare -> dictDeclare .)
+    MAIN            reduce using rule 20 (declare -> dictDeclare .)
+    IF              reduce using rule 20 (declare -> dictDeclare .)
+    ID              reduce using rule 20 (declare -> dictDeclare .)
+    FOR             reduce using rule 20 (declare -> dictDeclare .)
+    WHILE           reduce using rule 20 (declare -> dictDeclare .)
+    }               reduce using rule 20 (declare -> dictDeclare .)
+    RETURN          reduce using rule 20 (declare -> dictDeclare .)
 
 
 state 10
 
-    (19) declare -> e .
+    (38) structDeclare -> STRUCT . ID struct ; cyDeclare
 
-    FUNC            reduce using rule 19 (declare -> e .)
-    MAIN            reduce using rule 19 (declare -> e .)
-    IF              reduce using rule 19 (declare -> e .)
-    ID              reduce using rule 19 (declare -> e .)
-    FOR             reduce using rule 19 (declare -> e .)
-    WHILE           reduce using rule 19 (declare -> e .)
-    }               reduce using rule 19 (declare -> e .)
-    RETURN          reduce using rule 19 (declare -> e .)
+    ID              shift and go to state 25
 
 
 state 11
-
-    (18) declare -> d .
-
-    FUNC            reduce using rule 18 (declare -> d .)
-    MAIN            reduce using rule 18 (declare -> d .)
-    IF              reduce using rule 18 (declare -> d .)
-    ID              reduce using rule 18 (declare -> d .)
-    FOR             reduce using rule 18 (declare -> d .)
-    WHILE           reduce using rule 18 (declare -> d .)
-    }               reduce using rule 18 (declare -> d .)
-    RETURN          reduce using rule 18 (declare -> d .)
-
-
-state 12
-
-    (20) declare -> f .
-
-    FUNC            reduce using rule 20 (declare -> f .)
-    MAIN            reduce using rule 20 (declare -> f .)
-    IF              reduce using rule 20 (declare -> f .)
-    ID              reduce using rule 20 (declare -> f .)
-    FOR             reduce using rule 20 (declare -> f .)
-    WHILE           reduce using rule 20 (declare -> f .)
-    }               reduce using rule 20 (declare -> f .)
-    RETURN          reduce using rule 20 (declare -> f .)
-
-
-state 13
 
     (7) type -> INT .
 
     ID              reduce using rule 7 (type -> INT .)
     {               reduce using rule 7 (type -> INT .)
+    )               reduce using rule 7 (type -> INT .)
     [               reduce using rule 7 (type -> INT .)
     :               reduce using rule 7 (type -> INT .)
-    )               reduce using rule 7 (type -> INT .)
 
 
-state 14
+state 12
+
+    (37) basicDeclare -> type . ID cyTypeParam ; cyDeclare
+
+    ID              shift and go to state 26
+
+
+state 13
 
     (8) type -> FLOAT .
 
     ID              reduce using rule 8 (type -> FLOAT .)
     {               reduce using rule 8 (type -> FLOAT .)
+    )               reduce using rule 8 (type -> FLOAT .)
     [               reduce using rule 8 (type -> FLOAT .)
     :               reduce using rule 8 (type -> FLOAT .)
-    )               reduce using rule 8 (type -> FLOAT .)
+
+
+state 14
+
+    (10) type -> OBJECT .
+
+    ID              reduce using rule 10 (type -> OBJECT .)
+    {               reduce using rule 10 (type -> OBJECT .)
+    )               reduce using rule 10 (type -> OBJECT .)
+    [               reduce using rule 10 (type -> OBJECT .)
+    :               reduce using rule 10 (type -> OBJECT .)
 
 
 state 15
@@ -425,16 +411,16 @@ state 15
 
     ID              reduce using rule 9 (type -> STRING .)
     {               reduce using rule 9 (type -> STRING .)
+    )               reduce using rule 9 (type -> STRING .)
     [               reduce using rule 9 (type -> STRING .)
     :               reduce using rule 9 (type -> STRING .)
-    )               reduce using rule 9 (type -> STRING .)
 
 
 state 16
 
-    (39) f -> DICT . ID dict ; h
+    (39) dictDeclare -> DICT . ID dict ; cyDeclare
 
-    ID              shift and go to state 25
+    ID              shift and go to state 27
 
 
 state 17
@@ -443,19 +429,40 @@ state 17
 
     ID              reduce using rule 11 (type -> BOOL .)
     {               reduce using rule 11 (type -> BOOL .)
+    )               reduce using rule 11 (type -> BOOL .)
     [               reduce using rule 11 (type -> BOOL .)
     :               reduce using rule 11 (type -> BOOL .)
-    )               reduce using rule 11 (type -> BOOL .)
 
 
 state 18
 
-    (37) d -> type . ID g ; h
+    (19) declare -> structDeclare .
 
-    ID              shift and go to state 26
+    FUNC            reduce using rule 19 (declare -> structDeclare .)
+    MAIN            reduce using rule 19 (declare -> structDeclare .)
+    IF              reduce using rule 19 (declare -> structDeclare .)
+    ID              reduce using rule 19 (declare -> structDeclare .)
+    FOR             reduce using rule 19 (declare -> structDeclare .)
+    WHILE           reduce using rule 19 (declare -> structDeclare .)
+    }               reduce using rule 19 (declare -> structDeclare .)
+    RETURN          reduce using rule 19 (declare -> structDeclare .)
 
 
 state 19
+
+    (18) declare -> basicDeclare .
+
+    FUNC            reduce using rule 18 (declare -> basicDeclare .)
+    MAIN            reduce using rule 18 (declare -> basicDeclare .)
+    IF              reduce using rule 18 (declare -> basicDeclare .)
+    ID              reduce using rule 18 (declare -> basicDeclare .)
+    FOR             reduce using rule 18 (declare -> basicDeclare .)
+    WHILE           reduce using rule 18 (declare -> basicDeclare .)
+    }               reduce using rule 18 (declare -> basicDeclare .)
+    RETURN          reduce using rule 18 (declare -> basicDeclare .)
+
+
+state 20
 
     (6) vars -> VARS declare .
 
@@ -467,13 +474,6 @@ state 19
     WHILE           reduce using rule 6 (vars -> VARS declare .)
     RETURN          reduce using rule 6 (vars -> VARS declare .)
     }               reduce using rule 6 (vars -> VARS declare .)
-
-
-state 20
-
-    (38) e -> STRUCT . ID struct ; h
-
-    ID              shift and go to state 27
 
 
 state 21
@@ -516,29 +516,7 @@ state 24
 
 state 25
 
-    (39) f -> DICT ID . dict ; h
-    (70) dict -> . ( type : type )
-
-    (               shift and go to state 32
-
-    dict                           shift and go to state 33
-
-state 26
-
-    (37) d -> type ID . g ; h
-    (40) g -> . , ID
-    (41) g -> . empty
-    (109) empty -> .
-
-    ,               shift and go to state 35
-    ;               reduce using rule 109 (empty -> .)
-
-    empty                          shift and go to state 36
-    g                              shift and go to state 34
-
-state 27
-
-    (38) e -> STRUCT ID . struct ; h
+    (38) structDeclare -> STRUCT ID . struct ; cyDeclare
     (62) struct -> . structType [ CTED ] optionalMatrix
     (63) structType -> . type
     (64) structType -> . DICT dict
@@ -548,16 +526,38 @@ state 27
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    DICT            shift and go to state 40
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
+    DICT            shift and go to state 34
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
     STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
+    OBJECT          shift and go to state 14
     BOOL            shift and go to state 17
 
-    structType                     shift and go to state 37
-    struct                         shift and go to state 39
-    type                           shift and go to state 38
+    structType                     shift and go to state 32
+    struct                         shift and go to state 33
+    type                           shift and go to state 35
+
+state 26
+
+    (37) basicDeclare -> type ID . cyTypeParam ; cyDeclare
+    (40) cyTypeParam -> . , ID
+    (41) cyTypeParam -> . empty
+    (109) empty -> .
+
+    ,               shift and go to state 36
+    ;               reduce using rule 109 (empty -> .)
+
+    cyTypeParam                    shift and go to state 37
+    empty                          shift and go to state 38
+
+state 27
+
+    (39) dictDeclare -> DICT ID . dict ; cyDeclare
+    (70) dict -> . ( type : type )
+
+    (               shift and go to state 39
+
+    dict                           shift and go to state 40
 
 state 28
 
@@ -596,6 +596,58 @@ state 31
 
 state 32
 
+    (62) struct -> structType . [ CTED ] optionalMatrix
+
+    [               shift and go to state 46
+
+
+state 33
+
+    (38) structDeclare -> STRUCT ID struct . ; cyDeclare
+
+    ;               shift and go to state 47
+
+
+state 34
+
+    (64) structType -> DICT . dict
+    (70) dict -> . ( type : type )
+
+    (               shift and go to state 39
+
+    dict                           shift and go to state 48
+
+state 35
+
+    (63) structType -> type .
+
+    [               reduce using rule 63 (structType -> type .)
+
+
+state 36
+
+    (40) cyTypeParam -> , . ID
+
+    ID              shift and go to state 49
+
+
+state 37
+
+    (37) basicDeclare -> type ID cyTypeParam . ; cyDeclare
+
+    ;               shift and go to state 50
+
+
+state 38
+
+    (41) cyTypeParam -> empty .
+
+    ;               reduce using rule 41 (cyTypeParam -> empty .)
+    )               reduce using rule 41 (cyTypeParam -> empty .)
+
+
+state 39
+
     (70) dict -> ( . type : type )
     (7) type -> . INT
     (8) type -> . FLOAT
@@ -603,87 +655,35 @@ state 32
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
     STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
+    OBJECT          shift and go to state 14
     BOOL            shift and go to state 17
 
-    type                           shift and go to state 46
-
-state 33
-
-    (39) f -> DICT ID dict . ; h
-
-    ;               shift and go to state 47
-
-
-state 34
-
-    (37) d -> type ID g . ; h
-
-    ;               shift and go to state 48
-
-
-state 35
-
-    (40) g -> , . ID
-
-    ID              shift and go to state 49
-
-
-state 36
-
-    (41) g -> empty .
-
-    ;               reduce using rule 41 (g -> empty .)
-    )               reduce using rule 41 (g -> empty .)
-
-
-state 37
-
-    (62) struct -> structType . [ CTED ] optionalMatrix
-
-    [               shift and go to state 50
-
-
-state 38
-
-    (63) structType -> type .
-
-    [               reduce using rule 63 (structType -> type .)
-
-
-state 39
-
-    (38) e -> STRUCT ID struct . ; h
-
-    ;               shift and go to state 51
-
+    type                           shift and go to state 51
 
 state 40
 
-    (64) structType -> DICT . dict
-    (70) dict -> . ( type : type )
+    (39) dictDeclare -> DICT ID dict . ; cyDeclare
 
-    (               shift and go to state 32
+    ;               shift and go to state 52
 
-    dict                           shift and go to state 52
 
 state 41
 
     (33) opParameters -> ( . param )
-    (28) param -> . type ID g k
+    (28) param -> . type ID cyTypeParam cyParam
     (7) type -> . INT
     (8) type -> . FLOAT
     (9) type -> . STRING
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
     STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
+    OBJECT          shift and go to state 14
     BOOL            shift and go to state 17
 
     type                           shift and go to state 54
@@ -736,23 +736,23 @@ state 45
 
 state 46
 
-    (70) dict -> ( type . : type )
+    (62) struct -> structType [ . CTED ] optionalMatrix
 
-    :               shift and go to state 59
+    CTED            shift and go to state 59
 
 
 state 47
 
-    (39) f -> DICT ID dict ; . h
-    (42) h -> . declare
-    (43) h -> . empty
-    (18) declare -> . d
-    (19) declare -> . e
-    (20) declare -> . f
+    (38) structDeclare -> STRUCT ID struct ; . cyDeclare
+    (42) cyDeclare -> . declare
+    (43) cyDeclare -> . empty
+    (18) declare -> . basicDeclare
+    (19) declare -> . structDeclare
+    (20) declare -> . dictDeclare
     (109) empty -> .
-    (37) d -> . type ID g ; h
-    (38) e -> . STRUCT ID struct ; h
-    (39) f -> . DICT ID dict ; h
+    (37) basicDeclare -> . type ID cyTypeParam ; cyDeclare
+    (38) structDeclare -> . STRUCT ID struct ; cyDeclare
+    (39) dictDeclare -> . DICT ID dict ; cyDeclare
     (7) type -> . INT
     (8) type -> . FLOAT
     (9) type -> . STRING
@@ -767,127 +767,127 @@ state 47
     WHILE           reduce using rule 109 (empty -> .)
     }               reduce using rule 109 (empty -> .)
     RETURN          reduce using rule 109 (empty -> .)
-    STRUCT          shift and go to state 20
+    STRUCT          shift and go to state 10
     DICT            shift and go to state 16
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
     STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
+    OBJECT          shift and go to state 14
     BOOL            shift and go to state 17
 
-    e                              shift and go to state 10
-    d                              shift and go to state 11
-    f                              shift and go to state 12
-    h                              shift and go to state 60
-    type                           shift and go to state 18
+    dictDeclare                    shift and go to state 9
+    cyDeclare                      shift and go to state 60
+    type                           shift and go to state 12
+    structDeclare                  shift and go to state 18
+    basicDeclare                   shift and go to state 19
     declare                        shift and go to state 61
     empty                          shift and go to state 62
 
 state 48
 
-    (37) d -> type ID g ; . h
-    (42) h -> . declare
-    (43) h -> . empty
-    (18) declare -> . d
-    (19) declare -> . e
-    (20) declare -> . f
-    (109) empty -> .
-    (37) d -> . type ID g ; h
-    (38) e -> . STRUCT ID struct ; h
-    (39) f -> . DICT ID dict ; h
-    (7) type -> . INT
-    (8) type -> . FLOAT
-    (9) type -> . STRING
-    (10) type -> . OBJECT
-    (11) type -> . BOOL
-
-    FUNC            reduce using rule 109 (empty -> .)
-    MAIN            reduce using rule 109 (empty -> .)
-    IF              reduce using rule 109 (empty -> .)
-    ID              reduce using rule 109 (empty -> .)
-    FOR             reduce using rule 109 (empty -> .)
-    WHILE           reduce using rule 109 (empty -> .)
-    }               reduce using rule 109 (empty -> .)
-    RETURN          reduce using rule 109 (empty -> .)
-    STRUCT          shift and go to state 20
-    DICT            shift and go to state 16
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
-    STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
-    BOOL            shift and go to state 17
-
-    e                              shift and go to state 10
-    d                              shift and go to state 11
-    f                              shift and go to state 12
-    h                              shift and go to state 63
-    type                           shift and go to state 18
-    declare                        shift and go to state 61
-    empty                          shift and go to state 62
-
-state 49
-
-    (40) g -> , ID .
-
-    ;               reduce using rule 40 (g -> , ID .)
-    )               reduce using rule 40 (g -> , ID .)
-
-
-state 50
-
-    (62) struct -> structType [ . CTED ] optionalMatrix
-
-    CTED            shift and go to state 64
-
-
-state 51
-
-    (38) e -> STRUCT ID struct ; . h
-    (42) h -> . declare
-    (43) h -> . empty
-    (18) declare -> . d
-    (19) declare -> . e
-    (20) declare -> . f
-    (109) empty -> .
-    (37) d -> . type ID g ; h
-    (38) e -> . STRUCT ID struct ; h
-    (39) f -> . DICT ID dict ; h
-    (7) type -> . INT
-    (8) type -> . FLOAT
-    (9) type -> . STRING
-    (10) type -> . OBJECT
-    (11) type -> . BOOL
-
-    FUNC            reduce using rule 109 (empty -> .)
-    MAIN            reduce using rule 109 (empty -> .)
-    IF              reduce using rule 109 (empty -> .)
-    ID              reduce using rule 109 (empty -> .)
-    FOR             reduce using rule 109 (empty -> .)
-    WHILE           reduce using rule 109 (empty -> .)
-    }               reduce using rule 109 (empty -> .)
-    RETURN          reduce using rule 109 (empty -> .)
-    STRUCT          shift and go to state 20
-    DICT            shift and go to state 16
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
-    STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
-    BOOL            shift and go to state 17
-
-    e                              shift and go to state 10
-    d                              shift and go to state 11
-    f                              shift and go to state 12
-    h                              shift and go to state 65
-    type                           shift and go to state 18
-    declare                        shift and go to state 61
-    empty                          shift and go to state 62
-
-state 52
-
     (64) structType -> DICT dict .
 
     [               reduce using rule 64 (structType -> DICT dict .)
 
+
+state 49
+
+    (40) cyTypeParam -> , ID .
+
+    ;               reduce using rule 40 (cyTypeParam -> , ID .)
+    )               reduce using rule 40 (cyTypeParam -> , ID .)
+
+
+state 50
+
+    (37) basicDeclare -> type ID cyTypeParam ; . cyDeclare
+    (42) cyDeclare -> . declare
+    (43) cyDeclare -> . empty
+    (18) declare -> . basicDeclare
+    (19) declare -> . structDeclare
+    (20) declare -> . dictDeclare
+    (109) empty -> .
+    (37) basicDeclare -> . type ID cyTypeParam ; cyDeclare
+    (38) structDeclare -> . STRUCT ID struct ; cyDeclare
+    (39) dictDeclare -> . DICT ID dict ; cyDeclare
+    (7) type -> . INT
+    (8) type -> . FLOAT
+    (9) type -> . STRING
+    (10) type -> . OBJECT
+    (11) type -> . BOOL
+
+    FUNC            reduce using rule 109 (empty -> .)
+    MAIN            reduce using rule 109 (empty -> .)
+    IF              reduce using rule 109 (empty -> .)
+    ID              reduce using rule 109 (empty -> .)
+    FOR             reduce using rule 109 (empty -> .)
+    WHILE           reduce using rule 109 (empty -> .)
+    }               reduce using rule 109 (empty -> .)
+    RETURN          reduce using rule 109 (empty -> .)
+    STRUCT          shift and go to state 10
+    DICT            shift and go to state 16
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
+    STRING          shift and go to state 15
+    OBJECT          shift and go to state 14
+    BOOL            shift and go to state 17
+
+    dictDeclare                    shift and go to state 9
+    cyDeclare                      shift and go to state 63
+    type                           shift and go to state 12
+    structDeclare                  shift and go to state 18
+    basicDeclare                   shift and go to state 19
+    declare                        shift and go to state 61
+    empty                          shift and go to state 62
+
+state 51
+
+    (70) dict -> ( type . : type )
+
+    :               shift and go to state 64
+
+
+state 52
+
+    (39) dictDeclare -> DICT ID dict ; . cyDeclare
+    (42) cyDeclare -> . declare
+    (43) cyDeclare -> . empty
+    (18) declare -> . basicDeclare
+    (19) declare -> . structDeclare
+    (20) declare -> . dictDeclare
+    (109) empty -> .
+    (37) basicDeclare -> . type ID cyTypeParam ; cyDeclare
+    (38) structDeclare -> . STRUCT ID struct ; cyDeclare
+    (39) dictDeclare -> . DICT ID dict ; cyDeclare
+    (7) type -> . INT
+    (8) type -> . FLOAT
+    (9) type -> . STRING
+    (10) type -> . OBJECT
+    (11) type -> . BOOL
+
+    FUNC            reduce using rule 109 (empty -> .)
+    MAIN            reduce using rule 109 (empty -> .)
+    IF              reduce using rule 109 (empty -> .)
+    ID              reduce using rule 109 (empty -> .)
+    FOR             reduce using rule 109 (empty -> .)
+    WHILE           reduce using rule 109 (empty -> .)
+    }               reduce using rule 109 (empty -> .)
+    RETURN          reduce using rule 109 (empty -> .)
+    STRUCT          shift and go to state 10
+    DICT            shift and go to state 16
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
+    STRING          shift and go to state 15
+    OBJECT          shift and go to state 14
+    BOOL            shift and go to state 17
+
+    dictDeclare                    shift and go to state 9
+    cyDeclare                      shift and go to state 65
+    type                           shift and go to state 12
+    structDeclare                  shift and go to state 18
+    basicDeclare                   shift and go to state 19
+    declare                        shift and go to state 61
+    empty                          shift and go to state 62
 
 state 53
 
@@ -898,7 +898,7 @@ state 53
 
 state 54
 
-    (28) param -> type . ID g k
+    (28) param -> type . ID cyTypeParam cyParam
 
     ID              shift and go to state 67
 
@@ -912,10 +912,10 @@ state 55
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
     STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
+    OBJECT          shift and go to state 14
     BOOL            shift and go to state 17
 
     type                           shift and go to state 68
@@ -953,11 +953,11 @@ state 58
     (45) body -> . empty
     (46) cyInstruction -> . instr body
     (109) empty -> .
-    (13) instr -> . c ;
+    (13) instr -> . basicStatements ;
     (14) instr -> . condition
     (15) instr -> . cycle
-    (16) c -> . assign
-    (17) c -> . funcCall
+    (16) basicStatements -> . assign
+    (17) basicStatements -> . funcCall
     (67) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
@@ -967,24 +967,87 @@ state 58
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
     }               reduce using rule 109 (empty -> .)
-    IF              shift and go to state 82
-    ID              shift and go to state 80
+    IF              shift and go to state 83
+    ID              shift and go to state 81
     FOR             shift and go to state 79
     WHILE           shift and go to state 73
 
     body                           shift and go to state 78
-    c                              shift and go to state 83
     funcCall                       shift and go to state 84
     instr                          shift and go to state 71
     forCycle                       shift and go to state 74
     assign                         shift and go to state 85
     whileCycle                     shift and go to state 72
-    condition                      shift and go to state 81
+    basicStatements                shift and go to state 80
+    condition                      shift and go to state 82
     cyInstruction                  shift and go to state 75
     empty                          shift and go to state 77
     cycle                          shift and go to state 76
 
 state 59
+
+    (62) struct -> structType [ CTED . ] optionalMatrix
+
+    ]               shift and go to state 86
+
+
+state 60
+
+    (38) structDeclare -> STRUCT ID struct ; cyDeclare .
+
+    FUNC            reduce using rule 38 (structDeclare -> STRUCT ID struct ; cyDeclare .)
+    MAIN            reduce using rule 38 (structDeclare -> STRUCT ID struct ; cyDeclare .)
+    IF              reduce using rule 38 (structDeclare -> STRUCT ID struct ; cyDeclare .)
+    ID              reduce using rule 38 (structDeclare -> STRUCT ID struct ; cyDeclare .)
+    FOR             reduce using rule 38 (structDeclare -> STRUCT ID struct ; cyDeclare .)
+    WHILE           reduce using rule 38 (structDeclare -> STRUCT ID struct ; cyDeclare .)
+    }               reduce using rule 38 (structDeclare -> STRUCT ID struct ; cyDeclare .)
+    RETURN          reduce using rule 38 (structDeclare -> STRUCT ID struct ; cyDeclare .)
+
+
+state 61
+
+    (42) cyDeclare -> declare .
+
+    FUNC            reduce using rule 42 (cyDeclare -> declare .)
+    MAIN            reduce using rule 42 (cyDeclare -> declare .)
+    IF              reduce using rule 42 (cyDeclare -> declare .)
+    ID              reduce using rule 42 (cyDeclare -> declare .)
+    FOR             reduce using rule 42 (cyDeclare -> declare .)
+    WHILE           reduce using rule 42 (cyDeclare -> declare .)
+    }               reduce using rule 42 (cyDeclare -> declare .)
+    RETURN          reduce using rule 42 (cyDeclare -> declare .)
+
+
+state 62
+
+    (43) cyDeclare -> empty .
+
+    FUNC            reduce using rule 43 (cyDeclare -> empty .)
+    MAIN            reduce using rule 43 (cyDeclare -> empty .)
+    IF              reduce using rule 43 (cyDeclare -> empty .)
+    ID              reduce using rule 43 (cyDeclare -> empty .)
+    FOR             reduce using rule 43 (cyDeclare -> empty .)
+    WHILE           reduce using rule 43 (cyDeclare -> empty .)
+    }               reduce using rule 43 (cyDeclare -> empty .)
+    RETURN          reduce using rule 43 (cyDeclare -> empty .)
+
+
+state 63
+
+    (37) basicDeclare -> type ID cyTypeParam ; cyDeclare .
+
+    FUNC            reduce using rule 37 (basicDeclare -> type ID cyTypeParam ; cyDeclare .)
+    MAIN            reduce using rule 37 (basicDeclare -> type ID cyTypeParam ; cyDeclare .)
+    IF              reduce using rule 37 (basicDeclare -> type ID cyTypeParam ; cyDeclare .)
+    ID              reduce using rule 37 (basicDeclare -> type ID cyTypeParam ; cyDeclare .)
+    FOR             reduce using rule 37 (basicDeclare -> type ID cyTypeParam ; cyDeclare .)
+    WHILE           reduce using rule 37 (basicDeclare -> type ID cyTypeParam ; cyDeclare .)
+    }               reduce using rule 37 (basicDeclare -> type ID cyTypeParam ; cyDeclare .)
+    RETURN          reduce using rule 37 (basicDeclare -> type ID cyTypeParam ; cyDeclare .)
+
+
+state 64
 
     (70) dict -> ( type : . type )
     (7) type -> . INT
@@ -993,89 +1056,26 @@ state 59
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
     STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
+    OBJECT          shift and go to state 14
     BOOL            shift and go to state 17
 
-    type                           shift and go to state 86
-
-state 60
-
-    (39) f -> DICT ID dict ; h .
-
-    FUNC            reduce using rule 39 (f -> DICT ID dict ; h .)
-    MAIN            reduce using rule 39 (f -> DICT ID dict ; h .)
-    IF              reduce using rule 39 (f -> DICT ID dict ; h .)
-    ID              reduce using rule 39 (f -> DICT ID dict ; h .)
-    FOR             reduce using rule 39 (f -> DICT ID dict ; h .)
-    WHILE           reduce using rule 39 (f -> DICT ID dict ; h .)
-    }               reduce using rule 39 (f -> DICT ID dict ; h .)
-    RETURN          reduce using rule 39 (f -> DICT ID dict ; h .)
-
-
-state 61
-
-    (42) h -> declare .
-
-    FUNC            reduce using rule 42 (h -> declare .)
-    MAIN            reduce using rule 42 (h -> declare .)
-    IF              reduce using rule 42 (h -> declare .)
-    ID              reduce using rule 42 (h -> declare .)
-    FOR             reduce using rule 42 (h -> declare .)
-    WHILE           reduce using rule 42 (h -> declare .)
-    }               reduce using rule 42 (h -> declare .)
-    RETURN          reduce using rule 42 (h -> declare .)
-
-
-state 62
-
-    (43) h -> empty .
-
-    FUNC            reduce using rule 43 (h -> empty .)
-    MAIN            reduce using rule 43 (h -> empty .)
-    IF              reduce using rule 43 (h -> empty .)
-    ID              reduce using rule 43 (h -> empty .)
-    FOR             reduce using rule 43 (h -> empty .)
-    WHILE           reduce using rule 43 (h -> empty .)
-    }               reduce using rule 43 (h -> empty .)
-    RETURN          reduce using rule 43 (h -> empty .)
-
-
-state 63
-
-    (37) d -> type ID g ; h .
-
-    FUNC            reduce using rule 37 (d -> type ID g ; h .)
-    MAIN            reduce using rule 37 (d -> type ID g ; h .)
-    IF              reduce using rule 37 (d -> type ID g ; h .)
-    ID              reduce using rule 37 (d -> type ID g ; h .)
-    FOR             reduce using rule 37 (d -> type ID g ; h .)
-    WHILE           reduce using rule 37 (d -> type ID g ; h .)
-    }               reduce using rule 37 (d -> type ID g ; h .)
-    RETURN          reduce using rule 37 (d -> type ID g ; h .)
-
-
-state 64
-
-    (62) struct -> structType [ CTED . ] optionalMatrix
-
-    ]               shift and go to state 87
-
+    type                           shift and go to state 87
 
 state 65
 
-    (38) e -> STRUCT ID struct ; h .
+    (39) dictDeclare -> DICT ID dict ; cyDeclare .
 
-    FUNC            reduce using rule 38 (e -> STRUCT ID struct ; h .)
-    MAIN            reduce using rule 38 (e -> STRUCT ID struct ; h .)
-    IF              reduce using rule 38 (e -> STRUCT ID struct ; h .)
-    ID              reduce using rule 38 (e -> STRUCT ID struct ; h .)
-    FOR             reduce using rule 38 (e -> STRUCT ID struct ; h .)
-    WHILE           reduce using rule 38 (e -> STRUCT ID struct ; h .)
-    }               reduce using rule 38 (e -> STRUCT ID struct ; h .)
-    RETURN          reduce using rule 38 (e -> STRUCT ID struct ; h .)
+    FUNC            reduce using rule 39 (dictDeclare -> DICT ID dict ; cyDeclare .)
+    MAIN            reduce using rule 39 (dictDeclare -> DICT ID dict ; cyDeclare .)
+    IF              reduce using rule 39 (dictDeclare -> DICT ID dict ; cyDeclare .)
+    ID              reduce using rule 39 (dictDeclare -> DICT ID dict ; cyDeclare .)
+    FOR             reduce using rule 39 (dictDeclare -> DICT ID dict ; cyDeclare .)
+    WHILE           reduce using rule 39 (dictDeclare -> DICT ID dict ; cyDeclare .)
+    }               reduce using rule 39 (dictDeclare -> DICT ID dict ; cyDeclare .)
+    RETURN          reduce using rule 39 (dictDeclare -> DICT ID dict ; cyDeclare .)
 
 
 state 66
@@ -1088,17 +1088,17 @@ state 66
 
 state 67
 
-    (28) param -> type ID . g k
-    (40) g -> . , ID
-    (41) g -> . empty
+    (28) param -> type ID . cyTypeParam cyParam
+    (40) cyTypeParam -> . , ID
+    (41) cyTypeParam -> . empty
     (109) empty -> .
 
-    ,               shift and go to state 35
+    ,               shift and go to state 36
     ;               reduce using rule 109 (empty -> .)
     )               reduce using rule 109 (empty -> .)
 
-    empty                          shift and go to state 36
-    g                              shift and go to state 88
+    cyTypeParam                    shift and go to state 88
+    empty                          shift and go to state 38
 
 state 68
 
@@ -1114,11 +1114,11 @@ state 69
     (45) body -> . empty
     (46) cyInstruction -> . instr body
     (109) empty -> .
-    (13) instr -> . c ;
+    (13) instr -> . basicStatements ;
     (14) instr -> . condition
     (15) instr -> . cycle
-    (16) c -> . assign
-    (17) c -> . funcCall
+    (16) basicStatements -> . assign
+    (17) basicStatements -> . funcCall
     (67) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
@@ -1128,19 +1128,19 @@ state 69
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
     }               reduce using rule 109 (empty -> .)
-    IF              shift and go to state 82
-    ID              shift and go to state 80
+    IF              shift and go to state 83
+    ID              shift and go to state 81
     FOR             shift and go to state 79
     WHILE           shift and go to state 73
 
     body                           shift and go to state 90
-    c                              shift and go to state 83
     funcCall                       shift and go to state 84
     instr                          shift and go to state 71
     forCycle                       shift and go to state 74
     assign                         shift and go to state 85
     whileCycle                     shift and go to state 72
-    condition                      shift and go to state 81
+    basicStatements                shift and go to state 80
+    condition                      shift and go to state 82
     cyInstruction                  shift and go to state 75
     empty                          shift and go to state 77
     cycle                          shift and go to state 76
@@ -1160,11 +1160,11 @@ state 71
     (45) body -> . empty
     (46) cyInstruction -> . instr body
     (109) empty -> .
-    (13) instr -> . c ;
+    (13) instr -> . basicStatements ;
     (14) instr -> . condition
     (15) instr -> . cycle
-    (16) c -> . assign
-    (17) c -> . funcCall
+    (16) basicStatements -> . assign
+    (17) basicStatements -> . funcCall
     (67) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
@@ -1175,21 +1175,21 @@ state 71
 
     }               reduce using rule 109 (empty -> .)
     RETURN          reduce using rule 109 (empty -> .)
-    IF              shift and go to state 82
-    ID              shift and go to state 80
+    IF              shift and go to state 83
+    ID              shift and go to state 81
     FOR             shift and go to state 79
     WHILE           shift and go to state 73
 
     body                           shift and go to state 91
-    c                              shift and go to state 83
     funcCall                       shift and go to state 84
     instr                          shift and go to state 71
     forCycle                       shift and go to state 74
     assign                         shift and go to state 85
     whileCycle                     shift and go to state 72
+    basicStatements                shift and go to state 80
     empty                          shift and go to state 77
     cyInstruction                  shift and go to state 75
-    condition                      shift and go to state 81
+    condition                      shift and go to state 82
     cycle                          shift and go to state 76
 
 state 72
@@ -1267,23 +1267,30 @@ state 79
 
 state 80
 
+    (13) instr -> basicStatements . ;
+
+    ;               shift and go to state 95
+
+
+state 81
+
     (51) assign -> ID . assignOptions
     (57) funcCall -> ID . ( opParamCall )
     (52) assignOptions -> . init
     (53) assignOptions -> . initDict
     (54) assignOptions -> . [ expresion ] assignMatrix init
-    (21) init -> . = i
-    (24) initDict -> . = ( j : j )
+    (21) init -> . = initWith
+    (24) initDict -> . = ( dictType : dictType )
 
-    (               shift and go to state 95
-    [               shift and go to state 100
-    =               shift and go to state 97
+    (               shift and go to state 96
+    [               shift and go to state 101
+    =               shift and go to state 98
 
-    initDict                       shift and go to state 96
-    assignOptions                  shift and go to state 98
-    init                           shift and go to state 99
+    initDict                       shift and go to state 97
+    assignOptions                  shift and go to state 99
+    init                           shift and go to state 100
 
-state 81
+state 82
 
     (14) instr -> condition .
 
@@ -1295,65 +1302,58 @@ state 81
     RETURN          reduce using rule 14 (instr -> condition .)
 
 
-state 82
+state 83
 
     (67) condition -> IF . ( expresion ) { body } optionalElse
 
-    (               shift and go to state 101
-
-
-state 83
-
-    (13) instr -> c . ;
-
-    ;               shift and go to state 102
+    (               shift and go to state 102
 
 
 state 84
 
-    (17) c -> funcCall .
+    (17) basicStatements -> funcCall .
 
-    ;               reduce using rule 17 (c -> funcCall .)
+    ;               reduce using rule 17 (basicStatements -> funcCall .)
 
 
 state 85
 
-    (16) c -> assign .
+    (16) basicStatements -> assign .
 
-    ;               reduce using rule 16 (c -> assign .)
+    ;               reduce using rule 16 (basicStatements -> assign .)
 
 
 state 86
-
-    (70) dict -> ( type : type . )
-
-    )               shift and go to state 103
-
-
-state 87
 
     (62) struct -> structType [ CTED ] . optionalMatrix
     (65) optionalMatrix -> . [ CTED ]
     (66) optionalMatrix -> . empty
     (109) empty -> .
 
-    [               shift and go to state 105
+    [               shift and go to state 104
     ;               reduce using rule 109 (empty -> .)
 
-    empty                          shift and go to state 106
-    optionalMatrix                 shift and go to state 104
+    empty                          shift and go to state 105
+    optionalMatrix                 shift and go to state 103
+
+state 87
+
+    (70) dict -> ( type : type . )
+
+    )               shift and go to state 106
+
 
 state 88
 
-    (28) param -> type ID g . k
-    (29) k -> . ; param
-    (30) k -> . empty
+    (28) param -> type ID cyTypeParam . cyParam
+    (29) cyParam -> . ; param
+    (30) cyParam -> . empty
     (109) empty -> .
 
-    ;               shift and go to state 108
+    ;               shift and go to state 107
     )               reduce using rule 109 (empty -> .)
 
-    k                              shift and go to state 107
+    cyParam                        shift and go to state 108
     empty                          shift and go to state 109
 
 state 89
@@ -1442,6 +1442,18 @@ state 94
 
 state 95
 
+    (13) instr -> basicStatements ; .
+
+    IF              reduce using rule 13 (instr -> basicStatements ; .)
+    ID              reduce using rule 13 (instr -> basicStatements ; .)
+    FOR             reduce using rule 13 (instr -> basicStatements ; .)
+    WHILE           reduce using rule 13 (instr -> basicStatements ; .)
+    }               reduce using rule 13 (instr -> basicStatements ; .)
+    RETURN          reduce using rule 13 (instr -> basicStatements ; .)
+
+
+state 96
+
     (57) funcCall -> ID ( . opParamCall )
     (58) opParamCall -> . expresion cyParamCall
     (59) opParamCall -> . empty
@@ -1480,7 +1492,7 @@ state 95
     opParamCall                    shift and go to state 127
     empty                          shift and go to state 128
 
-state 96
+state 97
 
     (53) assignOptions -> initDict .
 
@@ -1488,12 +1500,12 @@ state 96
     )               reduce using rule 53 (assignOptions -> initDict .)
 
 
-state 97
+state 98
 
-    (21) init -> = . i
-    (24) initDict -> = . ( j : j )
-    (22) i -> . expresion
-    (23) i -> . funcCall
+    (21) init -> = . initWith
+    (24) initDict -> = . ( dictType : dictType )
+    (22) initWith -> . expresion
+    (23) initWith -> . funcCall
     (71) expresion -> . sExp cyExpresion
     (57) funcCall -> . ID ( opParamCall )
     (75) sExp -> . exp opSExp
@@ -1509,24 +1521,24 @@ state 97
     (107) cte -> . TRUE
     (108) cte -> . FALSE
 
-    (               shift and go to state 130
-    ID              shift and go to state 131
+    (               shift and go to state 131
+    ID              shift and go to state 132
     CTES            shift and go to state 117
     CTED            shift and go to state 123
     CTEF            shift and go to state 122
     TRUE            shift and go to state 111
     FALSE           shift and go to state 119
 
-    expresion                      shift and go to state 132
+    expresion                      shift and go to state 133
+    initWith                       shift and go to state 130
+    funcCall                       shift and go to state 134
     term                           shift and go to state 118
-    funcCall                       shift and go to state 133
-    i                              shift and go to state 134
     sExp                           shift and go to state 113
     cte                            shift and go to state 121
     exp                            shift and go to state 114
     fact                           shift and go to state 124
 
-state 98
+state 99
 
     (51) assign -> ID assignOptions .
 
@@ -1534,7 +1546,7 @@ state 98
     )               reduce using rule 51 (assign -> ID assignOptions .)
 
 
-state 99
+state 100
 
     (52) assignOptions -> init .
 
@@ -1542,7 +1554,7 @@ state 99
     )               reduce using rule 52 (assignOptions -> init .)
 
 
-state 100
+state 101
 
     (54) assignOptions -> [ . expresion ] assignMatrix init
     (71) expresion -> . sExp cyExpresion
@@ -1576,7 +1588,7 @@ state 100
     exp                            shift and go to state 114
     fact                           shift and go to state 124
 
-state 101
+state 102
 
     (67) condition -> IF ( . expresion ) { body } optionalElse
     (71) expresion -> . sExp cyExpresion
@@ -1610,19 +1622,28 @@ state 101
     exp                            shift and go to state 114
     fact                           shift and go to state 124
 
-state 102
-
-    (13) instr -> c ; .
-
-    IF              reduce using rule 13 (instr -> c ; .)
-    ID              reduce using rule 13 (instr -> c ; .)
-    FOR             reduce using rule 13 (instr -> c ; .)
-    WHILE           reduce using rule 13 (instr -> c ; .)
-    }               reduce using rule 13 (instr -> c ; .)
-    RETURN          reduce using rule 13 (instr -> c ; .)
-
-
 state 103
+
+    (62) struct -> structType [ CTED ] optionalMatrix .
+
+    ;               reduce using rule 62 (struct -> structType [ CTED ] optionalMatrix .)
+
+
+state 104
+
+    (65) optionalMatrix -> [ . CTED ]
+
+    CTED            shift and go to state 137
+
+
+state 105
+
+    (66) optionalMatrix -> empty .
+
+    ;               reduce using rule 66 (optionalMatrix -> empty .)
+
+
+state 106
 
     (70) dict -> ( type : type ) .
 
@@ -1630,58 +1651,37 @@ state 103
     [               reduce using rule 70 (dict -> ( type : type ) .)
 
 
-state 104
-
-    (62) struct -> structType [ CTED ] optionalMatrix .
-
-    ;               reduce using rule 62 (struct -> structType [ CTED ] optionalMatrix .)
-
-
-state 105
-
-    (65) optionalMatrix -> [ . CTED ]
-
-    CTED            shift and go to state 137
-
-
-state 106
-
-    (66) optionalMatrix -> empty .
-
-    ;               reduce using rule 66 (optionalMatrix -> empty .)
-
-
 state 107
 
-    (28) param -> type ID g k .
-
-    )               reduce using rule 28 (param -> type ID g k .)
-
-
-state 108
-
-    (29) k -> ; . param
-    (28) param -> . type ID g k
+    (29) cyParam -> ; . param
+    (28) param -> . type ID cyTypeParam cyParam
     (7) type -> . INT
     (8) type -> . FLOAT
     (9) type -> . STRING
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    INT             shift and go to state 13
-    FLOAT           shift and go to state 14
+    INT             shift and go to state 11
+    FLOAT           shift and go to state 13
     STRING          shift and go to state 15
-    OBJECT          shift and go to state 9
+    OBJECT          shift and go to state 14
     BOOL            shift and go to state 17
 
     type                           shift and go to state 54
     param                          shift and go to state 138
 
+state 108
+
+    (28) param -> type ID cyTypeParam cyParam .
+
+    )               reduce using rule 28 (param -> type ID cyTypeParam cyParam .)
+
+
 state 109
 
-    (30) k -> empty .
+    (30) cyParam -> empty .
 
-    )               reduce using rule 30 (k -> empty .)
+    )               reduce using rule 30 (cyParam -> empty .)
 
 
 state 110
@@ -1691,11 +1691,11 @@ state 110
     (45) body -> . empty
     (46) cyInstruction -> . instr body
     (109) empty -> .
-    (13) instr -> . c ;
+    (13) instr -> . basicStatements ;
     (14) instr -> . condition
     (15) instr -> . cycle
-    (16) c -> . assign
-    (17) c -> . funcCall
+    (16) basicStatements -> . assign
+    (17) basicStatements -> . funcCall
     (67) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
@@ -1705,19 +1705,19 @@ state 110
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
     RETURN          reduce using rule 109 (empty -> .)
-    IF              shift and go to state 82
-    ID              shift and go to state 80
+    IF              shift and go to state 83
+    ID              shift and go to state 81
     FOR             shift and go to state 79
     WHILE           shift and go to state 73
 
     body                           shift and go to state 139
-    c                              shift and go to state 83
     funcCall                       shift and go to state 84
     instr                          shift and go to state 71
     forCycle                       shift and go to state 74
     assign                         shift and go to state 85
     whileCycle                     shift and go to state 72
-    condition                      shift and go to state 81
+    basicStatements                shift and go to state 80
+    condition                      shift and go to state 82
     cyInstruction                  shift and go to state 75
     empty                          shift and go to state 77
     cycle                          shift and go to state 76
@@ -1836,7 +1836,7 @@ state 115
     (102) opDictionary -> . . dictIndex
     (109) empty -> .
 
-    (               shift and go to state 95
+    (               shift and go to state 96
     [               shift and go to state 156
     .               shift and go to state 157
     *               reduce using rule 109 (empty -> .)
@@ -1884,8 +1884,8 @@ state 117
     <               reduce using rule 91 (fact -> CTES .)
     AND             reduce using rule 91 (fact -> CTES .)
     OR              reduce using rule 91 (fact -> CTES .)
-    ;               reduce using rule 91 (fact -> CTES .)
     )               reduce using rule 91 (fact -> CTES .)
+    ;               reduce using rule 91 (fact -> CTES .)
     ]               reduce using rule 91 (fact -> CTES .)
     ,               reduce using rule 91 (fact -> CTES .)
 
@@ -1956,8 +1956,8 @@ state 120
     AND             reduce using rule 93 (fact -> funcCall .)
     OR              reduce using rule 93 (fact -> funcCall .)
     )               reduce using rule 93 (fact -> funcCall .)
-    ;               reduce using rule 93 (fact -> funcCall .)
     ]               reduce using rule 93 (fact -> funcCall .)
+    ;               reduce using rule 93 (fact -> funcCall .)
     ,               reduce using rule 93 (fact -> funcCall .)
 
 
@@ -1977,8 +1977,8 @@ state 121
     <               reduce using rule 92 (fact -> cte .)
     AND             reduce using rule 92 (fact -> cte .)
     OR              reduce using rule 92 (fact -> cte .)
-    ;               reduce using rule 92 (fact -> cte .)
     )               reduce using rule 92 (fact -> cte .)
+    ;               reduce using rule 92 (fact -> cte .)
     ]               reduce using rule 92 (fact -> cte .)
     ,               reduce using rule 92 (fact -> cte .)
 
@@ -2063,15 +2063,15 @@ state 125
     (52) assignOptions -> . init
     (53) assignOptions -> . initDict
     (54) assignOptions -> . [ expresion ] assignMatrix init
-    (21) init -> . = i
-    (24) initDict -> . = ( j : j )
+    (21) init -> . = initWith
+    (24) initDict -> . = ( dictType : dictType )
 
-    [               shift and go to state 100
-    =               shift and go to state 97
+    [               shift and go to state 101
+    =               shift and go to state 98
 
-    initDict                       shift and go to state 96
-    assignOptions                  shift and go to state 98
-    init                           shift and go to state 99
+    initDict                       shift and go to state 97
+    assignOptions                  shift and go to state 99
+    init                           shift and go to state 100
 
 state 126
 
@@ -2109,11 +2109,19 @@ state 129
 
 state 130
 
-    (24) initDict -> = ( . j : j )
+    (21) init -> = initWith .
+
+    ;               reduce using rule 21 (init -> = initWith .)
+    )               reduce using rule 21 (init -> = initWith .)
+
+
+state 131
+
+    (24) initDict -> = ( . dictType : dictType )
     (94) fact -> ( . expresion )
-    (25) j -> . CTES
-    (26) j -> . cte
-    (27) j -> . ID
+    (25) dictType -> . CTES
+    (26) dictType -> . cte
+    (27) dictType -> . ID
     (71) expresion -> . sExp cyExpresion
     (105) cte -> . CTED
     (106) cte -> . CTEF
@@ -2129,24 +2137,24 @@ state 130
     (95) fact -> . ID opAccess
     (57) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 174
-    ID              shift and go to state 173
+    CTES            shift and go to state 175
+    ID              shift and go to state 174
     CTED            shift and go to state 123
     CTEF            shift and go to state 122
     TRUE            shift and go to state 111
     FALSE           shift and go to state 119
     (               shift and go to state 112
 
+    dictType                       shift and go to state 173
     expresion                      shift and go to state 140
     term                           shift and go to state 118
     funcCall                       shift and go to state 120
-    j                              shift and go to state 175
     sExp                           shift and go to state 113
     cte                            shift and go to state 176
     exp                            shift and go to state 114
     fact                           shift and go to state 124
 
-state 131
+state 132
 
     (57) funcCall -> ID . ( opParamCall )
     (95) fact -> ID . opAccess
@@ -2157,7 +2165,7 @@ state 131
     (102) opDictionary -> . . dictIndex
     (109) empty -> .
 
-    (               shift and go to state 95
+    (               shift and go to state 96
     [               shift and go to state 156
     .               shift and go to state 157
     *               reduce using rule 109 (empty -> .)
@@ -2180,23 +2188,23 @@ state 131
     opAccess                       shift and go to state 154
     empty                          shift and go to state 155
 
-state 132
-
-    (22) i -> expresion .
-
-    ;               reduce using rule 22 (i -> expresion .)
-    )               reduce using rule 22 (i -> expresion .)
-
-
 state 133
 
-    (23) i -> funcCall .
+    (22) initWith -> expresion .
+
+    ;               reduce using rule 22 (initWith -> expresion .)
+    )               reduce using rule 22 (initWith -> expresion .)
+
+
+state 134
+
+    (23) initWith -> funcCall .
     (93) fact -> funcCall .
 
-  ! reduce/reduce conflict for ; resolved using rule 23 (i -> funcCall .)
-  ! reduce/reduce conflict for ) resolved using rule 23 (i -> funcCall .)
-    ;               reduce using rule 23 (i -> funcCall .)
-    )               reduce using rule 23 (i -> funcCall .)
+  ! reduce/reduce conflict for ; resolved using rule 23 (initWith -> funcCall .)
+  ! reduce/reduce conflict for ) resolved using rule 23 (initWith -> funcCall .)
+    ;               reduce using rule 23 (initWith -> funcCall .)
+    )               reduce using rule 23 (initWith -> funcCall .)
     *               reduce using rule 93 (fact -> funcCall .)
     /               reduce using rule 93 (fact -> funcCall .)
     +               reduce using rule 93 (fact -> funcCall .)
@@ -2212,14 +2220,6 @@ state 133
 
   ! ;               [ reduce using rule 93 (fact -> funcCall .) ]
   ! )               [ reduce using rule 93 (fact -> funcCall .) ]
-
-
-state 134
-
-    (21) init -> = i .
-
-    ;               reduce using rule 21 (init -> = i .)
-    )               reduce using rule 21 (init -> = i .)
 
 
 state 135
@@ -2245,9 +2245,9 @@ state 137
 
 state 138
 
-    (29) k -> ; param .
+    (29) cyParam -> ; param .
 
-    )               reduce using rule 29 (k -> ; param .)
+    )               reduce using rule 29 (cyParam -> ; param .)
 
 
 state 139
@@ -2305,8 +2305,8 @@ state 142
     (71) expresion -> sExp cyExpresion .
 
     ]               reduce using rule 71 (expresion -> sExp cyExpresion .)
-    ,               reduce using rule 71 (expresion -> sExp cyExpresion .)
     )               reduce using rule 71 (expresion -> sExp cyExpresion .)
+    ,               reduce using rule 71 (expresion -> sExp cyExpresion .)
     ;               reduce using rule 71 (expresion -> sExp cyExpresion .)
 
 
@@ -2553,8 +2553,8 @@ state 152
     AND             reduce using rule 75 (sExp -> exp opSExp .)
     OR              reduce using rule 75 (sExp -> exp opSExp .)
     ]               reduce using rule 75 (sExp -> exp opSExp .)
-    ,               reduce using rule 75 (sExp -> exp opSExp .)
     )               reduce using rule 75 (sExp -> exp opSExp .)
+    ,               reduce using rule 75 (sExp -> exp opSExp .)
     ;               reduce using rule 75 (sExp -> exp opSExp .)
 
 
@@ -2596,8 +2596,8 @@ state 154
     <               reduce using rule 95 (fact -> ID opAccess .)
     AND             reduce using rule 95 (fact -> ID opAccess .)
     OR              reduce using rule 95 (fact -> ID opAccess .)
-    ;               reduce using rule 95 (fact -> ID opAccess .)
     )               reduce using rule 95 (fact -> ID opAccess .)
+    ;               reduce using rule 95 (fact -> ID opAccess .)
     ]               reduce using rule 95 (fact -> ID opAccess .)
     ,               reduce using rule 95 (fact -> ID opAccess .)
 
@@ -2702,18 +2702,18 @@ state 160
 
     (83) exp -> term cyExp .
 
-    AND             reduce using rule 83 (exp -> term cyExp .)
-    OR              reduce using rule 83 (exp -> term cyExp .)
-    )               reduce using rule 83 (exp -> term cyExp .)
-    ,               reduce using rule 83 (exp -> term cyExp .)
-    ;               reduce using rule 83 (exp -> term cyExp .)
-    ]               reduce using rule 83 (exp -> term cyExp .)
     EQ              reduce using rule 83 (exp -> term cyExp .)
     DIF             reduce using rule 83 (exp -> term cyExp .)
     LTOEQ           reduce using rule 83 (exp -> term cyExp .)
     GTOEQ           reduce using rule 83 (exp -> term cyExp .)
     >               reduce using rule 83 (exp -> term cyExp .)
     <               reduce using rule 83 (exp -> term cyExp .)
+    AND             reduce using rule 83 (exp -> term cyExp .)
+    OR              reduce using rule 83 (exp -> term cyExp .)
+    ,               reduce using rule 83 (exp -> term cyExp .)
+    )               reduce using rule 83 (exp -> term cyExp .)
+    ;               reduce using rule 83 (exp -> term cyExp .)
+    ]               reduce using rule 83 (exp -> term cyExp .)
 
 
 state 161
@@ -2933,8 +2933,8 @@ state 169
     AND             reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
     OR              reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
     )               reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
-    ,               reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
     ;               reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
+    ,               reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
     ]               reduce using rule 57 (funcCall -> ID ( opParamCall ) .)
 
 
@@ -2988,7 +2988,14 @@ state 172
 
 state 173
 
-    (27) j -> ID .
+    (24) initDict -> = ( dictType . : dictType )
+
+    :               shift and go to state 202
+
+
+state 174
+
+    (27) dictType -> ID .
     (95) fact -> ID . opAccess
     (57) funcCall -> ID . ( opParamCall )
     (96) opAccess -> . opStruct
@@ -2998,8 +3005,8 @@ state 173
     (102) opDictionary -> . . dictIndex
     (109) empty -> .
 
-    :               reduce using rule 27 (j -> ID .)
-    (               shift and go to state 95
+    :               reduce using rule 27 (dictType -> ID .)
+    (               shift and go to state 96
     [               shift and go to state 156
     .               shift and go to state 157
     *               reduce using rule 109 (empty -> .)
@@ -3021,12 +3028,12 @@ state 173
     opAccess                       shift and go to state 154
     empty                          shift and go to state 155
 
-state 174
+state 175
 
-    (25) j -> CTES .
+    (25) dictType -> CTES .
     (91) fact -> CTES .
 
-    :               reduce using rule 25 (j -> CTES .)
+    :               reduce using rule 25 (dictType -> CTES .)
     *               reduce using rule 91 (fact -> CTES .)
     /               reduce using rule 91 (fact -> CTES .)
     +               reduce using rule 91 (fact -> CTES .)
@@ -3042,19 +3049,12 @@ state 174
     )               reduce using rule 91 (fact -> CTES .)
 
 
-state 175
-
-    (24) initDict -> = ( j . : j )
-
-    :               shift and go to state 202
-
-
 state 176
 
-    (26) j -> cte .
+    (26) dictType -> cte .
     (92) fact -> cte .
 
-    :               reduce using rule 26 (j -> cte .)
+    :               reduce using rule 26 (dictType -> cte .)
     *               reduce using rule 92 (fact -> cte .)
     /               reduce using rule 92 (fact -> cte .)
     +               reduce using rule 92 (fact -> cte .)
@@ -3154,8 +3154,8 @@ state 182
     <               reduce using rule 94 (fact -> ( expresion ) .)
     AND             reduce using rule 94 (fact -> ( expresion ) .)
     OR              reduce using rule 94 (fact -> ( expresion ) .)
-    ;               reduce using rule 94 (fact -> ( expresion ) .)
     )               reduce using rule 94 (fact -> ( expresion ) .)
+    ;               reduce using rule 94 (fact -> ( expresion ) .)
     ]               reduce using rule 94 (fact -> ( expresion ) .)
     ,               reduce using rule 94 (fact -> ( expresion ) .)
 
@@ -3332,11 +3332,11 @@ state 195
     (45) body -> . empty
     (46) cyInstruction -> . instr body
     (109) empty -> .
-    (13) instr -> . c ;
+    (13) instr -> . basicStatements ;
     (14) instr -> . condition
     (15) instr -> . cycle
-    (16) c -> . assign
-    (17) c -> . funcCall
+    (16) basicStatements -> . assign
+    (17) basicStatements -> . funcCall
     (67) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
@@ -3346,19 +3346,19 @@ state 195
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
     }               reduce using rule 109 (empty -> .)
-    IF              shift and go to state 82
-    ID              shift and go to state 80
+    IF              shift and go to state 83
+    ID              shift and go to state 81
     FOR             shift and go to state 79
     WHILE           shift and go to state 73
 
     body                           shift and go to state 209
-    c                              shift and go to state 83
     funcCall                       shift and go to state 84
     instr                          shift and go to state 71
     forCycle                       shift and go to state 74
     assign                         shift and go to state 85
     whileCycle                     shift and go to state 72
-    condition                      shift and go to state 81
+    basicStatements                shift and go to state 80
+    condition                      shift and go to state 82
     cyInstruction                  shift and go to state 75
     empty                          shift and go to state 77
     cycle                          shift and go to state 76
@@ -3461,29 +3461,29 @@ state 201
 
 state 202
 
-    (24) initDict -> = ( j : . j )
-    (25) j -> . CTES
-    (26) j -> . cte
-    (27) j -> . ID
+    (24) initDict -> = ( dictType : . dictType )
+    (25) dictType -> . CTES
+    (26) dictType -> . cte
+    (27) dictType -> . ID
     (105) cte -> . CTED
     (106) cte -> . CTEF
     (107) cte -> . TRUE
     (108) cte -> . FALSE
 
-    CTES            shift and go to state 212
+    CTES            shift and go to state 213
     ID              shift and go to state 215
     CTED            shift and go to state 123
     CTEF            shift and go to state 122
     TRUE            shift and go to state 111
     FALSE           shift and go to state 119
 
+    dictType                       shift and go to state 212
     cte                            shift and go to state 214
-    j                              shift and go to state 213
 
 state 203
 
     (54) assignOptions -> [ expresion ] assignMatrix . init
-    (21) init -> . = i
+    (21) init -> . = initWith
 
     =               shift and go to state 217
 
@@ -3537,11 +3537,11 @@ state 206
     (45) body -> . empty
     (46) cyInstruction -> . instr body
     (109) empty -> .
-    (13) instr -> . c ;
+    (13) instr -> . basicStatements ;
     (14) instr -> . condition
     (15) instr -> . cycle
-    (16) c -> . assign
-    (17) c -> . funcCall
+    (16) basicStatements -> . assign
+    (17) basicStatements -> . funcCall
     (67) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
@@ -3551,19 +3551,19 @@ state 206
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
     }               reduce using rule 109 (empty -> .)
-    IF              shift and go to state 82
-    ID              shift and go to state 80
+    IF              shift and go to state 83
+    ID              shift and go to state 81
     FOR             shift and go to state 79
     WHILE           shift and go to state 73
 
     body                           shift and go to state 219
-    c                              shift and go to state 83
     funcCall                       shift and go to state 84
     instr                          shift and go to state 71
     forCycle                       shift and go to state 74
     assign                         shift and go to state 85
     whileCycle                     shift and go to state 72
-    condition                      shift and go to state 81
+    basicStatements                shift and go to state 80
+    condition                      shift and go to state 82
     cyInstruction                  shift and go to state 75
     empty                          shift and go to state 77
     cycle                          shift and go to state 76
@@ -3628,30 +3628,30 @@ state 211
 
 state 212
 
-    (25) j -> CTES .
-
-    )               reduce using rule 25 (j -> CTES .)
-
-
-state 213
-
-    (24) initDict -> = ( j : j . )
+    (24) initDict -> = ( dictType : dictType . )
 
     )               shift and go to state 226
 
 
+state 213
+
+    (25) dictType -> CTES .
+
+    )               reduce using rule 25 (dictType -> CTES .)
+
+
 state 214
 
-    (26) j -> cte .
+    (26) dictType -> cte .
 
-    )               reduce using rule 26 (j -> cte .)
+    )               reduce using rule 26 (dictType -> cte .)
 
 
 state 215
 
-    (27) j -> ID .
+    (27) dictType -> ID .
 
-    )               reduce using rule 27 (j -> ID .)
+    )               reduce using rule 27 (dictType -> ID .)
 
 
 state 216
@@ -3664,9 +3664,9 @@ state 216
 
 state 217
 
-    (21) init -> = . i
-    (22) i -> . expresion
-    (23) i -> . funcCall
+    (21) init -> = . initWith
+    (22) initWith -> . expresion
+    (23) initWith -> . funcCall
     (71) expresion -> . sExp cyExpresion
     (57) funcCall -> . ID ( opParamCall )
     (75) sExp -> . exp opSExp
@@ -3682,7 +3682,7 @@ state 217
     (107) cte -> . TRUE
     (108) cte -> . FALSE
 
-    ID              shift and go to state 131
+    ID              shift and go to state 132
     CTES            shift and go to state 117
     (               shift and go to state 112
     CTED            shift and go to state 123
@@ -3690,10 +3690,10 @@ state 217
     TRUE            shift and go to state 111
     FALSE           shift and go to state 119
 
-    expresion                      shift and go to state 132
+    expresion                      shift and go to state 133
+    initWith                       shift and go to state 130
+    funcCall                       shift and go to state 134
     term                           shift and go to state 118
-    funcCall                       shift and go to state 133
-    i                              shift and go to state 134
     sExp                           shift and go to state 113
     cte                            shift and go to state 121
     exp                            shift and go to state 114
@@ -3792,10 +3792,10 @@ state 223
     <               reduce using rule 99 (opStruct -> [ expresion ] opMatrix .)
     AND             reduce using rule 99 (opStruct -> [ expresion ] opMatrix .)
     OR              reduce using rule 99 (opStruct -> [ expresion ] opMatrix .)
-    ;               reduce using rule 99 (opStruct -> [ expresion ] opMatrix .)
     )               reduce using rule 99 (opStruct -> [ expresion ] opMatrix .)
     ,               reduce using rule 99 (opStruct -> [ expresion ] opMatrix .)
     ]               reduce using rule 99 (opStruct -> [ expresion ] opMatrix .)
+    ;               reduce using rule 99 (opStruct -> [ expresion ] opMatrix .)
 
 
 state 224
@@ -3819,10 +3819,10 @@ state 225
 
 state 226
 
-    (24) initDict -> = ( j : j ) .
+    (24) initDict -> = ( dictType : dictType ) .
 
-    ;               reduce using rule 24 (initDict -> = ( j : j ) .)
-    )               reduce using rule 24 (initDict -> = ( j : j ) .)
+    ;               reduce using rule 24 (initDict -> = ( dictType : dictType ) .)
+    )               reduce using rule 24 (initDict -> = ( dictType : dictType ) .)
 
 
 state 227
@@ -3924,11 +3924,11 @@ state 235
     (45) body -> . empty
     (46) cyInstruction -> . instr body
     (109) empty -> .
-    (13) instr -> . c ;
+    (13) instr -> . basicStatements ;
     (14) instr -> . condition
     (15) instr -> . cycle
-    (16) c -> . assign
-    (17) c -> . funcCall
+    (16) basicStatements -> . assign
+    (17) basicStatements -> . funcCall
     (67) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
@@ -3938,19 +3938,19 @@ state 235
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
     }               reduce using rule 109 (empty -> .)
-    IF              shift and go to state 82
-    ID              shift and go to state 80
+    IF              shift and go to state 83
+    ID              shift and go to state 81
     FOR             shift and go to state 79
     WHILE           shift and go to state 73
 
     body                           shift and go to state 237
-    c                              shift and go to state 83
     funcCall                       shift and go to state 84
     instr                          shift and go to state 71
     forCycle                       shift and go to state 74
     cyInstruction                  shift and go to state 75
     whileCycle                     shift and go to state 72
-    condition                      shift and go to state 81
+    basicStatements                shift and go to state 80
+    condition                      shift and go to state 82
     assign                         shift and go to state 85
     empty                          shift and go to state 77
     cycle                          shift and go to state 76
@@ -3962,11 +3962,11 @@ state 236
     (45) body -> . empty
     (46) cyInstruction -> . instr body
     (109) empty -> .
-    (13) instr -> . c ;
+    (13) instr -> . basicStatements ;
     (14) instr -> . condition
     (15) instr -> . cycle
-    (16) c -> . assign
-    (17) c -> . funcCall
+    (16) basicStatements -> . assign
+    (17) basicStatements -> . funcCall
     (67) condition -> . IF ( expresion ) { body } optionalElse
     (47) cycle -> . forCycle
     (48) cycle -> . whileCycle
@@ -3976,21 +3976,21 @@ state 236
     (49) whileCycle -> . WHILE ( expresion ) { body }
 
     }               reduce using rule 109 (empty -> .)
-    IF              shift and go to state 82
-    ID              shift and go to state 80
+    IF              shift and go to state 83
+    ID              shift and go to state 81
     FOR             shift and go to state 79
     WHILE           shift and go to state 73
 
     body                           shift and go to state 238
-    c                              shift and go to state 83
     funcCall                       shift and go to state 84
     instr                          shift and go to state 71
     forCycle                       shift and go to state 74
     assign                         shift and go to state 85
     whileCycle                     shift and go to state 72
+    basicStatements                shift and go to state 80
     empty                          shift and go to state 77
     cyInstruction                  shift and go to state 75
-    condition                      shift and go to state 81
+    condition                      shift and go to state 82
     cycle                          shift and go to state 76
 
 state 237
@@ -4033,5 +4033,5 @@ state 240
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: reduce/reduce conflict in state 133 resolved using rule (i -> funcCall)
-WARNING: rejected rule (fact -> funcCall) in state 133
+WARNING: reduce/reduce conflict in state 134 resolved using rule (initWith -> funcCall)
+WARNING: rejected rule (fact -> funcCall) in state 134
