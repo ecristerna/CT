@@ -4,8 +4,8 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':']
-reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
+literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':', '.']
+reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 # Tokens
@@ -53,19 +53,19 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : PROGRAM ID "{" a b main "}"'''
+    '''program : PROGRAM ID "{" opVars opFunctions main "}"'''
     print("program")
     pass
 
-def p_a(p):
-	'''a : vars
-		| empty'''
-	print("a")
+def p_opVars(p):
+	'''opVars : vars
+			| empty'''
+	print("optional vars")
 	pass
 
-def p_b(p):
-	'''b : function b
-		| empty'''
+def p_opFunctions(p):
+	'''opFunctions : function opFunctions
+				| empty'''
 	pass
 
 def p_vars(p):
@@ -75,73 +75,78 @@ def p_vars(p):
 
 def p_type(p):
 	'''type : INT
-		| FLOAT
-		| STRING
-		| OBJECT
-		| BOOL'''
+			| FLOAT
+			| STRING
+			| OBJECT
+			| BOOL'''
 	print("type")
 	pass
 
 def p_main(p):
-	'''main : MAIN "{" a body "}"'''
+	'''main : MAIN "{" opVars body "}"'''
 	print("main")
 	pass
 
 def p_instr(p):
-	'''instr : c ";"
+	'''instr : basicStatements ";"
 			| condition
 			| cycle '''
 	print("instr")
 	pass
-def p_c(p):
-	'''c : assign
-		| funcCall '''
+def p_basicStatements(p):
+	'''basicStatements : assign
+					| funcCall '''
 	pass
 
 def p_declare(p):
-	'''declare : d
-			| e
-			| f '''
+	'''declare : basicDeclare
+			| structDeclare
+			| dictDeclare '''
 	print("declare")
 	pass
 
 def p_init(p):
-	'''init : "=" i '''
+	'''init : "=" initWith '''
 	print("init")
 	pass
 
-def p_i(p):
-	'''i : expresion
+def p_initWith(p):
+	'''initWith : expresion
 		| funcCall '''
-	print("i")
+	print("init with")
 	pass
 
 def p_initDict(p):
-	'''initDict : "=" "(" j ":" j ")" '''
+	'''initDict : "=" "(" dictType ":" dictType ")" '''
 	print("initDict")
 	pass
 
-def p_j(p):
-	'''j : CTES
-		| cte
-		| ID '''
-	print("j")
+def p_dictType(p):
+	'''dictType : CTES
+				| cte
+				| ID '''
+	print("dict type")
 	pass
 
 def p_param(p):
-	'''param : type ID g k '''
+	'''param : type ID cyTypeParam cyParam '''
 	print("param")
 	pass
 
-def p_k(p):
-	'''k : ";" param
+def p_cyParam(p):
+	'''cyParam : ";" param
 		| empty '''
-	print("k")
+	print("cycle param")
 	pass
 
 def p_function(p):
-	'''function : FUNC ID opParameters opReturns "{" a body "}" '''
+	'''function : FUNC ID opParameters opReturns  "}" '''
 	print("function")
+	pass
+
+def p_return(p):
+	'''return : RETURN expresion ";" '''
+	print("return")
 	pass
 
 def p_opParameters(p):
@@ -151,46 +156,46 @@ def p_opParameters(p):
 	pass
 
 def p_opReturns(p):
-	'''opReturns : RETURNS type
-		| empty '''
+	'''opReturns : RETURNS type "{" opVars body return
+		| "{" opVars body '''
 	print("returns")
 	pass
 
-def p_d(p):
-	'''d : type ID g ";" h '''
-	print("d")
+def p_basicDeclare(p):
+	'''basicDeclare : type ID cyTypeParam ";" cyDeclare '''
+	print("basic declare")
 	pass
 
-def p_e(p):
-	'''e : STRUCT ID struct ";" h '''
-	print("e")
+def p_structDeclare(p):
+	'''structDeclare : STRUCT ID struct ";" cyDeclare '''
+	print("struct declare")
 	pass
 
-def p_f(p):
-	'''f : DICT ID dict ";" h '''
-	print("f")
+def p_dictDeclare(p):
+	'''dictDeclare : DICT ID dict ";" cyDeclare '''
+	print("dict declare")
 	pass
 
-def p_g(p):
-	'''g : "," ID
+def p_cyTypeParam(p):
+	'''cyTypeParam : "," ID
 		| empty '''
-	print("g")
+	print("cycle type param")
 	pass
 
-def p_h(p):
-	'''h : declare
+def p_cyDeclare(p):
+	'''cyDeclare : declare
 		| empty '''
-	print("h")
+	print("cycle declare")
 	pass
 
 def p_body(p):
-	'''body : cycleInstruction
+	'''body : cyInstruction
 			| empty '''
 	print("body")
 	pass
 
-def p_cycleInstruction(p):
-	'''cycleInstruction : instr body '''
+def p_cyInstruction(p):
+	'''cyInstruction : instr body '''
 	print("cycleInstruction")
 	pass
 
@@ -234,19 +239,26 @@ def p_funcCall(p):
 	pass
 
 def p_opParamCall(p):
-	'''opParamCall : expresion cyParamCall '''
+	'''opParamCall : expresion cyParamCall
+				| empty '''
 	print("function parameter")
 	pass
 
 def p_cyParamCall(p):
-	'''cyParamCall : "," opParamCall
+	'''cyParamCall : "," expresion cyParamCall
 				| empty '''
 	print("cycle parameter call")
 	pass
 
 def p_struct(p):
-	'''struct : type "[" CTED "]" optionalMatrix '''
+	'''struct : structType "[" CTED "]" optionalMatrix '''
 	print("struct")
+	pass
+
+def p_structType(p):
+	'''structType : type
+				| DICT dict '''
+	print("struct type")
 	pass
 
 def p_optionalMatrix(p):
@@ -284,17 +296,17 @@ def p_cyExpresion(p):
 	pass
 
 def p_sExp(p):
-	'''sExp : exp cySExp '''
+	'''sExp : exp opSExp '''
 	print("super expresion")
 	pass
 
-def p_cySExp(p):
-	'''cySExp : EQ sExp
-			| DIF sExp
-			| LTOEQ sExp
-			| GTOEQ sExp
-			| ">" sExp
-			| "<" sExp
+def p_opSExp(p):
+	'''opSExp : EQ exp
+			| DIF exp
+			| LTOEQ exp
+			| GTOEQ exp
+			| ">" exp
+			| "<" exp
 			| empty '''
 	print("cycle super expresion")
 	pass
@@ -328,14 +340,19 @@ def p_fact(p):
 			| cte
 			| funcCall
 			| "(" expresion ")"
-			| ID opStruct
-			| empty '''
+			| ID opAccess '''
 	print("fact")
 	pass	
 
-def p_opStruct(p):
-	'''opStruct : "[" expresion "]" opMatrix
+def p_opAccess(p):
+	'''opAccess : opStruct
+				| opDictionary
 				| empty '''
+	print("optional access")
+	pass
+
+def p_opStruct(p):
+	'''opStruct : "[" expresion "]" opMatrix '''
 	print("optional struct")
 	pass
 
@@ -345,11 +362,22 @@ def p_opMatrix(p):
 	print("optional matrix")
 	pass
 
+def p_opDictionary(p):
+	'''opDictionary : "." dictIndex '''
+	print("optional dictionary")
+	pass
+
+def p_dictIndex(p):
+	'''dictIndex : FIRST
+				| LAST '''
+	print("dictionary index")
+	pass
+
 def p_cte(p):
 	'''cte : CTED
 		| CTEF 
 		| TRUE 
-		| FALSE c'''
+		| FALSE '''
 	print("cte")
 	pass
 
