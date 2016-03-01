@@ -246,8 +246,14 @@ def p_cyParamCall(p):
 	pass
 
 def p_struct(p):
-	'''struct : type "[" CTED "]" optionalMatrix '''
+	'''struct : structType "[" CTED "]" optionalMatrix '''
 	print("struct")
+	pass
+
+def p_structType(p):
+	'''structType : type
+				| DICT dict '''
+	print("struct type")
 	pass
 
 def p_optionalMatrix(p):

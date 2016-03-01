@@ -13,21 +13,21 @@ program a {
 			dict p (float : bool);
 
 		g();
+		return 0;
 	}
 
 	func g {
-
 	}
 
 	func g returns bool {
-
+		return 0;
 	}
 
 	main {
 		vars int i, j;
 			struct k float[4][3];
 			dict p (float : bool);
-			struct r dict(int : int)[4];
+			struct r dict(int : int)[4][3];
 
 		i = 3 * 3;
 		k[i][0] = i;
