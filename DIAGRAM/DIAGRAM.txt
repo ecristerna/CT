@@ -1,4 +1,4 @@
-PROGRAM ::= 'program' 'id' '{' VARS (FUNCTION)* MAIN '}'
+PROGRAM ::= 'program' 'id' '{' VARS? FUNCTION* MAIN '}'
 
 VARS ::= 'vars' DECLARE
 
@@ -16,9 +16,11 @@ INIT_DICT ::= '=' '(' ('cte_s' | CTE | 'id') ':' ('cte_s' | CTE | 'id') ')'
 
 PARAM ::= (TYPE 'id' (',' 'id')*) (';' TYPE 'id' (',' 'id')*)* 
 
-FUNCTION ::= 'func' 'id' ('(' PARAM+ ')')? ('returns' TYPE)? '{' VARS? BODY '}'
+FUNCTION ::= 'func' 'id' ('(' PARAM+ ')')? ('returns' TYPE '{' VARS? BODY RETURN)? '{' VARS? BODY '}'
 
-STRUCT ::= TYPE '[' 'cte_d' ']' ('[' 'cte_d' ']')?
+RETURN ::= 'return' EXPRESION ';'
+
+STRUCT ::= (TYPE | 'dict' DICT) '[' 'cte_d' ']' ('[' 'cte_d' ']')?
 
 DICT ::= '(' TYPE ':' TYPE ')'
 
@@ -38,12 +40,12 @@ CTE ::= 'cte_d' | 'cte_f' | 'true' | 'false'
 
 EXPRESION ::= S_EXP (('or' | 'and') S_EXP)*
 
-S_EXP ::=  EXP (('>' | '>=' | '<' | '<=' | '!=' | '==') EXP)*
+S_EXP ::=  EXP (('>' | '>=' | '<' | '<=' | '!=' | '==') EXP)?
 
 EXP ::= TERM (('+' | '-') TERM)*
 
 TERM ::= FACT (('*' | '/') FACT)*
 
-FACT ::= ('cte_s' | 'id' ('[' EXPRESION ']' ('[' EXPRESION ']')?)? | CTE | '(' EXPRESION ')' | FUNC_CALL )?
+FACT ::= ('cte_s' | 'id' ('[' EXPRESION ']' ('[' EXPRESION ']')? | '.' ('0' | '1'))? | CTE | '(' EXPRESION ')' | FUNC_CALL )
 
 FUNC_CALL ::= 'id' '(' (EXPRESION (',' EXPRESION)*)? ')'

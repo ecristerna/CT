@@ -164,14 +164,14 @@
    <body>
       
       <p style="font-size: 14px; font-weight:bold"><a name="PROGRAM">PROGRAM:</a></p>
-      <img border="0" src="diagram/PROGRAM.png" height="70" width="570" usemap="#PROGRAM.map"><map name="PROGRAM.map">
-         <area shape="rect" coords="225,35,277,67" href="#VARS" title="VARS">
-         <area shape="rect" coords="317,1,401,33" href="#FUNCTION" title="FUNCTION">
-         <area shape="rect" coords="441,35,493,67" href="#MAIN" title="MAIN"></map>
+      <img border="0" src="diagram/PROGRAM.png" height="102" width="610" usemap="#PROGRAM.map"><map name="PROGRAM.map">
+         <area shape="rect" coords="245,67,297,99" href="#VARS" title="VARS">
+         <area shape="rect" coords="357,1,441,33" href="#FUNCTION" title="FUNCTION">
+         <area shape="rect" coords="481,35,533,67" href="#MAIN" title="MAIN"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#PROGRAM" title="PROGRAM" shape="rect">PROGRAM</a>  ::= 'program' 'id' '{' <a href="#VARS" title="VARS" shape="rect">VARS</a> <a href="#FUNCTION" title="FUNCTION" shape="rect">FUNCTION</a>* <a href="#MAIN" title="MAIN" shape="rect">MAIN</a> '}'</pre></div>
+         <div class="ebnf"><pre><a href="#PROGRAM" title="PROGRAM" shape="rect">PROGRAM</a>  ::= 'program' 'id' '{' <a href="#VARS" title="VARS" shape="rect">VARS</a>? <a href="#FUNCTION" title="FUNCTION" shape="rect">FUNCTION</a>* <a href="#MAIN" title="MAIN" shape="rect">MAIN</a> '}'</pre></div>
          
       </p>
       
@@ -346,15 +346,18 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="FUNCTION">FUNCTION:</a></p>
-      <img border="0" src="diagram/FUNCTION.png" height="84" width="892" usemap="#FUNCTION.map"><map name="FUNCTION.map">
+      <img border="0" src="diagram/FUNCTION.png" height="214" width="974" usemap="#FUNCTION.map"><map name="FUNCTION.map">
          <area shape="rect" coords="235,17,297,49" href="#PARAM" title="PARAM">
          <area shape="rect" coords="511,49,561,81" href="#TYPE" title="TYPE">
-         <area shape="rect" coords="669,49,721,81" href="#VARS" title="VARS">
-         <area shape="rect" coords="761,17,815,49" href="#BODY" title="BODY"></map>
+         <area shape="rect" coords="649,81,701,113" href="#VARS" title="VARS">
+         <area shape="rect" coords="741,49,795,81" href="#BODY" title="BODY">
+         <area shape="rect" coords="815,49,883,81" href="#RETURN" title="RETURN">
+         <area shape="rect" coords="751,179,803,211" href="#VARS" title="VARS">
+         <area shape="rect" coords="843,147,897,179" href="#BODY" title="BODY"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#FUNCTION" title="FUNCTION" shape="rect">FUNCTION</a> ::= 'func' 'id' ( '(' <a href="#PARAM" title="PARAM" shape="rect">PARAM</a>+ ')' )? ( 'returns' <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> )? '{' <a href="#VARS" title="VARS" shape="rect">VARS</a>? <a href="#BODY" title="BODY" shape="rect">BODY</a> '}'</pre></div>
+         <div class="ebnf"><pre><a href="#FUNCTION" title="FUNCTION" shape="rect">FUNCTION</a> ::= 'func' 'id' ( '(' <a href="#PARAM" title="PARAM" shape="rect">PARAM</a>+ ')' )? ( 'returns' <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> '{' <a href="#VARS" title="VARS" shape="rect">VARS</a>? <a href="#BODY" title="BODY" shape="rect">BODY</a> <a href="#RETURN" title="RETURN" shape="rect">RETURN</a> )? '{' <a href="#VARS" title="VARS" shape="rect">VARS</a>? <a href="#BODY" title="BODY" shape="rect">BODY</a> '}'</pre></div>
          
       </p>
       
@@ -366,13 +369,32 @@
             
          </ul>
          
-      </p><br><p style="font-size: 14px; font-weight:bold"><a name="STRUCT">STRUCT:</a></p>
-      <img border="0" src="diagram/STRUCT.png" height="68" width="484" usemap="#STRUCT.map"><map name="STRUCT.map">
-         <area shape="rect" coords="29,1,79,33" href="#TYPE" title="TYPE"></map>
+      </p><br><p style="font-size: 14px; font-weight:bold"><a name="RETURN">RETURN:</a></p>
+      <img border="0" src="diagram/RETURN.png" height="36" width="274" usemap="#RETURN.map"><map name="RETURN.map">
+         <area shape="rect" coords="109,1,201,33" href="#EXPRESION" title="EXPRESION"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#STRUCT" title="STRUCT" shape="rect">STRUCT</a>   ::= <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> '[' 'cte_d' ']' ( '[' 'cte_d' ']' )?</pre></div>
+         <div class="ebnf"><pre><a href="#RETURN" title="RETURN" shape="rect">RETURN</a>   ::= 'return' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ';'</pre></div>
+         
+      </p>
+      
+      <p>referenced by:
+         
+         <ul>
+            
+            <li><a href="#FUNCTION" title="FUNCTION">FUNCTION</a></li>
+            
+         </ul>
+         
+      </p><br><p style="font-size: 14px; font-weight:bold"><a name="STRUCT">STRUCT:</a></p>
+      <img border="0" src="diagram/STRUCT.png" height="80" width="588" usemap="#STRUCT.map"><map name="STRUCT.map">
+         <area shape="rect" coords="49,1,99,33" href="#TYPE" title="TYPE">
+         <area shape="rect" coords="113,45,163,77" href="#DICT" title="DICT"></map>
+      
+      <p>
+         
+         <div class="ebnf"><pre><a href="#STRUCT" title="STRUCT" shape="rect">STRUCT</a>   ::= ( <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> | 'dict' <a href="#DICT" title="DICT" shape="rect">DICT</a> ) '[' 'cte_d' ']' ( '[' 'cte_d' ']' )?</pre></div>
          
       </p>
       
@@ -400,6 +422,8 @@
          <ul>
             
             <li><a href="#DECLARE" title="DECLARE">DECLARE</a></li>
+            
+            <li><a href="#STRUCT" title="STRUCT">STRUCT</a></li>
             
          </ul>
          
@@ -576,17 +600,20 @@
             
             <li><a href="#INIT" title="INIT">INIT</a></li>
             
+            <li><a href="#RETURN" title="RETURN">RETURN</a></li>
+            
             <li><a href="#WHILE_CYCLE" title="WHILE_CYCLE">WHILE_CYCLE</a></li>
             
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="S_EXP">S_EXP:</a></p>
-      <img border="0" src="diagram/S_EXP.png" height="300" width="142" usemap="#S_EXP.map"><map name="S_EXP.map">
-         <area shape="rect" coords="49,265,93,297" href="#EXP" title="EXP"></map>
+      <img border="0" src="diagram/S_EXP.png" height="288" width="306" usemap="#S_EXP.map"><map name="S_EXP.map">
+         <area shape="rect" coords="29,1,73,33" href="#EXP" title="EXP">
+         <area shape="rect" coords="213,33,257,65" href="#EXP" title="EXP"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#S_EXP" title="S_EXP" shape="rect">S_EXP</a>    ::= <a href="#EXP" title="EXP" shape="rect">EXP</a> ( ( '&gt;' | '&gt;=' | '&lt;' | '&lt;=' | '!=' | '==' ) <a href="#EXP" title="EXP" shape="rect">EXP</a> )*</pre></div>
+         <div class="ebnf"><pre><a href="#S_EXP" title="S_EXP" shape="rect">S_EXP</a>    ::= <a href="#EXP" title="EXP" shape="rect">EXP</a> ( ( '&gt;' | '&gt;=' | '&lt;' | '&lt;=' | '!=' | '==' ) <a href="#EXP" title="EXP" shape="rect">EXP</a> )?</pre></div>
          
       </p>
       
@@ -635,16 +662,20 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="FACT">FACT:</a></p>
-      <img border="0" src="diagram/FACT.png" height="296" width="618" usemap="#FACT.map"><map name="FACT.map">
-         <area shape="rect" coords="167,97,259,129" href="#EXPRESION" title="EXPRESION">
-         <area shape="rect" coords="391,129,483,161" href="#EXPRESION" title="EXPRESION">
-         <area shape="rect" coords="49,173,93,205" href="#CTE" title="CTE">
-         <area shape="rect" coords="95,217,187,249" href="#EXPRESION" title="EXPRESION">
-         <area shape="rect" coords="49,261,141,293" href="#FUNC_CALL" title="FUNC_CALL"></map>
+      <img border="0" src="diagram/FACT.png" height="364" width="618" usemap="#FACT.map"><map name="FACT.map">
+         <area shape="rect" coords="167,77,259,109" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="391,109,483,141" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="49,241,93,273" href="#CTE" title="CTE">
+         <area shape="rect" coords="95,285,187,317" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="49,329,141,361" href="#FUNC_CALL" title="FUNC_CALL"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#FACT" title="FACT" shape="rect">FACT</a>     ::= ( 'cte_s' | 'id' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' )? )? | <a href="#CTE" title="CTE" shape="rect">CTE</a> | '(' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ')' | <a href="#FUNC_CALL" title="FUNC_CALL" shape="rect">FUNC_CALL</a> )?</pre></div>
+         <div class="ebnf"><pre><a href="#FACT" title="FACT" shape="rect">FACT</a>     ::= 'cte_s'
+           | 'id' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' )? | '.' ( '0' | '1' ) )?
+           | <a href="#CTE" title="CTE" shape="rect">CTE</a>
+           | '(' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ')'
+           | <a href="#FUNC_CALL" title="FUNC_CALL" shape="rect">FUNC_CALL</a></pre></div>
          
       </p>
       
