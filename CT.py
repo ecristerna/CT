@@ -140,8 +140,13 @@ def p_k(p):
 	pass
 
 def p_function(p):
-	'''function : FUNC ID opParameters opReturns "{" opVars body "}" '''
+	'''function : FUNC ID opParameters opReturns  "}" '''
 	print("function")
+	pass
+
+def p_return(p):
+	'''return : RETURN expresion ";" '''
+	print("return")
 	pass
 
 def p_opParameters(p):
@@ -151,8 +156,8 @@ def p_opParameters(p):
 	pass
 
 def p_opReturns(p):
-	'''opReturns : RETURNS type
-		| empty '''
+	'''opReturns : RETURNS type "{" opVars body return
+		| "{" opVars body '''
 	print("returns")
 	pass
 
