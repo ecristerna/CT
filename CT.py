@@ -4,8 +4,8 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':']
-reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
+literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':', '.']
+reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 # Tokens
@@ -328,14 +328,20 @@ def p_fact(p):
 			| cte
 			| funcCall
 			| "(" expresion ")"
-			| ID opStruct
+			| ID opAccess
 			| empty '''
 	print("fact")
 	pass	
 
-def p_opStruct(p):
-	'''opStruct : "[" expresion "]" opMatrix
+def p_opAccess(p):
+	'''opAccess : opStruct
+				| opDictionary
 				| empty '''
+	print("optional access")
+	pass
+
+def p_opStruct(p):
+	'''opStruct : "[" expresion "]" opMatrix '''
 	print("optional struct")
 	pass
 
@@ -343,6 +349,17 @@ def p_opMatrix(p):
 	'''opMatrix : "[" expresion "]"
 				| empty '''
 	print("optional matrix")
+	pass
+
+def p_opDictionary(p):
+	'''opDictionary : "." dictIndex '''
+	print("optional dictionary")
+	pass
+
+def p_dictIndex(p):
+	'''dictIndex : FIRST
+				| LAST '''
+	print("dictionary index")
 	pass
 
 def p_cte(p):

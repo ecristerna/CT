@@ -48,6 +48,7 @@ program a {
 
 		for (i = 0; i < 10; k[i] = k[i] + 1) {
 			g(parameter);
+			i = p.first;
 		}
 	}
 }

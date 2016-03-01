@@ -97,17 +97,22 @@ Rule 87    fact -> CTES
 Rule 88    fact -> cte
 Rule 89    fact -> funcCall
 Rule 90    fact -> ( expresion )
-Rule 91    fact -> ID opStruct
+Rule 91    fact -> ID opAccess
 Rule 92    fact -> empty
-Rule 93    opStruct -> [ expresion ] opMatrix
-Rule 94    opStruct -> empty
-Rule 95    opMatrix -> [ expresion ]
-Rule 96    opMatrix -> empty
-Rule 97    cte -> CTED
-Rule 98    cte -> CTEF
-Rule 99    cte -> TRUE
-Rule 100   cte -> FALSE c
-Rule 101   empty -> <empty>
+Rule 93    opAccess -> opStruct
+Rule 94    opAccess -> opDictionary
+Rule 95    opAccess -> empty
+Rule 96    opStruct -> [ expresion ] opMatrix
+Rule 97    opMatrix -> [ expresion ]
+Rule 98    opMatrix -> empty
+Rule 99    opDictionary -> . dictIndex
+Rule 100   dictIndex -> FIRST
+Rule 101   dictIndex -> LAST
+Rule 102   cte -> CTED
+Rule 103   cte -> CTEF
+Rule 104   cte -> TRUE
+Rule 105   cte -> FALSE c
+Rule 106   empty -> <empty>
 
 Terminals, with rules where they appear
 
@@ -117,6 +122,7 @@ Terminals, with rules where they appear
 +                    : 80
 ,                    : 39 58
 -                    : 81
+.                    : 99
 /                    : 85
 :                    : 24 66
 ;                    : 13 29 36 37 38 49 49
@@ -125,14 +131,15 @@ Terminals, with rules where they appear
 >                    : 76
 AND                  : 68
 BOOL                 : 11
-CTED                 : 60 61 97
-CTEF                 : 98
+CTED                 : 60 61 102
+CTEF                 : 103
 CTES                 : 25 87
 DICT                 : 38
 DIF                  : 73
 ELSE                 : 64
 EQ                   : 72
-FALSE                : 100
+FALSE                : 105
+FIRST                : 100
 FLOAT                : 8
 FOR                  : 49
 FUNC                 : 31
@@ -140,6 +147,7 @@ GTOEQ                : 75
 ID                   : 1 27 28 31 36 37 38 39 50 56 91
 IF                   : 63
 INT                  : 7
+LAST                 : 101
 LTOEQ                : 74
 MAIN                 : 12
 OBJECT               : 10
@@ -149,11 +157,11 @@ RETURN               :
 RETURNS              : 34
 STRING               : 9
 STRUCT               : 37
-TRUE                 : 99
+TRUE                 : 104
 VARS                 : 6
 WHILE                : 48
-[                    : 53 54 60 61 93 95
-]                    : 53 54 60 61 93 95
+[                    : 53 54 60 61 96 97
+]                    : 53 54 60 61 96 97
 error                : 
 {                    : 1 12 31 48 49 63 64
 }                    : 1 12 31 48 49 63 64
@@ -166,7 +174,7 @@ assignMatrix         : 53
 assignOptions        : 50
 b                    : 1 4
 body                 : 12 31 45 48 49 63 64
-c                    : 13 100
+c                    : 13 105
 condition            : 14
 cte                  : 26 88
 cyExp                : 79
@@ -179,10 +187,11 @@ cycleInstruction     : 43
 d                    : 18
 declare              : 6 41
 dict                 : 38
+dictIndex            : 99
 e                    : 19
-empty                : 3 5 30 33 35 40 42 44 55 59 62 65 70 78 82 86 92 94 96
+empty                : 3 5 30 33 35 40 42 44 55 59 62 65 70 78 82 86 92 95 98
 exp                  : 71
-expresion            : 22 48 49 53 54 57 63 68 69 90 93 95
+expresion            : 22 48 49 53 54 57 63 68 69 90 96 97
 f                    : 20
 fact                 : 83 84 85
 forCycle             : 46
@@ -197,11 +206,13 @@ instr                : 45
 j                    : 24 24
 k                    : 28
 main                 : 1
-opMatrix             : 93
+opAccess             : 91
+opDictionary         : 94
+opMatrix             : 96
 opParamCall          : 56 58
 opParameters         : 31
 opReturns            : 31
-opStruct             : 91
+opStruct             : 93
 optionalElse         : 63
 optionalMatrix       : 60
 param                : 29 32
@@ -250,11 +261,11 @@ state 4
     (2) a -> . vars
     (3) a -> . empty
     (6) vars -> . VARS declare
-    (101) empty -> .
+    (106) empty -> .
 
     VARS            shift and go to state 6
-    FUNC            reduce using rule 101 (empty -> .)
-    MAIN            reduce using rule 101 (empty -> .)
+    FUNC            reduce using rule 106 (empty -> .)
+    MAIN            reduce using rule 106 (empty -> .)
 
     a                              shift and go to state 5
     vars                           shift and go to state 7
@@ -266,10 +277,10 @@ state 5
     (4) b -> . function b
     (5) b -> . empty
     (31) function -> . FUNC ID opParameters opReturns { a body }
-    (101) empty -> .
+    (106) empty -> .
 
     FUNC            shift and go to state 11
-    MAIN            reduce using rule 101 (empty -> .)
+    MAIN            reduce using rule 106 (empty -> .)
 
     function                       shift and go to state 9
     b                              shift and go to state 10
@@ -336,10 +347,10 @@ state 9
     (4) b -> . function b
     (5) b -> . empty
     (31) function -> . FUNC ID opParameters opReturns { a body }
-    (101) empty -> .
+    (106) empty -> .
 
     FUNC            shift and go to state 11
-    MAIN            reduce using rule 101 (empty -> .)
+    MAIN            reduce using rule 106 (empty -> .)
 
     function                       shift and go to state 9
     b                              shift and go to state 25
@@ -522,11 +533,11 @@ state 28
     (31) function -> FUNC ID . opParameters opReturns { a body }
     (32) opParameters -> . ( param )
     (33) opParameters -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
     (               shift and go to state 35
-    RETURNS         reduce using rule 101 (empty -> .)
-    {               reduce using rule 101 (empty -> .)
+    RETURNS         reduce using rule 106 (empty -> .)
+    {               reduce using rule 106 (empty -> .)
 
     opParameters                   shift and go to state 34
     empty                          shift and go to state 36
@@ -545,10 +556,10 @@ state 30
     (36) d -> type ID . g ; h
     (39) g -> . , ID
     (40) g -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
     ,               shift and go to state 40
-    ;               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
 
     empty                          shift and go to state 41
     g                              shift and go to state 39
@@ -578,14 +589,14 @@ state 32
     (2) a -> . vars
     (3) a -> . empty
     (6) vars -> . VARS declare
-    (101) empty -> .
+    (106) empty -> .
 
     VARS            shift and go to state 6
-    IF              reduce using rule 101 (empty -> .)
-    ID              reduce using rule 101 (empty -> .)
-    FOR             reduce using rule 101 (empty -> .)
-    WHILE           reduce using rule 101 (empty -> .)
-    }               reduce using rule 101 (empty -> .)
+    IF              reduce using rule 106 (empty -> .)
+    ID              reduce using rule 106 (empty -> .)
+    FOR             reduce using rule 106 (empty -> .)
+    WHILE           reduce using rule 106 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
 
     a                              shift and go to state 44
     empty                          shift and go to state 8
@@ -603,10 +614,10 @@ state 34
     (31) function -> FUNC ID opParameters . opReturns { a body }
     (34) opReturns -> . RETURNS type
     (35) opReturns -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
     RETURNS         shift and go to state 45
-    {               reduce using rule 101 (empty -> .)
+    {               reduce using rule 106 (empty -> .)
 
     empty                          shift and go to state 46
     opReturns                      shift and go to state 47
@@ -704,7 +715,7 @@ state 44
     (43) body -> . cycleInstruction
     (44) body -> . empty
     (45) cycleInstruction -> . instr body
-    (101) empty -> .
+    (106) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
@@ -718,7 +729,7 @@ state 44
     (49) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (48) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 101 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     IF              shift and go to state 67
     ID              shift and go to state 65
     FOR             shift and go to state 64
@@ -796,7 +807,7 @@ state 51
     (18) declare -> . d
     (19) declare -> . e
     (20) declare -> . f
-    (101) empty -> .
+    (106) empty -> .
     (36) d -> . type ID g ; h
     (37) e -> . STRUCT ID struct ; h
     (38) f -> . DICT ID dict ; h
@@ -806,13 +817,13 @@ state 51
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    FUNC            reduce using rule 101 (empty -> .)
-    MAIN            reduce using rule 101 (empty -> .)
-    IF              reduce using rule 101 (empty -> .)
-    ID              reduce using rule 101 (empty -> .)
-    FOR             reduce using rule 101 (empty -> .)
-    WHILE           reduce using rule 101 (empty -> .)
-    }               reduce using rule 101 (empty -> .)
+    FUNC            reduce using rule 106 (empty -> .)
+    MAIN            reduce using rule 106 (empty -> .)
+    IF              reduce using rule 106 (empty -> .)
+    ID              reduce using rule 106 (empty -> .)
+    FOR             reduce using rule 106 (empty -> .)
+    WHILE           reduce using rule 106 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     STRUCT          shift and go to state 24
     DICT            shift and go to state 20
     INT             shift and go to state 17
@@ -837,7 +848,7 @@ state 52
     (18) declare -> . d
     (19) declare -> . e
     (20) declare -> . f
-    (101) empty -> .
+    (106) empty -> .
     (36) d -> . type ID g ; h
     (37) e -> . STRUCT ID struct ; h
     (38) f -> . DICT ID dict ; h
@@ -847,13 +858,13 @@ state 52
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    FUNC            reduce using rule 101 (empty -> .)
-    MAIN            reduce using rule 101 (empty -> .)
-    IF              reduce using rule 101 (empty -> .)
-    ID              reduce using rule 101 (empty -> .)
-    FOR             reduce using rule 101 (empty -> .)
-    WHILE           reduce using rule 101 (empty -> .)
-    }               reduce using rule 101 (empty -> .)
+    FUNC            reduce using rule 106 (empty -> .)
+    MAIN            reduce using rule 106 (empty -> .)
+    IF              reduce using rule 106 (empty -> .)
+    ID              reduce using rule 106 (empty -> .)
+    FOR             reduce using rule 106 (empty -> .)
+    WHILE           reduce using rule 106 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     STRUCT          shift and go to state 24
     DICT            shift and go to state 20
     INT             shift and go to state 17
@@ -886,7 +897,7 @@ state 54
     (18) declare -> . d
     (19) declare -> . e
     (20) declare -> . f
-    (101) empty -> .
+    (106) empty -> .
     (36) d -> . type ID g ; h
     (37) e -> . STRUCT ID struct ; h
     (38) f -> . DICT ID dict ; h
@@ -896,13 +907,13 @@ state 54
     (10) type -> . OBJECT
     (11) type -> . BOOL
 
-    FUNC            reduce using rule 101 (empty -> .)
-    MAIN            reduce using rule 101 (empty -> .)
-    IF              reduce using rule 101 (empty -> .)
-    ID              reduce using rule 101 (empty -> .)
-    FOR             reduce using rule 101 (empty -> .)
-    WHILE           reduce using rule 101 (empty -> .)
-    }               reduce using rule 101 (empty -> .)
+    FUNC            reduce using rule 106 (empty -> .)
+    MAIN            reduce using rule 106 (empty -> .)
+    IF              reduce using rule 106 (empty -> .)
+    ID              reduce using rule 106 (empty -> .)
+    FOR             reduce using rule 106 (empty -> .)
+    WHILE           reduce using rule 106 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     STRUCT          shift and go to state 24
     DICT            shift and go to state 20
     INT             shift and go to state 17
@@ -932,7 +943,7 @@ state 56
     (43) body -> . cycleInstruction
     (44) body -> . empty
     (45) cycleInstruction -> . instr body
-    (101) empty -> .
+    (106) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
@@ -946,7 +957,7 @@ state 56
     (49) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (48) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 101 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     IF              shift and go to state 67
     ID              shift and go to state 65
     FOR             shift and go to state 64
@@ -1134,14 +1145,14 @@ state 72
     (2) a -> . vars
     (3) a -> . empty
     (6) vars -> . VARS declare
-    (101) empty -> .
+    (106) empty -> .
 
     VARS            shift and go to state 6
-    IF              reduce using rule 101 (empty -> .)
-    ID              reduce using rule 101 (empty -> .)
-    FOR             reduce using rule 101 (empty -> .)
-    WHILE           reduce using rule 101 (empty -> .)
-    }               reduce using rule 101 (empty -> .)
+    IF              reduce using rule 106 (empty -> .)
+    ID              reduce using rule 106 (empty -> .)
+    FOR             reduce using rule 106 (empty -> .)
+    WHILE           reduce using rule 106 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
 
     a                              shift and go to state 94
     vars                           shift and go to state 7
@@ -1160,11 +1171,11 @@ state 74
     (28) param -> type ID . g k
     (39) g -> . , ID
     (40) g -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
     ,               shift and go to state 40
-    ;               reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
     empty                          shift and go to state 41
     g                              shift and go to state 95
@@ -1276,14 +1287,14 @@ state 83
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -1292,19 +1303,19 @@ state 83
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 104
     funcCall                       shift and go to state 108
@@ -1343,14 +1354,14 @@ state 86
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -1359,20 +1370,20 @@ state 86
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 116
     funcCall                       shift and go to state 108
@@ -1422,13 +1433,13 @@ state 88
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
-    (101) empty -> .
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
+    (106) empty -> .
 
     (               shift and go to state 117
     ID              shift and go to state 118
@@ -1437,23 +1448,23 @@ state 88
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 119
     funcCall                       shift and go to state 120
@@ -1470,7 +1481,6 @@ state 89
     (50) assign -> ID assignOptions .
 
     ;               reduce using rule 50 (assign -> ID assignOptions .)
-    )               reduce using rule 50 (assign -> ID assignOptions .)
     *               reduce using rule 50 (assign -> ID assignOptions .)
     /               reduce using rule 50 (assign -> ID assignOptions .)
     +               reduce using rule 50 (assign -> ID assignOptions .)
@@ -1483,6 +1493,7 @@ state 89
     <               reduce using rule 50 (assign -> ID assignOptions .)
     AND             reduce using rule 50 (assign -> ID assignOptions .)
     OR              reduce using rule 50 (assign -> ID assignOptions .)
+    )               reduce using rule 50 (assign -> ID assignOptions .)
     ,               reduce using rule 50 (assign -> ID assignOptions .)
     ]               reduce using rule 50 (assign -> ID assignOptions .)
     :               reduce using rule 50 (assign -> ID assignOptions .)
@@ -1522,14 +1533,14 @@ state 91
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -1538,19 +1549,19 @@ state 91
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 122
     funcCall                       shift and go to state 108
@@ -1572,14 +1583,14 @@ state 92
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -1588,19 +1599,19 @@ state 92
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 123
     funcCall                       shift and go to state 108
@@ -1628,7 +1639,7 @@ state 94
     (43) body -> . cycleInstruction
     (44) body -> . empty
     (45) cycleInstruction -> . instr body
-    (101) empty -> .
+    (106) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
@@ -1642,7 +1653,7 @@ state 94
     (49) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (48) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 101 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     IF              shift and go to state 67
     ID              shift and go to state 65
     FOR             shift and go to state 64
@@ -1665,10 +1676,10 @@ state 95
     (28) param -> type ID g . k
     (29) k -> . ; param
     (30) k -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
     ;               shift and go to state 126
-    )               reduce using rule 101 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
     k                              shift and go to state 125
     empty                          shift and go to state 127
@@ -1685,35 +1696,35 @@ state 97
     (60) struct -> type [ CTED ] . optionalMatrix
     (61) optionalMatrix -> . [ CTED ]
     (62) optionalMatrix -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
     [               shift and go to state 130
-    ;               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
 
     optionalMatrix                 shift and go to state 129
     empty                          shift and go to state 131
 
 state 98
 
-    (99) cte -> TRUE .
+    (104) cte -> TRUE .
 
-    *               reduce using rule 99 (cte -> TRUE .)
-    /               reduce using rule 99 (cte -> TRUE .)
-    +               reduce using rule 99 (cte -> TRUE .)
-    -               reduce using rule 99 (cte -> TRUE .)
-    EQ              reduce using rule 99 (cte -> TRUE .)
-    DIF             reduce using rule 99 (cte -> TRUE .)
-    LTOEQ           reduce using rule 99 (cte -> TRUE .)
-    GTOEQ           reduce using rule 99 (cte -> TRUE .)
-    >               reduce using rule 99 (cte -> TRUE .)
-    <               reduce using rule 99 (cte -> TRUE .)
-    AND             reduce using rule 99 (cte -> TRUE .)
-    OR              reduce using rule 99 (cte -> TRUE .)
-    )               reduce using rule 99 (cte -> TRUE .)
-    ;               reduce using rule 99 (cte -> TRUE .)
-    ,               reduce using rule 99 (cte -> TRUE .)
-    ]               reduce using rule 99 (cte -> TRUE .)
-    :               reduce using rule 99 (cte -> TRUE .)
+    *               reduce using rule 104 (cte -> TRUE .)
+    /               reduce using rule 104 (cte -> TRUE .)
+    +               reduce using rule 104 (cte -> TRUE .)
+    -               reduce using rule 104 (cte -> TRUE .)
+    EQ              reduce using rule 104 (cte -> TRUE .)
+    DIF             reduce using rule 104 (cte -> TRUE .)
+    LTOEQ           reduce using rule 104 (cte -> TRUE .)
+    GTOEQ           reduce using rule 104 (cte -> TRUE .)
+    >               reduce using rule 104 (cte -> TRUE .)
+    <               reduce using rule 104 (cte -> TRUE .)
+    AND             reduce using rule 104 (cte -> TRUE .)
+    OR              reduce using rule 104 (cte -> TRUE .)
+    ]               reduce using rule 104 (cte -> TRUE .)
+    )               reduce using rule 104 (cte -> TRUE .)
+    ;               reduce using rule 104 (cte -> TRUE .)
+    ,               reduce using rule 104 (cte -> TRUE .)
+    :               reduce using rule 104 (cte -> TRUE .)
 
 
 state 99
@@ -1727,14 +1738,14 @@ state 99
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -1743,19 +1754,19 @@ state 99
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 132
     term                           shift and go to state 106
@@ -1772,30 +1783,30 @@ state 100
     (68) cyExpresion -> . AND expresion
     (69) cyExpresion -> . OR expresion
     (70) cyExpresion -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
   ! shift/reduce conflict for AND resolved as shift
   ! shift/reduce conflict for OR resolved as shift
     AND             shift and go to state 133
     OR              shift and go to state 135
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-  ! AND             [ reduce using rule 101 (empty -> .) ]
-  ! OR              [ reduce using rule 101 (empty -> .) ]
+  ! AND             [ reduce using rule 106 (empty -> .) ]
+  ! OR              [ reduce using rule 106 (empty -> .) ]
 
     cyExpresion                    shift and go to state 134
     empty                          shift and go to state 136
@@ -1833,7 +1844,7 @@ state 102
     (76) cySExp -> . > sExp
     (77) cySExp -> . < sExp
     (78) cySExp -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
   ! shift/reduce conflict for EQ resolved as shift
   ! shift/reduce conflict for DIF resolved as shift
@@ -1847,64 +1858,70 @@ state 102
     GTOEQ           shift and go to state 140
     >               shift and go to state 144
     <               shift and go to state 142
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-  ! EQ              [ reduce using rule 101 (empty -> .) ]
-  ! DIF             [ reduce using rule 101 (empty -> .) ]
-  ! LTOEQ           [ reduce using rule 101 (empty -> .) ]
-  ! GTOEQ           [ reduce using rule 101 (empty -> .) ]
-  ! >               [ reduce using rule 101 (empty -> .) ]
-  ! <               [ reduce using rule 101 (empty -> .) ]
+  ! EQ              [ reduce using rule 106 (empty -> .) ]
+  ! DIF             [ reduce using rule 106 (empty -> .) ]
+  ! LTOEQ           [ reduce using rule 106 (empty -> .) ]
+  ! GTOEQ           [ reduce using rule 106 (empty -> .) ]
+  ! >               [ reduce using rule 106 (empty -> .) ]
+  ! <               [ reduce using rule 106 (empty -> .) ]
 
     cySExp                         shift and go to state 137
     empty                          shift and go to state 143
 
 state 103
 
-    (91) fact -> ID . opStruct
+    (91) fact -> ID . opAccess
     (56) funcCall -> ID . ( opParamCall )
-    (93) opStruct -> . [ expresion ] opMatrix
-    (94) opStruct -> . empty
-    (101) empty -> .
+    (93) opAccess -> . opStruct
+    (94) opAccess -> . opDictionary
+    (95) opAccess -> . empty
+    (96) opStruct -> . [ expresion ] opMatrix
+    (99) opDictionary -> . . dictIndex
+    (106) empty -> .
 
     (               shift and go to state 86
-    [               shift and go to state 146
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    ;               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    [               shift and go to state 148
+    .               shift and go to state 149
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
+    opDictionary                   shift and go to state 150
     opStruct                       shift and go to state 145
+    opAccess                       shift and go to state 146
     empty                          shift and go to state 147
 
 state 104
 
     (48) whileCycle -> WHILE ( expresion . ) { body }
 
-    )               shift and go to state 148
+    )               shift and go to state 151
 
 
 state 105
@@ -1936,37 +1953,37 @@ state 106
     (80) cyExp -> . + term
     (81) cyExp -> . - term
     (82) cyExp -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
   ! shift/reduce conflict for + resolved as shift
   ! shift/reduce conflict for - resolved as shift
-    +               shift and go to state 151
-    -               shift and go to state 150
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    +               shift and go to state 154
+    -               shift and go to state 153
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-  ! +               [ reduce using rule 101 (empty -> .) ]
-  ! -               [ reduce using rule 101 (empty -> .) ]
+  ! +               [ reduce using rule 106 (empty -> .) ]
+  ! -               [ reduce using rule 106 (empty -> .) ]
 
-    cyExp                          shift and go to state 149
-    empty                          shift and go to state 152
+    cyExp                          shift and go to state 152
+    empty                          shift and go to state 155
 
 state 107
 
-    (100) cte -> FALSE . c
+    (105) cte -> FALSE . c
     (16) c -> . assign
     (17) c -> . funcCall
     (50) assign -> . ID assignOptions
@@ -1974,7 +1991,7 @@ state 107
 
     ID              shift and go to state 65
 
-    c                              shift and go to state 153
+    c                              shift and go to state 156
     assign                         shift and go to state 70
     funcCall                       shift and go to state 69
 
@@ -2026,48 +2043,48 @@ state 109
 
 state 110
 
-    (98) cte -> CTEF .
+    (103) cte -> CTEF .
 
-    *               reduce using rule 98 (cte -> CTEF .)
-    /               reduce using rule 98 (cte -> CTEF .)
-    +               reduce using rule 98 (cte -> CTEF .)
-    -               reduce using rule 98 (cte -> CTEF .)
-    EQ              reduce using rule 98 (cte -> CTEF .)
-    DIF             reduce using rule 98 (cte -> CTEF .)
-    LTOEQ           reduce using rule 98 (cte -> CTEF .)
-    GTOEQ           reduce using rule 98 (cte -> CTEF .)
-    >               reduce using rule 98 (cte -> CTEF .)
-    <               reduce using rule 98 (cte -> CTEF .)
-    AND             reduce using rule 98 (cte -> CTEF .)
-    OR              reduce using rule 98 (cte -> CTEF .)
-    )               reduce using rule 98 (cte -> CTEF .)
-    ;               reduce using rule 98 (cte -> CTEF .)
-    ,               reduce using rule 98 (cte -> CTEF .)
-    ]               reduce using rule 98 (cte -> CTEF .)
-    :               reduce using rule 98 (cte -> CTEF .)
+    *               reduce using rule 103 (cte -> CTEF .)
+    /               reduce using rule 103 (cte -> CTEF .)
+    +               reduce using rule 103 (cte -> CTEF .)
+    -               reduce using rule 103 (cte -> CTEF .)
+    EQ              reduce using rule 103 (cte -> CTEF .)
+    DIF             reduce using rule 103 (cte -> CTEF .)
+    LTOEQ           reduce using rule 103 (cte -> CTEF .)
+    GTOEQ           reduce using rule 103 (cte -> CTEF .)
+    >               reduce using rule 103 (cte -> CTEF .)
+    <               reduce using rule 103 (cte -> CTEF .)
+    AND             reduce using rule 103 (cte -> CTEF .)
+    OR              reduce using rule 103 (cte -> CTEF .)
+    ]               reduce using rule 103 (cte -> CTEF .)
+    )               reduce using rule 103 (cte -> CTEF .)
+    ;               reduce using rule 103 (cte -> CTEF .)
+    ,               reduce using rule 103 (cte -> CTEF .)
+    :               reduce using rule 103 (cte -> CTEF .)
 
 
 state 111
 
-    (97) cte -> CTED .
+    (102) cte -> CTED .
 
-    *               reduce using rule 97 (cte -> CTED .)
-    /               reduce using rule 97 (cte -> CTED .)
-    +               reduce using rule 97 (cte -> CTED .)
-    -               reduce using rule 97 (cte -> CTED .)
-    EQ              reduce using rule 97 (cte -> CTED .)
-    DIF             reduce using rule 97 (cte -> CTED .)
-    LTOEQ           reduce using rule 97 (cte -> CTED .)
-    GTOEQ           reduce using rule 97 (cte -> CTED .)
-    >               reduce using rule 97 (cte -> CTED .)
-    <               reduce using rule 97 (cte -> CTED .)
-    AND             reduce using rule 97 (cte -> CTED .)
-    OR              reduce using rule 97 (cte -> CTED .)
-    )               reduce using rule 97 (cte -> CTED .)
-    ;               reduce using rule 97 (cte -> CTED .)
-    ,               reduce using rule 97 (cte -> CTED .)
-    ]               reduce using rule 97 (cte -> CTED .)
-    :               reduce using rule 97 (cte -> CTED .)
+    *               reduce using rule 102 (cte -> CTED .)
+    /               reduce using rule 102 (cte -> CTED .)
+    +               reduce using rule 102 (cte -> CTED .)
+    -               reduce using rule 102 (cte -> CTED .)
+    EQ              reduce using rule 102 (cte -> CTED .)
+    DIF             reduce using rule 102 (cte -> CTED .)
+    LTOEQ           reduce using rule 102 (cte -> CTED .)
+    GTOEQ           reduce using rule 102 (cte -> CTED .)
+    >               reduce using rule 102 (cte -> CTED .)
+    <               reduce using rule 102 (cte -> CTED .)
+    AND             reduce using rule 102 (cte -> CTED .)
+    OR              reduce using rule 102 (cte -> CTED .)
+    ]               reduce using rule 102 (cte -> CTED .)
+    )               reduce using rule 102 (cte -> CTED .)
+    ;               reduce using rule 102 (cte -> CTED .)
+    ,               reduce using rule 102 (cte -> CTED .)
+    :               reduce using rule 102 (cte -> CTED .)
 
 
 state 112
@@ -2076,33 +2093,33 @@ state 112
     (84) cyTerm -> . * fact
     (85) cyTerm -> . / fact
     (86) cyTerm -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
   ! shift/reduce conflict for * resolved as shift
   ! shift/reduce conflict for / resolved as shift
-    *               shift and go to state 156
-    /               shift and go to state 157
-    ;               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    *               shift and go to state 159
+    /               shift and go to state 160
+    ;               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-  ! *               [ reduce using rule 101 (empty -> .) ]
-  ! /               [ reduce using rule 101 (empty -> .) ]
+  ! *               [ reduce using rule 106 (empty -> .) ]
+  ! /               [ reduce using rule 106 (empty -> .) ]
 
-    cyTerm                         shift and go to state 154
-    empty                          shift and go to state 155
+    cyTerm                         shift and go to state 157
+    empty                          shift and go to state 158
 
 state 113
 
@@ -2124,14 +2141,14 @@ state 114
 
     (49) forCycle -> FOR ( assign . ; expresion ; assign ) { body }
 
-    ;               shift and go to state 158
+    ;               shift and go to state 161
 
 
 state 115
 
     (56) funcCall -> ID ( opParamCall . )
 
-    )               shift and go to state 159
+    )               shift and go to state 162
 
 
 state 116
@@ -2139,13 +2156,13 @@ state 116
     (57) opParamCall -> expresion . cyParamCall
     (58) cyParamCall -> . , opParamCall
     (59) cyParamCall -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
-    ,               shift and go to state 161
-    )               reduce using rule 101 (empty -> .)
+    ,               shift and go to state 164
+    )               reduce using rule 106 (empty -> .)
 
-    cyParamCall                    shift and go to state 160
-    empty                          shift and go to state 162
+    cyParamCall                    shift and go to state 163
+    empty                          shift and go to state 165
 
 state 117
 
@@ -2155,10 +2172,10 @@ state 117
     (26) j -> . cte
     (27) j -> . ID
     (67) expresion -> . sExp cyExpresion
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (71) sExp -> . exp cySExp
     (79) exp -> . term cyExp
     (83) term -> . fact cyTerm
@@ -2166,37 +2183,37 @@ state 117
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
-    CTES            shift and go to state 164
-    ID              shift and go to state 163
+    CTES            shift and go to state 167
+    ID              shift and go to state 166
     CTED            shift and go to state 111
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
     (               shift and go to state 99
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 132
     funcCall                       shift and go to state 108
-    j                              shift and go to state 165
+    j                              shift and go to state 168
     sExp                           shift and go to state 100
-    cte                            shift and go to state 166
+    cte                            shift and go to state 169
     empty                          shift and go to state 101
     term                           shift and go to state 106
     exp                            shift and go to state 102
@@ -2205,32 +2222,38 @@ state 117
 state 118
 
     (56) funcCall -> ID . ( opParamCall )
-    (91) fact -> ID . opStruct
-    (93) opStruct -> . [ expresion ] opMatrix
-    (94) opStruct -> . empty
-    (101) empty -> .
+    (91) fact -> ID . opAccess
+    (93) opAccess -> . opStruct
+    (94) opAccess -> . opDictionary
+    (95) opAccess -> . empty
+    (96) opStruct -> . [ expresion ] opMatrix
+    (99) opDictionary -> . . dictIndex
+    (106) empty -> .
 
     (               shift and go to state 86
-    [               shift and go to state 146
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    [               shift and go to state 148
+    .               shift and go to state 149
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
+    opDictionary                   shift and go to state 150
     opStruct                       shift and go to state 145
+    opAccess                       shift and go to state 146
     empty                          shift and go to state 147
 
 state 119
@@ -2342,21 +2365,21 @@ state 122
 
     (53) assignOptions -> [ expresion . ] assignMatrix init
 
-    ]               shift and go to state 167
+    ]               shift and go to state 170
 
 
 state 123
 
     (63) condition -> IF ( expresion . ) { body } optionalElse
 
-    )               shift and go to state 168
+    )               shift and go to state 171
 
 
 state 124
 
     (31) function -> FUNC ID opParameters opReturns { a body . }
 
-    }               shift and go to state 169
+    }               shift and go to state 172
 
 
 state 125
@@ -2383,7 +2406,7 @@ state 126
     BOOL            shift and go to state 21
 
     type                           shift and go to state 49
-    param                          shift and go to state 170
+    param                          shift and go to state 173
 
 state 127
 
@@ -2410,7 +2433,7 @@ state 130
 
     (61) optionalMatrix -> [ . CTED ]
 
-    CTED            shift and go to state 171
+    CTED            shift and go to state 174
 
 
 state 131
@@ -2424,7 +2447,7 @@ state 132
 
     (90) fact -> ( expresion . )
 
-    )               shift and go to state 172
+    )               shift and go to state 175
 
 
 state 133
@@ -2438,14 +2461,14 @@ state 133
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2454,25 +2477,25 @@ state 133
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-    expresion                      shift and go to state 173
+    expresion                      shift and go to state 176
     term                           shift and go to state 106
     funcCall                       shift and go to state 108
     sExp                           shift and go to state 100
@@ -2515,14 +2538,14 @@ state 135
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2531,25 +2554,25 @@ state 135
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-    expresion                      shift and go to state 174
+    expresion                      shift and go to state 177
     term                           shift and go to state 106
     funcCall                       shift and go to state 108
     sExp                           shift and go to state 100
@@ -2614,14 +2637,14 @@ state 138
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2630,27 +2653,27 @@ state 138
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     funcCall                       shift and go to state 108
     term                           shift and go to state 106
-    sExp                           shift and go to state 175
+    sExp                           shift and go to state 178
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     exp                            shift and go to state 102
@@ -2666,14 +2689,14 @@ state 139
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2682,27 +2705,27 @@ state 139
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     funcCall                       shift and go to state 108
     term                           shift and go to state 106
-    sExp                           shift and go to state 176
+    sExp                           shift and go to state 179
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     exp                            shift and go to state 102
@@ -2718,14 +2741,14 @@ state 140
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2734,27 +2757,27 @@ state 140
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     funcCall                       shift and go to state 108
     term                           shift and go to state 106
-    sExp                           shift and go to state 177
+    sExp                           shift and go to state 180
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     exp                            shift and go to state 102
@@ -2770,14 +2793,14 @@ state 141
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2786,27 +2809,27 @@ state 141
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     funcCall                       shift and go to state 108
     term                           shift and go to state 106
-    sExp                           shift and go to state 178
+    sExp                           shift and go to state 181
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     exp                            shift and go to state 102
@@ -2822,14 +2845,14 @@ state 142
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2838,27 +2861,27 @@ state 142
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     funcCall                       shift and go to state 108
     term                           shift and go to state 106
-    sExp                           shift and go to state 179
+    sExp                           shift and go to state 182
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     exp                            shift and go to state 102
@@ -2897,14 +2920,14 @@ state 144
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2913,27 +2936,27 @@ state 144
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     funcCall                       shift and go to state 108
     term                           shift and go to state 106
-    sExp                           shift and go to state 180
+    sExp                           shift and go to state 183
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     exp                            shift and go to state 102
@@ -2941,30 +2964,76 @@ state 144
 
 state 145
 
-    (91) fact -> ID opStruct .
+    (93) opAccess -> opStruct .
 
-    ;               reduce using rule 91 (fact -> ID opStruct .)
-    *               reduce using rule 91 (fact -> ID opStruct .)
-    /               reduce using rule 91 (fact -> ID opStruct .)
-    +               reduce using rule 91 (fact -> ID opStruct .)
-    -               reduce using rule 91 (fact -> ID opStruct .)
-    EQ              reduce using rule 91 (fact -> ID opStruct .)
-    DIF             reduce using rule 91 (fact -> ID opStruct .)
-    LTOEQ           reduce using rule 91 (fact -> ID opStruct .)
-    GTOEQ           reduce using rule 91 (fact -> ID opStruct .)
-    >               reduce using rule 91 (fact -> ID opStruct .)
-    <               reduce using rule 91 (fact -> ID opStruct .)
-    AND             reduce using rule 91 (fact -> ID opStruct .)
-    OR              reduce using rule 91 (fact -> ID opStruct .)
-    )               reduce using rule 91 (fact -> ID opStruct .)
-    ,               reduce using rule 91 (fact -> ID opStruct .)
-    ]               reduce using rule 91 (fact -> ID opStruct .)
-    :               reduce using rule 91 (fact -> ID opStruct .)
+    *               reduce using rule 93 (opAccess -> opStruct .)
+    /               reduce using rule 93 (opAccess -> opStruct .)
+    +               reduce using rule 93 (opAccess -> opStruct .)
+    -               reduce using rule 93 (opAccess -> opStruct .)
+    EQ              reduce using rule 93 (opAccess -> opStruct .)
+    DIF             reduce using rule 93 (opAccess -> opStruct .)
+    LTOEQ           reduce using rule 93 (opAccess -> opStruct .)
+    GTOEQ           reduce using rule 93 (opAccess -> opStruct .)
+    >               reduce using rule 93 (opAccess -> opStruct .)
+    <               reduce using rule 93 (opAccess -> opStruct .)
+    AND             reduce using rule 93 (opAccess -> opStruct .)
+    OR              reduce using rule 93 (opAccess -> opStruct .)
+    )               reduce using rule 93 (opAccess -> opStruct .)
+    ,               reduce using rule 93 (opAccess -> opStruct .)
+    ]               reduce using rule 93 (opAccess -> opStruct .)
+    ;               reduce using rule 93 (opAccess -> opStruct .)
+    :               reduce using rule 93 (opAccess -> opStruct .)
 
 
 state 146
 
-    (93) opStruct -> [ . expresion ] opMatrix
+    (91) fact -> ID opAccess .
+
+    ;               reduce using rule 91 (fact -> ID opAccess .)
+    *               reduce using rule 91 (fact -> ID opAccess .)
+    /               reduce using rule 91 (fact -> ID opAccess .)
+    +               reduce using rule 91 (fact -> ID opAccess .)
+    -               reduce using rule 91 (fact -> ID opAccess .)
+    EQ              reduce using rule 91 (fact -> ID opAccess .)
+    DIF             reduce using rule 91 (fact -> ID opAccess .)
+    LTOEQ           reduce using rule 91 (fact -> ID opAccess .)
+    GTOEQ           reduce using rule 91 (fact -> ID opAccess .)
+    >               reduce using rule 91 (fact -> ID opAccess .)
+    <               reduce using rule 91 (fact -> ID opAccess .)
+    AND             reduce using rule 91 (fact -> ID opAccess .)
+    OR              reduce using rule 91 (fact -> ID opAccess .)
+    )               reduce using rule 91 (fact -> ID opAccess .)
+    ,               reduce using rule 91 (fact -> ID opAccess .)
+    ]               reduce using rule 91 (fact -> ID opAccess .)
+    :               reduce using rule 91 (fact -> ID opAccess .)
+
+
+state 147
+
+    (95) opAccess -> empty .
+
+    *               reduce using rule 95 (opAccess -> empty .)
+    /               reduce using rule 95 (opAccess -> empty .)
+    +               reduce using rule 95 (opAccess -> empty .)
+    -               reduce using rule 95 (opAccess -> empty .)
+    EQ              reduce using rule 95 (opAccess -> empty .)
+    DIF             reduce using rule 95 (opAccess -> empty .)
+    LTOEQ           reduce using rule 95 (opAccess -> empty .)
+    GTOEQ           reduce using rule 95 (opAccess -> empty .)
+    >               reduce using rule 95 (opAccess -> empty .)
+    <               reduce using rule 95 (opAccess -> empty .)
+    AND             reduce using rule 95 (opAccess -> empty .)
+    OR              reduce using rule 95 (opAccess -> empty .)
+    )               reduce using rule 95 (opAccess -> empty .)
+    ,               reduce using rule 95 (opAccess -> empty .)
+    ]               reduce using rule 95 (opAccess -> empty .)
+    ;               reduce using rule 95 (opAccess -> empty .)
+    :               reduce using rule 95 (opAccess -> empty .)
+
+
+state 148
+
+    (96) opStruct -> [ . expresion ] opMatrix
     (67) expresion -> . sExp cyExpresion
     (71) sExp -> . exp cySExp
     (79) exp -> . term cyExp
@@ -2973,14 +3042,14 @@ state 146
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -2989,21 +3058,21 @@ state 146
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
 
-    expresion                      shift and go to state 181
+    expresion                      shift and go to state 184
     funcCall                       shift and go to state 108
     term                           shift and go to state 106
     sExp                           shift and go to state 100
@@ -3012,37 +3081,48 @@ state 146
     exp                            shift and go to state 102
     fact                           shift and go to state 112
 
-state 147
+state 149
 
-    (94) opStruct -> empty .
+    (99) opDictionary -> . . dictIndex
+    (100) dictIndex -> . FIRST
+    (101) dictIndex -> . LAST
 
-    ;               reduce using rule 94 (opStruct -> empty .)
-    *               reduce using rule 94 (opStruct -> empty .)
-    /               reduce using rule 94 (opStruct -> empty .)
-    +               reduce using rule 94 (opStruct -> empty .)
-    -               reduce using rule 94 (opStruct -> empty .)
-    EQ              reduce using rule 94 (opStruct -> empty .)
-    DIF             reduce using rule 94 (opStruct -> empty .)
-    LTOEQ           reduce using rule 94 (opStruct -> empty .)
-    GTOEQ           reduce using rule 94 (opStruct -> empty .)
-    >               reduce using rule 94 (opStruct -> empty .)
-    <               reduce using rule 94 (opStruct -> empty .)
-    AND             reduce using rule 94 (opStruct -> empty .)
-    OR              reduce using rule 94 (opStruct -> empty .)
-    )               reduce using rule 94 (opStruct -> empty .)
-    ,               reduce using rule 94 (opStruct -> empty .)
-    ]               reduce using rule 94 (opStruct -> empty .)
-    :               reduce using rule 94 (opStruct -> empty .)
+    FIRST           shift and go to state 185
+    LAST            shift and go to state 186
+
+    dictIndex                      shift and go to state 187
+
+state 150
+
+    (94) opAccess -> opDictionary .
+
+    *               reduce using rule 94 (opAccess -> opDictionary .)
+    /               reduce using rule 94 (opAccess -> opDictionary .)
+    +               reduce using rule 94 (opAccess -> opDictionary .)
+    -               reduce using rule 94 (opAccess -> opDictionary .)
+    EQ              reduce using rule 94 (opAccess -> opDictionary .)
+    DIF             reduce using rule 94 (opAccess -> opDictionary .)
+    LTOEQ           reduce using rule 94 (opAccess -> opDictionary .)
+    GTOEQ           reduce using rule 94 (opAccess -> opDictionary .)
+    >               reduce using rule 94 (opAccess -> opDictionary .)
+    <               reduce using rule 94 (opAccess -> opDictionary .)
+    AND             reduce using rule 94 (opAccess -> opDictionary .)
+    OR              reduce using rule 94 (opAccess -> opDictionary .)
+    )               reduce using rule 94 (opAccess -> opDictionary .)
+    ,               reduce using rule 94 (opAccess -> opDictionary .)
+    ]               reduce using rule 94 (opAccess -> opDictionary .)
+    ;               reduce using rule 94 (opAccess -> opDictionary .)
+    :               reduce using rule 94 (opAccess -> opDictionary .)
 
 
-state 148
+state 151
 
     (48) whileCycle -> WHILE ( expresion ) . { body }
 
-    {               shift and go to state 182
+    {               shift and go to state 188
 
 
-state 149
+state 152
 
     (79) exp -> term cyExp .
 
@@ -3065,7 +3145,7 @@ state 149
     :               reduce using rule 79 (exp -> term cyExp .)
 
 
-state 150
+state 153
 
     (81) cyExp -> - . term
     (83) term -> . fact cyTerm
@@ -3073,14 +3153,14 @@ state 150
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -3089,31 +3169,31 @@ state 150
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-    term                           shift and go to state 183
+    term                           shift and go to state 189
     funcCall                       shift and go to state 108
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     fact                           shift and go to state 112
 
-state 151
+state 154
 
     (80) cyExp -> + . term
     (83) term -> . fact cyTerm
@@ -3121,14 +3201,14 @@ state 151
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -3137,31 +3217,31 @@ state 151
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-    term                           shift and go to state 184
+    term                           shift and go to state 190
     funcCall                       shift and go to state 108
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     fact                           shift and go to state 112
 
-state 152
+state 155
 
     (82) cyExp -> empty .
 
@@ -3184,30 +3264,30 @@ state 152
     :               reduce using rule 82 (cyExp -> empty .)
 
 
-state 153
+state 156
 
-    (100) cte -> FALSE c .
+    (105) cte -> FALSE c .
 
-    *               reduce using rule 100 (cte -> FALSE c .)
-    /               reduce using rule 100 (cte -> FALSE c .)
-    +               reduce using rule 100 (cte -> FALSE c .)
-    -               reduce using rule 100 (cte -> FALSE c .)
-    EQ              reduce using rule 100 (cte -> FALSE c .)
-    DIF             reduce using rule 100 (cte -> FALSE c .)
-    LTOEQ           reduce using rule 100 (cte -> FALSE c .)
-    GTOEQ           reduce using rule 100 (cte -> FALSE c .)
-    >               reduce using rule 100 (cte -> FALSE c .)
-    <               reduce using rule 100 (cte -> FALSE c .)
-    AND             reduce using rule 100 (cte -> FALSE c .)
-    OR              reduce using rule 100 (cte -> FALSE c .)
-    )               reduce using rule 100 (cte -> FALSE c .)
-    ;               reduce using rule 100 (cte -> FALSE c .)
-    ,               reduce using rule 100 (cte -> FALSE c .)
-    ]               reduce using rule 100 (cte -> FALSE c .)
-    :               reduce using rule 100 (cte -> FALSE c .)
+    *               reduce using rule 105 (cte -> FALSE c .)
+    /               reduce using rule 105 (cte -> FALSE c .)
+    +               reduce using rule 105 (cte -> FALSE c .)
+    -               reduce using rule 105 (cte -> FALSE c .)
+    EQ              reduce using rule 105 (cte -> FALSE c .)
+    DIF             reduce using rule 105 (cte -> FALSE c .)
+    LTOEQ           reduce using rule 105 (cte -> FALSE c .)
+    GTOEQ           reduce using rule 105 (cte -> FALSE c .)
+    >               reduce using rule 105 (cte -> FALSE c .)
+    <               reduce using rule 105 (cte -> FALSE c .)
+    AND             reduce using rule 105 (cte -> FALSE c .)
+    OR              reduce using rule 105 (cte -> FALSE c .)
+    ]               reduce using rule 105 (cte -> FALSE c .)
+    )               reduce using rule 105 (cte -> FALSE c .)
+    ;               reduce using rule 105 (cte -> FALSE c .)
+    ,               reduce using rule 105 (cte -> FALSE c .)
+    :               reduce using rule 105 (cte -> FALSE c .)
 
 
-state 154
+state 157
 
     (83) term -> fact cyTerm .
 
@@ -3230,7 +3310,7 @@ state 154
     :               reduce using rule 83 (term -> fact cyTerm .)
 
 
-state 155
+state 158
 
     (86) cyTerm -> empty .
 
@@ -3253,21 +3333,21 @@ state 155
     :               reduce using rule 86 (cyTerm -> empty .)
 
 
-state 156
+state 159
 
     (84) cyTerm -> * . fact
     (87) fact -> . CTES
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -3276,44 +3356,44 @@ state 156
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     funcCall                       shift and go to state 108
     cte                            shift and go to state 109
-    fact                           shift and go to state 185
+    fact                           shift and go to state 191
     empty                          shift and go to state 101
 
-state 157
+state 160
 
     (85) cyTerm -> / . fact
     (87) fact -> . CTES
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -3322,30 +3402,30 @@ state 157
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     funcCall                       shift and go to state 108
     cte                            shift and go to state 109
-    fact                           shift and go to state 186
+    fact                           shift and go to state 192
     empty                          shift and go to state 101
 
-state 158
+state 161
 
     (49) forCycle -> FOR ( assign ; . expresion ; assign ) { body }
     (67) expresion -> . sExp cyExpresion
@@ -3356,14 +3436,14 @@ state 158
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -3372,21 +3452,21 @@ state 158
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    ;               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
 
-    expresion                      shift and go to state 187
+    expresion                      shift and go to state 193
     funcCall                       shift and go to state 108
     term                           shift and go to state 106
     sExp                           shift and go to state 100
@@ -3395,7 +3475,7 @@ state 158
     exp                            shift and go to state 102
     fact                           shift and go to state 112
 
-state 159
+state 162
 
     (56) funcCall -> ID ( opParamCall ) .
 
@@ -3418,14 +3498,14 @@ state 159
     :               reduce using rule 56 (funcCall -> ID ( opParamCall ) .)
 
 
-state 160
+state 163
 
     (57) opParamCall -> expresion cyParamCall .
 
     )               reduce using rule 57 (opParamCall -> expresion cyParamCall .)
 
 
-state 161
+state 164
 
     (58) cyParamCall -> , . opParamCall
     (57) opParamCall -> . expresion cyParamCall
@@ -3437,14 +3517,14 @@ state 161
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -3453,20 +3533,20 @@ state 161
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 116
     funcCall                       shift and go to state 108
@@ -3475,46 +3555,52 @@ state 161
     cte                            shift and go to state 109
     empty                          shift and go to state 101
     exp                            shift and go to state 102
-    opParamCall                    shift and go to state 188
+    opParamCall                    shift and go to state 194
     fact                           shift and go to state 112
 
-state 162
+state 165
 
     (59) cyParamCall -> empty .
 
     )               reduce using rule 59 (cyParamCall -> empty .)
 
 
-state 163
+state 166
 
     (27) j -> ID .
-    (91) fact -> ID . opStruct
+    (91) fact -> ID . opAccess
     (56) funcCall -> ID . ( opParamCall )
-    (93) opStruct -> . [ expresion ] opMatrix
-    (94) opStruct -> . empty
-    (101) empty -> .
+    (93) opAccess -> . opStruct
+    (94) opAccess -> . opDictionary
+    (95) opAccess -> . empty
+    (96) opStruct -> . [ expresion ] opMatrix
+    (99) opDictionary -> . . dictIndex
+    (106) empty -> .
 
     :               reduce using rule 27 (j -> ID .)
     (               shift and go to state 86
-    [               shift and go to state 146
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
+    [               shift and go to state 148
+    .               shift and go to state 149
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
 
+    opDictionary                   shift and go to state 150
     opStruct                       shift and go to state 145
+    opAccess                       shift and go to state 146
     empty                          shift and go to state 147
 
-state 164
+state 167
 
     (25) j -> CTES .
     (87) fact -> CTES .
@@ -3535,14 +3621,14 @@ state 164
     )               reduce using rule 87 (fact -> CTES .)
 
 
-state 165
+state 168
 
     (24) initDict -> = ( j . : j )
 
-    :               shift and go to state 189
+    :               shift and go to state 195
 
 
-state 166
+state 169
 
     (26) j -> cte .
     (88) fact -> cte .
@@ -3563,27 +3649,27 @@ state 166
     )               reduce using rule 88 (fact -> cte .)
 
 
-state 167
+state 170
 
     (53) assignOptions -> [ expresion ] . assignMatrix init
     (54) assignMatrix -> . [ expresion ]
     (55) assignMatrix -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
-    [               shift and go to state 191
-    =               reduce using rule 101 (empty -> .)
+    [               shift and go to state 197
+    =               reduce using rule 106 (empty -> .)
 
-    assignMatrix                   shift and go to state 190
-    empty                          shift and go to state 192
+    assignMatrix                   shift and go to state 196
+    empty                          shift and go to state 198
 
-state 168
+state 171
 
     (63) condition -> IF ( expresion ) . { body } optionalElse
 
-    {               shift and go to state 193
+    {               shift and go to state 199
 
 
-state 169
+state 172
 
     (31) function -> FUNC ID opParameters opReturns { a body } .
 
@@ -3591,21 +3677,21 @@ state 169
     MAIN            reduce using rule 31 (function -> FUNC ID opParameters opReturns { a body } .)
 
 
-state 170
+state 173
 
     (29) k -> ; param .
 
     )               reduce using rule 29 (k -> ; param .)
 
 
-state 171
+state 174
 
     (61) optionalMatrix -> [ CTED . ]
 
-    ]               shift and go to state 194
+    ]               shift and go to state 200
 
 
-state 172
+state 175
 
     (90) fact -> ( expresion ) .
 
@@ -3628,7 +3714,7 @@ state 172
     :               reduce using rule 90 (fact -> ( expresion ) .)
 
 
-state 173
+state 176
 
     (68) cyExpresion -> AND expresion .
 
@@ -3651,7 +3737,7 @@ state 173
     :               reduce using rule 68 (cyExpresion -> AND expresion .)
 
 
-state 174
+state 177
 
     (69) cyExpresion -> OR expresion .
 
@@ -3674,7 +3760,7 @@ state 174
     :               reduce using rule 69 (cyExpresion -> OR expresion .)
 
 
-state 175
+state 178
 
     (72) cySExp -> EQ sExp .
 
@@ -3697,7 +3783,7 @@ state 175
     :               reduce using rule 72 (cySExp -> EQ sExp .)
 
 
-state 176
+state 179
 
     (73) cySExp -> DIF sExp .
 
@@ -3720,7 +3806,7 @@ state 176
     :               reduce using rule 73 (cySExp -> DIF sExp .)
 
 
-state 177
+state 180
 
     (75) cySExp -> GTOEQ sExp .
 
@@ -3743,7 +3829,7 @@ state 177
     :               reduce using rule 75 (cySExp -> GTOEQ sExp .)
 
 
-state 178
+state 181
 
     (74) cySExp -> LTOEQ sExp .
 
@@ -3766,7 +3852,7 @@ state 178
     :               reduce using rule 74 (cySExp -> LTOEQ sExp .)
 
 
-state 179
+state 182
 
     (77) cySExp -> < sExp .
 
@@ -3789,7 +3875,7 @@ state 179
     :               reduce using rule 77 (cySExp -> < sExp .)
 
 
-state 180
+state 183
 
     (76) cySExp -> > sExp .
 
@@ -3812,20 +3898,89 @@ state 180
     :               reduce using rule 76 (cySExp -> > sExp .)
 
 
-state 181
+state 184
 
-    (93) opStruct -> [ expresion . ] opMatrix
+    (96) opStruct -> [ expresion . ] opMatrix
 
-    ]               shift and go to state 195
+    ]               shift and go to state 201
 
 
-state 182
+state 185
+
+    (100) dictIndex -> FIRST .
+
+    *               reduce using rule 100 (dictIndex -> FIRST .)
+    /               reduce using rule 100 (dictIndex -> FIRST .)
+    +               reduce using rule 100 (dictIndex -> FIRST .)
+    -               reduce using rule 100 (dictIndex -> FIRST .)
+    EQ              reduce using rule 100 (dictIndex -> FIRST .)
+    DIF             reduce using rule 100 (dictIndex -> FIRST .)
+    LTOEQ           reduce using rule 100 (dictIndex -> FIRST .)
+    GTOEQ           reduce using rule 100 (dictIndex -> FIRST .)
+    >               reduce using rule 100 (dictIndex -> FIRST .)
+    <               reduce using rule 100 (dictIndex -> FIRST .)
+    AND             reduce using rule 100 (dictIndex -> FIRST .)
+    OR              reduce using rule 100 (dictIndex -> FIRST .)
+    )               reduce using rule 100 (dictIndex -> FIRST .)
+    ,               reduce using rule 100 (dictIndex -> FIRST .)
+    ]               reduce using rule 100 (dictIndex -> FIRST .)
+    ;               reduce using rule 100 (dictIndex -> FIRST .)
+    :               reduce using rule 100 (dictIndex -> FIRST .)
+
+
+state 186
+
+    (101) dictIndex -> LAST .
+
+    *               reduce using rule 101 (dictIndex -> LAST .)
+    /               reduce using rule 101 (dictIndex -> LAST .)
+    +               reduce using rule 101 (dictIndex -> LAST .)
+    -               reduce using rule 101 (dictIndex -> LAST .)
+    EQ              reduce using rule 101 (dictIndex -> LAST .)
+    DIF             reduce using rule 101 (dictIndex -> LAST .)
+    LTOEQ           reduce using rule 101 (dictIndex -> LAST .)
+    GTOEQ           reduce using rule 101 (dictIndex -> LAST .)
+    >               reduce using rule 101 (dictIndex -> LAST .)
+    <               reduce using rule 101 (dictIndex -> LAST .)
+    AND             reduce using rule 101 (dictIndex -> LAST .)
+    OR              reduce using rule 101 (dictIndex -> LAST .)
+    )               reduce using rule 101 (dictIndex -> LAST .)
+    ,               reduce using rule 101 (dictIndex -> LAST .)
+    ]               reduce using rule 101 (dictIndex -> LAST .)
+    ;               reduce using rule 101 (dictIndex -> LAST .)
+    :               reduce using rule 101 (dictIndex -> LAST .)
+
+
+state 187
+
+    (99) opDictionary -> . dictIndex .
+
+    *               reduce using rule 99 (opDictionary -> . dictIndex .)
+    /               reduce using rule 99 (opDictionary -> . dictIndex .)
+    +               reduce using rule 99 (opDictionary -> . dictIndex .)
+    -               reduce using rule 99 (opDictionary -> . dictIndex .)
+    EQ              reduce using rule 99 (opDictionary -> . dictIndex .)
+    DIF             reduce using rule 99 (opDictionary -> . dictIndex .)
+    LTOEQ           reduce using rule 99 (opDictionary -> . dictIndex .)
+    GTOEQ           reduce using rule 99 (opDictionary -> . dictIndex .)
+    >               reduce using rule 99 (opDictionary -> . dictIndex .)
+    <               reduce using rule 99 (opDictionary -> . dictIndex .)
+    AND             reduce using rule 99 (opDictionary -> . dictIndex .)
+    OR              reduce using rule 99 (opDictionary -> . dictIndex .)
+    )               reduce using rule 99 (opDictionary -> . dictIndex .)
+    ;               reduce using rule 99 (opDictionary -> . dictIndex .)
+    ,               reduce using rule 99 (opDictionary -> . dictIndex .)
+    ]               reduce using rule 99 (opDictionary -> . dictIndex .)
+    :               reduce using rule 99 (opDictionary -> . dictIndex .)
+
+
+state 188
 
     (48) whileCycle -> WHILE ( expresion ) { . body }
     (43) body -> . cycleInstruction
     (44) body -> . empty
     (45) cycleInstruction -> . instr body
-    (101) empty -> .
+    (106) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
@@ -3839,13 +3994,13 @@ state 182
     (49) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (48) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 101 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     IF              shift and go to state 67
     ID              shift and go to state 65
     FOR             shift and go to state 64
     WHILE           shift and go to state 58
 
-    body                           shift and go to state 196
+    body                           shift and go to state 202
     c                              shift and go to state 68
     funcCall                       shift and go to state 69
     cycleInstruction               shift and go to state 60
@@ -3857,7 +4012,7 @@ state 182
     empty                          shift and go to state 62
     cycle                          shift and go to state 61
 
-state 183
+state 189
 
     (81) cyExp -> - term .
 
@@ -3880,7 +4035,7 @@ state 183
     :               reduce using rule 81 (cyExp -> - term .)
 
 
-state 184
+state 190
 
     (80) cyExp -> + term .
 
@@ -3903,7 +4058,7 @@ state 184
     :               reduce using rule 80 (cyExp -> + term .)
 
 
-state 185
+state 191
 
     (84) cyTerm -> * fact .
 
@@ -3926,7 +4081,7 @@ state 185
     :               reduce using rule 84 (cyTerm -> * fact .)
 
 
-state 186
+state 192
 
     (85) cyTerm -> / fact .
 
@@ -3949,51 +4104,51 @@ state 186
     :               reduce using rule 85 (cyTerm -> / fact .)
 
 
-state 187
+state 193
 
     (49) forCycle -> FOR ( assign ; expresion . ; assign ) { body }
 
-    ;               shift and go to state 197
+    ;               shift and go to state 203
 
 
-state 188
+state 194
 
     (58) cyParamCall -> , opParamCall .
 
     )               reduce using rule 58 (cyParamCall -> , opParamCall .)
 
 
-state 189
+state 195
 
     (24) initDict -> = ( j : . j )
     (25) j -> . CTES
     (26) j -> . cte
     (27) j -> . ID
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
 
-    CTES            shift and go to state 198
-    ID              shift and go to state 201
+    CTES            shift and go to state 204
+    ID              shift and go to state 207
     CTED            shift and go to state 111
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
 
-    cte                            shift and go to state 200
-    j                              shift and go to state 199
+    cte                            shift and go to state 206
+    j                              shift and go to state 205
 
-state 190
+state 196
 
     (53) assignOptions -> [ expresion ] assignMatrix . init
     (21) init -> . = i
 
-    =               shift and go to state 203
+    =               shift and go to state 209
 
-    init                           shift and go to state 202
+    init                           shift and go to state 208
 
-state 191
+state 197
 
     (54) assignMatrix -> [ . expresion ]
     (67) expresion -> . sExp cyExpresion
@@ -4004,14 +4159,14 @@ state 191
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -4020,21 +4175,21 @@ state 191
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
 
-    expresion                      shift and go to state 204
+    expresion                      shift and go to state 210
     term                           shift and go to state 106
     funcCall                       shift and go to state 108
     sExp                           shift and go to state 100
@@ -4043,20 +4198,20 @@ state 191
     exp                            shift and go to state 102
     fact                           shift and go to state 112
 
-state 192
+state 198
 
     (55) assignMatrix -> empty .
 
     =               reduce using rule 55 (assignMatrix -> empty .)
 
 
-state 193
+state 199
 
     (63) condition -> IF ( expresion ) { . body } optionalElse
     (43) body -> . cycleInstruction
     (44) body -> . empty
     (45) cycleInstruction -> . instr body
-    (101) empty -> .
+    (106) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
@@ -4070,13 +4225,13 @@ state 193
     (49) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (48) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 101 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     IF              shift and go to state 67
     ID              shift and go to state 65
     FOR             shift and go to state 64
     WHILE           shift and go to state 58
 
-    body                           shift and go to state 205
+    body                           shift and go to state 211
     c                              shift and go to state 68
     funcCall                       shift and go to state 69
     cycleInstruction               shift and go to state 60
@@ -4088,87 +4243,87 @@ state 193
     empty                          shift and go to state 62
     cycle                          shift and go to state 61
 
-state 194
+state 200
 
     (61) optionalMatrix -> [ CTED ] .
 
     ;               reduce using rule 61 (optionalMatrix -> [ CTED ] .)
 
 
-state 195
+state 201
 
-    (93) opStruct -> [ expresion ] . opMatrix
-    (95) opMatrix -> . [ expresion ]
-    (96) opMatrix -> . empty
-    (101) empty -> .
+    (96) opStruct -> [ expresion ] . opMatrix
+    (97) opMatrix -> . [ expresion ]
+    (98) opMatrix -> . empty
+    (106) empty -> .
 
-    [               shift and go to state 206
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    ;               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    [               shift and go to state 212
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
-    empty                          shift and go to state 207
-    opMatrix                       shift and go to state 208
+    empty                          shift and go to state 213
+    opMatrix                       shift and go to state 214
 
-state 196
+state 202
 
     (48) whileCycle -> WHILE ( expresion ) { body . }
 
-    }               shift and go to state 209
+    }               shift and go to state 215
 
 
-state 197
+state 203
 
     (49) forCycle -> FOR ( assign ; expresion ; . assign ) { body }
     (50) assign -> . ID assignOptions
 
     ID              shift and go to state 113
 
-    assign                         shift and go to state 210
+    assign                         shift and go to state 216
 
-state 198
+state 204
 
     (25) j -> CTES .
 
     )               reduce using rule 25 (j -> CTES .)
 
 
-state 199
+state 205
 
     (24) initDict -> = ( j : j . )
 
-    )               shift and go to state 211
+    )               shift and go to state 217
 
 
-state 200
+state 206
 
     (26) j -> cte .
 
     )               reduce using rule 26 (j -> cte .)
 
 
-state 201
+state 207
 
     (27) j -> ID .
 
     )               reduce using rule 27 (j -> ID .)
 
 
-state 202
+state 208
 
     (53) assignOptions -> [ expresion ] assignMatrix init .
 
@@ -4191,7 +4346,7 @@ state 202
     :               reduce using rule 53 (assignOptions -> [ expresion ] assignMatrix init .)
 
 
-state 203
+state 209
 
     (21) init -> = . i
     (22) i -> . expresion
@@ -4205,13 +4360,13 @@ state 203
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
-    (101) empty -> .
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
+    (106) empty -> .
 
     ID              shift and go to state 118
     CTES            shift and go to state 105
@@ -4220,23 +4375,23 @@ state 203
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    ;               reduce using rule 101 (empty -> .)
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    )               reduce using rule 101 (empty -> .)
-    ,               reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
-    :               reduce using rule 101 (empty -> .)
+    ;               reduce using rule 106 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    )               reduce using rule 106 (empty -> .)
+    ,               reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
+    :               reduce using rule 106 (empty -> .)
 
     expresion                      shift and go to state 119
     funcCall                       shift and go to state 120
@@ -4248,23 +4403,23 @@ state 203
     exp                            shift and go to state 102
     fact                           shift and go to state 112
 
-state 204
+state 210
 
     (54) assignMatrix -> [ expresion . ]
 
-    ]               shift and go to state 212
+    ]               shift and go to state 218
 
 
-state 205
+state 211
 
     (63) condition -> IF ( expresion ) { body . } optionalElse
 
-    }               shift and go to state 213
+    }               shift and go to state 219
 
 
-state 206
+state 212
 
-    (95) opMatrix -> [ . expresion ]
+    (97) opMatrix -> [ . expresion ]
     (67) expresion -> . sExp cyExpresion
     (71) sExp -> . exp cySExp
     (79) exp -> . term cyExp
@@ -4273,14 +4428,14 @@ state 206
     (88) fact -> . cte
     (89) fact -> . funcCall
     (90) fact -> . ( expresion )
-    (91) fact -> . ID opStruct
+    (91) fact -> . ID opAccess
     (92) fact -> . empty
-    (97) cte -> . CTED
-    (98) cte -> . CTEF
-    (99) cte -> . TRUE
-    (100) cte -> . FALSE c
+    (102) cte -> . CTED
+    (103) cte -> . CTEF
+    (104) cte -> . TRUE
+    (105) cte -> . FALSE c
     (56) funcCall -> . ID ( opParamCall )
-    (101) empty -> .
+    (106) empty -> .
 
     CTES            shift and go to state 105
     (               shift and go to state 99
@@ -4289,21 +4444,21 @@ state 206
     CTEF            shift and go to state 110
     TRUE            shift and go to state 98
     FALSE           shift and go to state 107
-    *               reduce using rule 101 (empty -> .)
-    /               reduce using rule 101 (empty -> .)
-    +               reduce using rule 101 (empty -> .)
-    -               reduce using rule 101 (empty -> .)
-    EQ              reduce using rule 101 (empty -> .)
-    DIF             reduce using rule 101 (empty -> .)
-    LTOEQ           reduce using rule 101 (empty -> .)
-    GTOEQ           reduce using rule 101 (empty -> .)
-    >               reduce using rule 101 (empty -> .)
-    <               reduce using rule 101 (empty -> .)
-    AND             reduce using rule 101 (empty -> .)
-    OR              reduce using rule 101 (empty -> .)
-    ]               reduce using rule 101 (empty -> .)
+    *               reduce using rule 106 (empty -> .)
+    /               reduce using rule 106 (empty -> .)
+    +               reduce using rule 106 (empty -> .)
+    -               reduce using rule 106 (empty -> .)
+    EQ              reduce using rule 106 (empty -> .)
+    DIF             reduce using rule 106 (empty -> .)
+    LTOEQ           reduce using rule 106 (empty -> .)
+    GTOEQ           reduce using rule 106 (empty -> .)
+    >               reduce using rule 106 (empty -> .)
+    <               reduce using rule 106 (empty -> .)
+    AND             reduce using rule 106 (empty -> .)
+    OR              reduce using rule 106 (empty -> .)
+    ]               reduce using rule 106 (empty -> .)
 
-    expresion                      shift and go to state 214
+    expresion                      shift and go to state 220
     term                           shift and go to state 106
     funcCall                       shift and go to state 108
     sExp                           shift and go to state 100
@@ -4312,53 +4467,53 @@ state 206
     exp                            shift and go to state 102
     fact                           shift and go to state 112
 
-state 207
+state 213
 
-    (96) opMatrix -> empty .
+    (98) opMatrix -> empty .
 
-    *               reduce using rule 96 (opMatrix -> empty .)
-    /               reduce using rule 96 (opMatrix -> empty .)
-    +               reduce using rule 96 (opMatrix -> empty .)
-    -               reduce using rule 96 (opMatrix -> empty .)
-    EQ              reduce using rule 96 (opMatrix -> empty .)
-    DIF             reduce using rule 96 (opMatrix -> empty .)
-    LTOEQ           reduce using rule 96 (opMatrix -> empty .)
-    GTOEQ           reduce using rule 96 (opMatrix -> empty .)
-    >               reduce using rule 96 (opMatrix -> empty .)
-    <               reduce using rule 96 (opMatrix -> empty .)
-    AND             reduce using rule 96 (opMatrix -> empty .)
-    OR              reduce using rule 96 (opMatrix -> empty .)
-    )               reduce using rule 96 (opMatrix -> empty .)
-    ,               reduce using rule 96 (opMatrix -> empty .)
-    ]               reduce using rule 96 (opMatrix -> empty .)
-    ;               reduce using rule 96 (opMatrix -> empty .)
-    :               reduce using rule 96 (opMatrix -> empty .)
-
-
-state 208
-
-    (93) opStruct -> [ expresion ] opMatrix .
-
-    ;               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    *               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    /               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    +               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    -               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    EQ              reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    DIF             reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    LTOEQ           reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    GTOEQ           reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    >               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    <               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    AND             reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    OR              reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    )               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    ,               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    ]               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
-    :               reduce using rule 93 (opStruct -> [ expresion ] opMatrix .)
+    *               reduce using rule 98 (opMatrix -> empty .)
+    /               reduce using rule 98 (opMatrix -> empty .)
+    +               reduce using rule 98 (opMatrix -> empty .)
+    -               reduce using rule 98 (opMatrix -> empty .)
+    EQ              reduce using rule 98 (opMatrix -> empty .)
+    DIF             reduce using rule 98 (opMatrix -> empty .)
+    LTOEQ           reduce using rule 98 (opMatrix -> empty .)
+    GTOEQ           reduce using rule 98 (opMatrix -> empty .)
+    >               reduce using rule 98 (opMatrix -> empty .)
+    <               reduce using rule 98 (opMatrix -> empty .)
+    AND             reduce using rule 98 (opMatrix -> empty .)
+    OR              reduce using rule 98 (opMatrix -> empty .)
+    )               reduce using rule 98 (opMatrix -> empty .)
+    ,               reduce using rule 98 (opMatrix -> empty .)
+    ]               reduce using rule 98 (opMatrix -> empty .)
+    ;               reduce using rule 98 (opMatrix -> empty .)
+    :               reduce using rule 98 (opMatrix -> empty .)
 
 
-state 209
+state 214
+
+    (96) opStruct -> [ expresion ] opMatrix .
+
+    ;               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    *               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    /               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    +               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    -               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    EQ              reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    DIF             reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    LTOEQ           reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    GTOEQ           reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    >               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    <               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    AND             reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    OR              reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    )               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    ,               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    ]               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+    :               reduce using rule 96 (opStruct -> [ expresion ] opMatrix .)
+
+
+state 215
 
     (48) whileCycle -> WHILE ( expresion ) { body } .
 
@@ -4369,14 +4524,14 @@ state 209
     }               reduce using rule 48 (whileCycle -> WHILE ( expresion ) { body } .)
 
 
-state 210
+state 216
 
     (49) forCycle -> FOR ( assign ; expresion ; assign . ) { body }
 
-    )               shift and go to state 215
+    )               shift and go to state 221
 
 
-state 211
+state 217
 
     (24) initDict -> = ( j : j ) .
 
@@ -4399,52 +4554,52 @@ state 211
     :               reduce using rule 24 (initDict -> = ( j : j ) .)
 
 
-state 212
+state 218
 
     (54) assignMatrix -> [ expresion ] .
 
     =               reduce using rule 54 (assignMatrix -> [ expresion ] .)
 
 
-state 213
+state 219
 
     (63) condition -> IF ( expresion ) { body } . optionalElse
     (64) optionalElse -> . ELSE { body }
     (65) optionalElse -> . empty
-    (101) empty -> .
+    (106) empty -> .
 
-    ELSE            shift and go to state 216
-    IF              reduce using rule 101 (empty -> .)
-    ID              reduce using rule 101 (empty -> .)
-    FOR             reduce using rule 101 (empty -> .)
-    WHILE           reduce using rule 101 (empty -> .)
-    }               reduce using rule 101 (empty -> .)
+    ELSE            shift and go to state 222
+    IF              reduce using rule 106 (empty -> .)
+    ID              reduce using rule 106 (empty -> .)
+    FOR             reduce using rule 106 (empty -> .)
+    WHILE           reduce using rule 106 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
 
-    optionalElse                   shift and go to state 217
-    empty                          shift and go to state 218
+    optionalElse                   shift and go to state 223
+    empty                          shift and go to state 224
 
-state 214
+state 220
 
-    (95) opMatrix -> [ expresion . ]
+    (97) opMatrix -> [ expresion . ]
 
-    ]               shift and go to state 219
+    ]               shift and go to state 225
 
 
-state 215
+state 221
 
     (49) forCycle -> FOR ( assign ; expresion ; assign ) . { body }
 
-    {               shift and go to state 220
+    {               shift and go to state 226
 
 
-state 216
+state 222
 
     (64) optionalElse -> ELSE . { body }
 
-    {               shift and go to state 221
+    {               shift and go to state 227
 
 
-state 217
+state 223
 
     (63) condition -> IF ( expresion ) { body } optionalElse .
 
@@ -4455,7 +4610,7 @@ state 217
     }               reduce using rule 63 (condition -> IF ( expresion ) { body } optionalElse .)
 
 
-state 218
+state 224
 
     (65) optionalElse -> empty .
 
@@ -4466,36 +4621,36 @@ state 218
     }               reduce using rule 65 (optionalElse -> empty .)
 
 
-state 219
+state 225
 
-    (95) opMatrix -> [ expresion ] .
+    (97) opMatrix -> [ expresion ] .
 
-    *               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    /               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    +               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    -               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    EQ              reduce using rule 95 (opMatrix -> [ expresion ] .)
-    DIF             reduce using rule 95 (opMatrix -> [ expresion ] .)
-    LTOEQ           reduce using rule 95 (opMatrix -> [ expresion ] .)
-    GTOEQ           reduce using rule 95 (opMatrix -> [ expresion ] .)
-    >               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    <               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    AND             reduce using rule 95 (opMatrix -> [ expresion ] .)
-    OR              reduce using rule 95 (opMatrix -> [ expresion ] .)
-    )               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    ,               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    ]               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    ;               reduce using rule 95 (opMatrix -> [ expresion ] .)
-    :               reduce using rule 95 (opMatrix -> [ expresion ] .)
+    *               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    /               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    +               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    -               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    EQ              reduce using rule 97 (opMatrix -> [ expresion ] .)
+    DIF             reduce using rule 97 (opMatrix -> [ expresion ] .)
+    LTOEQ           reduce using rule 97 (opMatrix -> [ expresion ] .)
+    GTOEQ           reduce using rule 97 (opMatrix -> [ expresion ] .)
+    >               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    <               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    AND             reduce using rule 97 (opMatrix -> [ expresion ] .)
+    OR              reduce using rule 97 (opMatrix -> [ expresion ] .)
+    )               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    ,               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    ]               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    ;               reduce using rule 97 (opMatrix -> [ expresion ] .)
+    :               reduce using rule 97 (opMatrix -> [ expresion ] .)
 
 
-state 220
+state 226
 
     (49) forCycle -> FOR ( assign ; expresion ; assign ) { . body }
     (43) body -> . cycleInstruction
     (44) body -> . empty
     (45) cycleInstruction -> . instr body
-    (101) empty -> .
+    (106) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
@@ -4509,13 +4664,13 @@ state 220
     (49) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (48) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 101 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     IF              shift and go to state 67
     ID              shift and go to state 65
     FOR             shift and go to state 64
     WHILE           shift and go to state 58
 
-    body                           shift and go to state 222
+    body                           shift and go to state 228
     c                              shift and go to state 68
     funcCall                       shift and go to state 69
     cycleInstruction               shift and go to state 60
@@ -4527,13 +4682,13 @@ state 220
     empty                          shift and go to state 62
     cycle                          shift and go to state 61
 
-state 221
+state 227
 
     (64) optionalElse -> ELSE { . body }
     (43) body -> . cycleInstruction
     (44) body -> . empty
     (45) cycleInstruction -> . instr body
-    (101) empty -> .
+    (106) empty -> .
     (13) instr -> . c ;
     (14) instr -> . condition
     (15) instr -> . cycle
@@ -4547,13 +4702,13 @@ state 221
     (49) forCycle -> . FOR ( assign ; expresion ; assign ) { body }
     (48) whileCycle -> . WHILE ( expresion ) { body }
 
-    }               reduce using rule 101 (empty -> .)
+    }               reduce using rule 106 (empty -> .)
     IF              shift and go to state 67
     ID              shift and go to state 65
     FOR             shift and go to state 64
     WHILE           shift and go to state 58
 
-    body                           shift and go to state 223
+    body                           shift and go to state 229
     c                              shift and go to state 68
     funcCall                       shift and go to state 69
     cycleInstruction               shift and go to state 60
@@ -4565,21 +4720,21 @@ state 221
     condition                      shift and go to state 66
     cycle                          shift and go to state 61
 
-state 222
+state 228
 
     (49) forCycle -> FOR ( assign ; expresion ; assign ) { body . }
 
-    }               shift and go to state 224
+    }               shift and go to state 230
 
 
-state 223
+state 229
 
     (64) optionalElse -> ELSE { body . }
 
-    }               shift and go to state 225
+    }               shift and go to state 231
 
 
-state 224
+state 230
 
     (49) forCycle -> FOR ( assign ; expresion ; assign ) { body } .
 
@@ -4590,7 +4745,7 @@ state 224
     }               reduce using rule 49 (forCycle -> FOR ( assign ; expresion ; assign ) { body } .)
 
 
-state 225
+state 231
 
     (64) optionalElse -> ELSE { body } .
 
