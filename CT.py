@@ -387,7 +387,7 @@ def p_empty(p):
     pass
 
 def p_error(p):
-    print("Syntax error")
+    raise TypeError("Unknown text '%s'" % (p.value,))
 
 import ply.yacc as yacc
 parser = yacc.yacc()
