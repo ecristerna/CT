@@ -8,6 +8,8 @@ literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':'
 reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
+line = 1
+
 # Tokens
 
 t_ignore = " \t"
@@ -40,7 +42,9 @@ for r in reserved:
     reserved_map[r.lower()] = r
 
 def t_newline(t):
-    r'\n+'
+    r'\n'
+    global line
+    line += 1
 
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
@@ -53,9 +57,13 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : PROGRAM ID "{" opVars opFunctions main "}"'''
+    '''program : PROGRAM errorProgram ID "{" opVars opFunctions main "}"'''
     print("program")
     pass
+
+def p_errorProgram(p):
+	'''errorProgram : '''
+	pass
 
 def p_opVars(p):
 	'''opVars : vars
@@ -387,7 +395,9 @@ def p_empty(p):
     pass
 
 def p_error(p):
-    raise TypeError("Unknown text '%s'" % (p.value,))
+	global line
+	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
+	sys.exit()
 
 import ply.yacc as yacc
 parser = yacc.yacc()
