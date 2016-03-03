@@ -1,4 +1,4 @@
-program a {
+	program  a {
 	func g(int i, j; float h) {
 		vars int i, j;
 			struct k float[4][3];
