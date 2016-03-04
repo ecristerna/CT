@@ -1,7 +1,7 @@
 	program  a {
 	func g(int i, j; float h) {
 		vars int i, j;
-			struct k float[4][3];
+			struct k float[][3];
 			dict p (float : bool);
 	}
 	
