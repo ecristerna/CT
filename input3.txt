@@ -2,15 +2,12 @@
 	vars int a, b;
 		float k;
 		bool p, m, n, o, q;
-		struct k float[9][3]
-		dict p (float : bool);
 
 	func g(int i, j; float h) {
-		vars int i, j;
-			struct k float[9][3];
-			dict p (float : bool);
+		vars int w, j;
 	}
 
 	main {
+		l
 	}
 }

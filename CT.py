@@ -1,4 +1,5 @@
 import sys
+
 sys.path.insert(0,"../..")
 
 if sys.version_info[0] >= 3:
@@ -13,7 +14,7 @@ errorMsg = ""
 currentScope = ""
 vars_global = {}
 vars_local = {}
-dir_procs = {}
+dir_procs = []
 currentType = ""
 currentTable = ""
 currentToken = ""
@@ -75,7 +76,7 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : errorProgram PROGRAM saveType ID "{" opVars opFunctions main "}"'''
+    '''program : errorProgram PROGRAM saveType ID saveProc "{" opVars opFunctions main "}"'''
     print("program")
 
 def p_saveType(p):
@@ -87,6 +88,15 @@ def p_saveType(p):
 	currentType = currentToken
 	print("This is current type --> %s" % currentType)
 
+
+def p_saveProc(p):
+	'''saveProc : '''
+	global vars_global
+	global dir_procs
+	global currentType
+	global currentToken
+	newProc = [currentToken, currentType, None, None, None]
+	dir_procs += [newProc]
 
 def p_errorProgram(p):
 	'''errorProgram : '''
@@ -153,8 +163,15 @@ def p_errorType(p):
 	
 
 def p_main(p):
-	'''main : errorMain MAIN "{" opVars body "}"'''
+	'''main : errorMain MAIN saveMain "{" opVars body "}"'''
 	print("main")
+
+def p_saveMain(p):
+	'''saveMain : '''
+	global dir_procs
+	global currentToken
+	newProc = [currentToken, "main", None, None, None]
+	dir_procs += [newProc]
 	
 
 def p_errorMain(p):
@@ -634,7 +651,7 @@ def p_error(p):
 	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
 	print('%s' % errorMsg)
 	print(vars_global)
-	print(semanticError)
+	print(dir_procs)
 	sys.exit()
 
 import ply.yacc as yacc
