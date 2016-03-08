@@ -3,8 +3,14 @@
 		float k;
 		bool p, m, n, o, q;
 
-	func g(int i, j; float h) {
+	func g(int i, j; float h) returns float {
 		vars int w, j;
+
+		return 1;
+	}
+
+	func g {
+	
 	}
 
 	main {

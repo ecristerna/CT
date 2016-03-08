@@ -95,6 +95,11 @@ def p_saveProc(p):
 	global dir_procs
 	global currentType
 	global currentToken
+	for proc in dir_procs:
+		if proc[0] is currentToken:
+			global semanticError
+			semanticError = "Function '" + currentToken + "' already declared"
+			semanticErrorHalt()
 	newProc = [currentToken, currentType, None, None, None]
 	dir_procs += [newProc]
 
@@ -263,9 +268,14 @@ def p_errorCyParam(p):
 	
 
 def p_function(p):
-	'''function : errorFunction FUNC ID opParameters opReturns  "}" '''
+	'''function : errorFunction FUNC saveType ID saveProc opParameters opReturns  "}" '''
 	print("function")
 	
+
+def p_saveFunction(p):
+	'''saveFunction : '''
+
+
 
 def p_errorFunction(p):
 	'''errorFunction : '''
@@ -297,10 +307,19 @@ def p_errorOpParameters(p):
 	
 
 def p_opReturns(p):
-	'''opReturns : errorOpReturns RETURNS type "{" opVars body return
+	'''opReturns : errorOpReturns RETURNS type saveReturnType "{" opVars body return
 		| "{" opVars body '''
 	print("returns")
 	
+
+def p_saveReturnType(p):
+	'''saveReturnType : '''
+	global vars_global
+	global dir_procs
+	global currentToken
+	dir_procs[len(dir_procs) - 1][3] = currentToken
+
+
 
 def p_errorOpReturns(p):
 	'''errorOpReturns : '''
