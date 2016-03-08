@@ -14,9 +14,10 @@ currentScope = ""
 vars_global = {}
 vars_local = {}
 dir_procs = {}
-currentType = 0
+currentType = ""
 currentTable = ""
 currentToken = ""
+semanticError = ""
 
 # Tokens
 
@@ -74,16 +75,17 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : errorProgram PROGRAM ID saveID "{" opVars opFunctions main "}"'''
+    '''program : errorProgram PROGRAM saveType ID "{" opVars opFunctions main "}"'''
     print("program")
 
-
-def p_saveID(p):
-	'''saveID : '''
+def p_saveType(p):
+	'''saveType : '''
 	global currentScope
 	currentScope = "global"
-	global lexer
-	print(lexer.token)
+	global currentToken
+	global currentType
+	currentType = currentToken
+	print("This is current type --> %s" % currentType)
 
 
 def p_errorProgram(p):
@@ -108,13 +110,26 @@ def p_vars(p):
 	print("vars")
 	
 
-def p_createVarsTable(p):
-	'''createVarsTable : '''
+def p_saveID(p):
+	'''saveID : '''
 	global currentScope
 	global vars_global
 	global vars_local
 	global currentType
-	
+	global currentToken
+	if currentScope is "global":
+		if currentToken in vars_global:
+			global semanticError
+			semanticError = "Varibale '" + currentToken + "' already declared"
+			semanticErrorHalt()
+		else:
+			vars_global[currentToken] = currentType
+
+def semanticErrorHalt():
+	global semanticError
+	global currentToken
+	print("Semantic Error: " + semanticError)
+	sys.exit()
 
 def p_errorVars(p):
 	'''errorVars : '''
@@ -277,7 +292,7 @@ def p_errorOpReturns(p):
 	
 
 def p_basicDeclare(p):
-	'''basicDeclare : type errorBasicDeclare ID cyTypeParam ";" cyDeclare '''
+	'''basicDeclare : saveType type errorBasicDeclare ID cyTypeParam saveID ";" cyDeclare '''
 	print("basic declare")
 	
 
@@ -310,7 +325,7 @@ def p_errorDictDeclare(p):
 	
 
 def p_cyTypeParam(p):
-	'''cyTypeParam : "," ID
+	'''cyTypeParam : "," saveID ID cyTypeParam
 		| empty '''
 	print("cycle type param")
 	
@@ -602,8 +617,8 @@ def p_cte(p):
 		| TRUE 
 		| FALSE '''
 	print("cte")
-	global currentType
-	currentType = p[1]
+	global currentToken
+	print(currentToken)
 	
 
 def p_empty(p):
@@ -618,12 +633,12 @@ def p_error(p):
 	global currentType
 	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
 	print('%s' % errorMsg)
-	print(currentType)
-	print(currentToken)
+	print(vars_global)
+	print(semanticError)
 	sys.exit()
 
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input.txt", "r");
+file = open ("input3.txt", "r");
 yacc.parse(file.read())
