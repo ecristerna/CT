@@ -86,8 +86,6 @@ def p_saveType(p):
 	global currentToken
 	global currentType
 	currentType = currentToken
-	print("This is current type --> %s" % currentType)
-
 
 def p_saveProc(p):
 	'''saveProc : '''
@@ -245,7 +243,7 @@ def p_errorDictType(p):
 	
 
 def p_param(p):
-	'''param : type errorParam ID cyTypeParam cyParam '''
+	'''param : saveType type errorParam ID cyTypeParam cyParam '''
 	print("param")
 	
 
@@ -256,10 +254,16 @@ def p_errorParam(p):
 	
 
 def p_cyParam(p):
-	'''cyParam : errorCyParam ";" param
-		| empty '''
+	'''cyParam : errorCyParam saveID ";" param
+		| empty saveID '''
 	print("cycle param")
 	
+
+def p_cyTypeParam(p):
+	'''cyTypeParam : "," saveID ID cyTypeParam
+		| empty '''
+	print("cycle type param")
+
 
 def p_errorCyParam(p):
 	'''errorCyParam : '''
@@ -358,12 +362,6 @@ def p_errorDictDeclare(p):
 	'''errorDictDeclare : '''
 	global errorMsg
 	errorMsg = "Error in rule DICTDECLARE"
-	
-
-def p_cyTypeParam(p):
-	'''cyTypeParam : "," saveID ID cyTypeParam
-		| empty '''
-	print("cycle type param")
 	
 
 def p_cyDeclare(p):
@@ -669,8 +667,16 @@ def p_error(p):
 	global currentType
 	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
 	print('%s' % errorMsg)
-	print(vars_global)
+	print
+	print("=========================================================")
+	print("This is DIR PROCS --> ")
 	print(dir_procs)
+	print("=========================================================")
+	print("This is VARS GLOBAL --> ")
+	print(vars_global)
+	print("=========================================================")
+	print
+
 	sys.exit()
 
 import ply.yacc as yacc
