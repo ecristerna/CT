@@ -4,9 +4,23 @@
 		bool globalL, globalM, globalN, globalO, gobalQ;
 
 	func g(int firstVar, secondVar; float thirdVar, fourthVar) returns float {
-		vars bool localW, localA;
+		vars int hola, adios;
+			float bye, hello, maybe;
+			bool uno;
 
 		return 1;
+	}
+
+	func jota(int primerVar, segundoVar, terceraVar){
+
+	}
+
+	func ge() {
+		vars int h1;
+	}
+
+	func ab() returns int {
+		return hola;
 	}
 
 	main {

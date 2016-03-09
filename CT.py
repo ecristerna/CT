@@ -11,14 +11,16 @@ tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
 errorMsg = ""
-currentScope = ""
+currentScope = "global"
 vars_global = {}
 vars_local = {}
 dir_procs = []
+param_types = []
 currentType = ""
 currentTable = ""
 currentToken = ""
 semanticError = ""
+declaringParameters = False
 
 # Tokens
 
@@ -76,21 +78,26 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : errorProgram PROGRAM saveType ID saveProc "{" opVars opFunctions main "}"'''
+    '''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}"'''
     print("program")
+
+def p_changeCurrentScope(p):
+    '''changeCurrentScope : '''
+    print("Enter Change Current")
+    global currentScope
+    currentScope = "local"
 
 def p_saveType(p):
 	'''saveType : '''
 	global currentScope
-	currentScope = "global"
 	global currentToken
 	global currentType
 	currentType = currentToken
 
 def p_saveProc(p):
 	'''saveProc : '''
-	global vars_global
 	global dir_procs
+	global currentScope
 	global currentType
 	global currentToken
 	for proc in dir_procs:
@@ -98,7 +105,10 @@ def p_saveProc(p):
 			global semanticError
 			semanticError = "Function '" + currentToken + "' already declared"
 			semanticErrorHalt()
-	newProc = [currentToken, currentType, None, None, None]
+	if currentScope is "global":
+		newProc = [currentToken, currentType, None, None, vars_global]
+	else:
+		newProc = [currentToken, currentType, None, None, vars_local]
 	dir_procs += [newProc]
 
 def p_errorProgram(p):
@@ -130,6 +140,7 @@ def p_saveID(p):
 	global vars_local
 	global currentType
 	global currentToken
+	print("CURRENT SCOPE ---- " + currentScope)
 	if currentScope is "global":
 		if currentToken in vars_global:
 			global semanticError
@@ -137,6 +148,13 @@ def p_saveID(p):
 			semanticErrorHalt()
 		else:
 			vars_global[currentToken] = currentType
+	else:
+		if currentToken in vars_local:
+			global semanticError
+			semanticError = "Variable '" + currentToken + "' already declared on this scope"
+			semanticErrorHalt()
+		else:
+			vars_local[currentToken] = currentType
 
 def semanticErrorHalt():
 	global semanticError
@@ -254,15 +272,23 @@ def p_errorParam(p):
 	
 
 def p_cyParam(p):
-	'''cyParam : errorCyParam saveID ";" param
-		| empty saveID '''
+	'''cyParam : errorCyParam saveID saveTypeParam ";"  param
+		| empty saveID saveTypeParam'''
 	print("cycle param")
 	
 
 def p_cyTypeParam(p):
-	'''cyTypeParam : "," saveID ID cyTypeParam
+	'''cyTypeParam : "," saveID saveTypeParam ID cyTypeParam
 		| empty '''
 	print("cycle type param")
+
+def p_saveTypeParam(p):
+        '''saveTypeParam : '''
+        global declaringParameters 
+        if declaringParameters:
+            global currenType
+            global param_types
+            param_types.append(currentType)
 
 
 def p_errorCyParam(p):
@@ -272,20 +298,21 @@ def p_errorCyParam(p):
 	
 
 def p_function(p):
-	'''function : errorFunction FUNC saveType ID saveProc opParameters opReturns  "}" '''
+	'''function : errorFunction FUNC saveType ID saveProc flagParameters "(" opParameters ")" flagParameters opReturns  "}" clearVarsTable '''
 	print("function")
-	
-
-def p_saveFunction(p):
-	'''saveFunction : '''
-
-
 
 def p_errorFunction(p):
 	'''errorFunction : '''
 	global errorMsg
 	errorMsg = "Error in rule FUNCTION"
-	
+
+def p_clearVarsTable(p):
+    '''clearVarsTable : '''
+    global vars_local
+    print("This is VARS LOCAL --> ")
+    print(vars_local)
+    print("=========================================================")
+    vars_local = {}
 
 def p_return(p):
 	'''return : errorReturn RETURN expresion ";" '''
@@ -299,10 +326,22 @@ def p_errorReturn(p):
 	
 
 def p_opParameters(p):
-	'''opParameters : "(" param ")" errorOpParameters
+	'''opParameters : param saveParamToDirProc errorOpParameters
 					| empty '''
 	print("optional parameters")
-	
+
+def p_flagParameters(p):
+    '''flagParameters : '''
+    global declaringParameters
+    declaringParameters = not declaringParameters
+
+def p_saveParamToDirProc(p):
+        '''saveParamToDirProc : '''
+        global param_types
+        global dir_procs
+        dir_procs[len(dir_procs) - 1][2] = param_types
+        param_types = []
+ 
 
 def p_errorOpParameters(p):
 	'''errorOpParameters : '''
@@ -318,12 +357,9 @@ def p_opReturns(p):
 
 def p_saveReturnType(p):
 	'''saveReturnType : '''
-	global vars_global
 	global dir_procs
 	global currentToken
 	dir_procs[len(dir_procs) - 1][3] = currentToken
-
-
 
 def p_errorOpReturns(p):
 	'''errorOpReturns : '''
@@ -674,6 +710,9 @@ def p_error(p):
 	print("=========================================================")
 	print("This is VARS GLOBAL --> ")
 	print(vars_global)
+	print("=========================================================")
+	print("This is VARS LOCAL --> ")
+	print(vars_local)
 	print("=========================================================")
 	print
 
