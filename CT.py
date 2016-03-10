@@ -1,4 +1,5 @@
 import sys
+
 sys.path.insert(0,"../..")
 
 if sys.version_info[0] >= 3:
@@ -10,6 +11,16 @@ tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
 errorMsg = ""
+currentScope = "global"
+vars_global = {}
+vars_local = {}
+dir_procs = []
+param_types = []
+currentType = ""
+currentTable = ""
+currentToken = ""
+semanticError = ""
+declaringParameters = False
 
 # Tokens
 
@@ -22,21 +33,30 @@ t_LTOEQ = "<="
 def t_CTEF(t):
     r'(\d+)(\.\d+)'
     t.value = float(t.value)
+    global currentToken
+    currentToken = t.value
     return t
 
 def t_CTED(t):
 	r'\d+'
 	t.value = int(t.value)
+	global currentToken
+	currentToken = t.value
 	return t
 
 def t_ID(t):
     r'[A-Za-z_][\w_]*'
     t.type = reserved_map.get(t.value,"ID")
+    global currentToken
+    currentToken = t.value
     return t
 
 def t_CTES(t):
     r'\"([^\\\n]|(\\.))*?\"'
+    global currentToken
+    currentToken = t.value
     return t
+
 
 reserved_map = { }
 for r in reserved:
@@ -58,37 +78,94 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : errorProgram PROGRAM ID "{" opVars opFunctions main "}"'''
-    print("program")
-    pass
+    '''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}" printTables'''
+    # print("program")
+
+def p_changeCurrentScope(p):
+    '''changeCurrentScope : '''
+    global currentScope
+    currentScope = "local"
+
+def p_saveType(p):
+	'''saveType : '''
+	global currentScope
+	global currentToken
+	global currentType
+	currentType = currentToken
+
+def p_saveProc(p):
+	'''saveProc : '''
+	global dir_procs
+	global currentScope
+	global currentType
+	global currentToken
+	for proc in dir_procs:
+		if proc[0] is currentToken:
+			global semanticError
+			semanticError = "Function '" + currentToken + "' already declared"
+			semanticErrorHalt()
+	if currentScope is "global":
+		newProc = [currentToken, currentType, None, None, vars_global]
+	else:
+		newProc = [currentToken, currentType, None, None, vars_local]
+	dir_procs += [newProc]
 
 def p_errorProgram(p):
 	'''errorProgram : '''
 	global errorMsg
 	errorMsg = "Error in rule PROGRAM"
-	pass
+	
 
 def p_opVars(p):
 	'''opVars : vars
 			| empty'''
-	print("optional vars")
-	pass
+	# print("optional vars")
+	
 
 def p_opFunctions(p):
 	'''opFunctions : function opFunctions
 				| empty'''
-	pass
+	
 
 def p_vars(p):
 	'''vars : errorVars VARS declare '''
-	print("vars")
-	pass
+	# print("vars")
+	
+
+def p_saveID(p):
+	'''saveID : '''
+	global currentScope
+	global currentType
+	global currentToken
+	global semanticError
+	if currentScope is "global":
+		global vars_global
+		if currentToken in vars_global:
+			semanticError = "Varibale '" + currentToken + "' already declared"
+			semanticErrorHalt()
+		else:
+			vars_global[currentToken] = currentType
+	else:
+		global vars_local
+		if currentToken in vars_local:
+			semanticError = "Variable '" + currentToken + "' already declared on this scope"
+			semanticErrorHalt()
+		else:
+			vars_local[currentToken] = currentType
+
+def semanticErrorHalt():
+	global semanticError
+	global currentToken
+	global line
+	print("Semantic Error: " + semanticError)
+	print("Line: %d" % line)
+	sys.exit()
 
 def p_errorVars(p):
 	'''errorVars : '''
 	global errorMsg
 	errorMsg = "Error in rule VARS"
-	pass
+	
 
 def p_type(p):
 	'''type : errorType INT
@@ -96,364 +173,406 @@ def p_type(p):
 			| STRING
 			| OBJECT
 			| BOOL'''
-	print("type")
-	pass
+	# print("type")
+
 
 def p_errorType(p):
 	'''errorType : '''
 	global errorMsg
 	errorMsg = "Error in rule TYPE"
-	pass
+	
 
 def p_main(p):
-	'''main : errorMain MAIN "{" opVars body "}"'''
-	print("main")
-	pass
+	'''main : errorMain MAIN saveMain "{" opVars body "}" clearVarsTable'''
+	# print("main")
+
+def p_saveMain(p):
+	'''saveMain : '''
+	global dir_procs
+	global currentToken
+	newProc = [currentToken, "main", None, None, None]
+	dir_procs += [newProc]
+	
 
 def p_errorMain(p):
 	'''errorMain : '''
 	global errorMsg
 	errorMsg = "Error in rule MAIN"
-	pass
+	
 
 def p_instr(p):
 	'''instr : basicStatements ";"
 			| condition
 			| cycle '''
-	print("instr")
-	pass
+	# print("instr")
+	
 def p_basicStatements(p):
 	'''basicStatements : assign
 					| funcCall '''
-	pass
+	
 
 def p_declare(p):
 	'''declare : basicDeclare
 			| structDeclare
 			| dictDeclare '''
-	print("declare")
-	pass
+	# print("declare")
+	
 
 def p_init(p):
 	'''init : "=" initWith errorInit'''
-	print("init")
-	pass
+	# print("init")
+	
 
 def p_errorInit(p):
 	'''errorInit : '''
 	global errorMsg
 	errorMsg = "Error in rule INIT"
-	pass
+	
 
 def p_initWith(p):
 	'''initWith : expresion
 		| funcCall '''
-	print("init with")
-	pass
+	# print("init with")
+	
 
 def p_initDict(p):
 	'''initDict : "=" "(" dictType ":" dictType ")" errorInitDict'''
-	print("initDict")
-	pass
+	# print("initDict")
+	
 
 def p_errorInitDict(p):
 	'''errorInitDict : '''
 	global errorMsg
 	errorMsg = "Error in rule INITDICT"
-	pass
+	
 
 def p_dictType(p):
 	'''dictType : errorDictType CTES
 				| cte
 				| ID '''
-	print("dict type")
-	pass
+	# print("dict type")
+	
 
 def p_errorDictType(p):
 	'''errorDictType : '''
 	global errorMsg
 	errorMsg = "Error in rule DICTTYPE. Dictionary not initialized."
-	pass
+	
 
 def p_param(p):
-	'''param : type errorParam ID cyTypeParam cyParam '''
-	print("param")
-	pass
+	'''param : saveType type errorParam ID cyTypeParam cyParam '''
+	# print("param")
+	
 
 def p_errorParam(p):
 	'''errorParam : '''
 	global errorMsg
 	errorMsg = "Error in rule PARAM"
-	pass
+	
 
 def p_cyParam(p):
-	'''cyParam : errorCyParam ";" param
+	'''cyParam : errorCyParam saveID saveTypeParam ";"  param
+		| empty saveID saveTypeParam'''
+	# print("cycle param")
+	
+
+def p_cyTypeParam(p):
+	'''cyTypeParam : "," saveID saveTypeParam ID cyTypeParam
 		| empty '''
-	print("cycle param")
-	pass
+	# print("cycle type param")
+
+def p_saveTypeParam(p):
+        '''saveTypeParam : '''
+        global declaringParameters 
+        if declaringParameters:
+            global currenType
+            global param_types
+            param_types.append(currentType)
+
 
 def p_errorCyParam(p):
 	'''errorCyParam : '''
 	global errorMsg
 	errorMsg = "Error in rule CYPARAM. Missing ; "
-	pass
+	
 
 def p_function(p):
-	'''function : errorFunction FUNC ID opParameters opReturns  "}" '''
-	print("function")
-	pass
+	'''function : errorFunction FUNC saveType ID saveProc flagParameters "(" opParameters ")" flagParameters opReturns  "}" clearVarsTable '''
+	# print("function")
 
 def p_errorFunction(p):
 	'''errorFunction : '''
 	global errorMsg
 	errorMsg = "Error in rule FUNCTION"
-	pass
+
+def p_clearVarsTable(p):
+    '''clearVarsTable : '''
+    global vars_local
+    print
+    print("=========================================================")
+    print("This is VARS LOCAL --> ")
+    print(vars_local)
+    print("=========================================================")
+    print
+    vars_local = {}
 
 def p_return(p):
 	'''return : errorReturn RETURN expresion ";" '''
-	print("return")
-	pass
+	# print("return")
+	
 
 def p_errorReturn(p):
 	'''errorReturn : '''
 	global errorMsg
 	errorMsg = "Error in rule RETURN"
-	pass
+	
 
 def p_opParameters(p):
-	'''opParameters : "(" param ")" errorOpParameters
+	'''opParameters : param saveParamToDirProc errorOpParameters
 					| empty '''
-	print("optional parameters")
-	pass
+	# print("optional parameters")
+
+def p_flagParameters(p):
+    '''flagParameters : '''
+    global declaringParameters
+    declaringParameters = not declaringParameters
+
+def p_saveParamToDirProc(p):
+    '''saveParamToDirProc : '''
+    global param_types
+    global dir_procs
+    dir_procs[len(dir_procs) - 1][2] = param_types
+    param_types = []
+ 
 
 def p_errorOpParameters(p):
 	'''errorOpParameters : '''
 	global errorMsg
 	errorMsg = "Error in rule OPPARAMETERS"
-	pass
+	
 
 def p_opReturns(p):
-	'''opReturns : errorOpReturns RETURNS type "{" opVars body return
+	'''opReturns : errorOpReturns RETURNS type saveReturnType "{" opVars body return
 		| "{" opVars body '''
-	print("returns")
-	pass
+	# print("returns")
+	
+
+def p_saveReturnType(p):
+	'''saveReturnType : '''
+	global dir_procs
+	global currentToken
+	dir_procs[len(dir_procs) - 1][3] = currentToken
 
 def p_errorOpReturns(p):
 	'''errorOpReturns : '''
 	global errorMsg
 	errorMsg = "Error in rule OPRETURNS"
-	pass
+	
 
 def p_basicDeclare(p):
-	'''basicDeclare : type errorBasicDeclare ID cyTypeParam ";" cyDeclare '''
-	print("basic declare")
-	pass
+	'''basicDeclare : saveType type errorBasicDeclare ID cyTypeParam saveID ";" cyDeclare '''
+	# print("basic declare")
+	
 
 def p_errorBasicDeclare(p):
 	'''errorBasicDeclare : '''
 	global errorMsg
 	errorMsg = "Error in rule BASICDECLARE"
-	pass
+	
 
 def p_structDeclare(p):
 	'''structDeclare : errorStructDeclare STRUCT ID struct ";" cyDeclare '''
-	print("struct declare")
-	pass
+	# print("struct declare")
+	
 
 def p_errorStructDeclare(p):
 	'''errorStructDeclare : '''
 	global errorMsg
 	errorMsg = "Error in rule STRUCTDECLARE"
-	pass
+	
 
 def p_dictDeclare(p):
 	'''dictDeclare : errorDictDeclare DICT ID dict ";" cyDeclare '''
-	print("dict declare")
-	pass
+	# print("dict declare")
+	
 
 def p_errorDictDeclare(p):
 	'''errorDictDeclare : '''
 	global errorMsg
 	errorMsg = "Error in rule DICTDECLARE"
-	pass
-
-def p_cyTypeParam(p):
-	'''cyTypeParam : "," ID
-		| empty '''
-	print("cycle type param")
-	pass
+	
 
 def p_cyDeclare(p):
 	'''cyDeclare : declare
 		| empty '''
-	print("cycle declare")
-	pass
+	# print("cycle declare")
+	
 
 def p_body(p):
 	'''body : errorBody cyInstruction
 			| empty '''
-	print("body")
-	pass
+	# print("body")
+	
 
 def p_errorBody(p):
 	'''errorBody : '''
 	global errorMsg
 	errorMsg = "Error in rule BODY"
-	pass
+	
 
 def p_cyInstruction(p):
 	'''cyInstruction : instr body '''
-	print("cycleInstruction")
-	pass
+	# print("cycleInstruction")
+	
 
 def p_cycle(p):
 	'''cycle : forCycle
 			| whileCycle '''
-	print("cycle")
-	pass
+	# print("cycle")
+	
 
 def p_whileCycle(p):
 	'''whileCycle : errorWhileCycle WHILE "(" expresion ")" "{" body "}" '''
-	print("while")
-	pass
+	# print("while")
+	
 
 def p_errorWhileCycle(p):
 	'''errorWhileCycle : '''
 	global errorMsg
 	errorMsg = "Error in rule WHILECYCLE"
-	pass
+	
 
 def p_forCycle(p):
 	'''forCycle : errorForCycle FOR "(" assign ";" expresion ";" assign ")" "{" body "}" '''
-	print("for")
-	pass
+	# print("for")
+	
 
 def p_errorForCycle(p):
 	'''errorForCycle : '''
 	global errorMsg
 	errorMsg = "Error in rule FORCYCLE"
-	pass
+	
 
 def p_assign(p):
 	'''assign :  ID errorAssign assignOptions '''
-	print("assign")
-	pass
+	# print("assign")
+	
     
 def p_errorAssign(p):
 	'''errorAssign : '''
 	global errorMsg
 	errorMsg = "Error in rule ASSIGN"
-	pass
+	
 
 def p_assignOptions(p):
 	'''assignOptions : init
 					| initDict
 					| "[" expresion "]" assignMatrix init '''
-	print("assignOptions")
-	pass
+	# print("assignOptions")
+	
 
 def p_assignMatrix(p):
 	'''assignMatrix : "[" expresion "]" errorAssignMatrix
 					| empty '''
-	print("assignMatrix")
-	pass
+	# print("assignMatrix")
+	
 
 def p_errorAssignMatrix(p):
 	'''errorAssignMatrix : '''
 	global errorMsg
 	errorMsg = "Error in rule ASSIGNMATRIX"
-	pass
+	
 
 def p_funcCall(p):
 	'''funcCall : ID "(" opParamCall ")" '''
-	print("funcCall")
-	pass
+	# print("funcCall")
+	
 
 def p_opParamCall(p):
 	'''opParamCall : expresion cyParamCall
 				| empty '''
-	print("function parameter")
-	pass
+	# print("function parameter")
+	
 
 def p_cyParamCall(p):
 	'''cyParamCall : "," expresion cyParamCall
 				| empty '''
-	print("cycle parameter call")
-	pass
+	# print("cycle parameter call")
+	
 
 def p_struct(p):
 	'''struct : structType "[" CTED "]" optionalMatrix '''
-	print("struct")
-	pass
+	# print("struct")
+	
 
 def p_structType(p):
 	'''structType : type
 				| DICT dict '''
-	print("struct type")
-	pass
+	# print("struct type")
+	
 
 def p_optionalMatrix(p):
 	'''optionalMatrix : "[" CTED "]"
 					| empty '''
-	print("matrix")
-	pass
+	# print("matrix")
+	
 
 def p_condition(p):
 	'''condition : errorCondition IF "(" expresion ")" "{" body "}" optionalElse '''
-	print("condition")
-	pass
+	# print("condition")
+	
 
 def p_errorCondition(p):
 	'''errorCondition : '''
 	global errorMsg
 	errorMsg = "Error in rule CONDITION"
-	pass
+	
 
 def p_optionalElse(p):
 	'''optionalElse : errorElse ELSE "{" body "}"
 					| empty '''
-	print("else")
-	pass
+	# print("else")
+	
 
 def p_errorElse(p):
 	'''errorElse : '''
 	global errorMsg
 	errorMsg = "Error in rule OPTIONALELSE"
-	pass
+	
 
 def p_dict(p):
 	'''dict : errorDict "(" type ":" type ")" '''
-	print("dict")
-	pass
+	# print("dict")
+	
 
 def p_errorDict(p):
 	'''errorDict : '''
 	global errorMsg
 	errorMsg = "Error in rule DICT"
-	pass
+	
 
 def p_expresion(p):
 	'''expresion : sExp cyExpresion errorExpresion '''
-	print("expresion")
-	pass
+	# print("expresion")
+	
 
 def p_errorExpresion(p):
 	'''errorExpresion : '''
 	global errorMsg
 	errorMsg = "Error in rule EXPRESION"
-	pass
+	
 
 def p_cyExpresion(p):
 	'''cyExpresion : AND expresion
 				| OR expresion
 				| empty '''
-	print("cycle expresion")
-	pass
+	# print("cycle expresion")
+	
 
 def p_sExp(p):
 	'''sExp : exp errorOpSExp opSExp '''
-	print("super expresion")
-	pass
+	# print("super expresion")
+	
 
 def p_opSExp(p):
 	'''opSExp :  EQ exp
@@ -463,44 +582,44 @@ def p_opSExp(p):
 			| ">" exp
 			| "<" exp
 			| empty '''
-	print("cycle super expresion")
-	pass
+	# print("cycle super expresion")
+	
 
 def p_errorOpSExp(p):
 	'''errorOpSExp : '''
 	global errorMsg
 	errorMsg = "Error in rule OPSEXP"
-	pass
+	
 
 def p_exp(p):
 	'''exp : term errorCyExp cyExp '''
-	print("exp")
-	pass
+	# print("exp")
+	
 
 def p_cyExp(p):
 	'''cyExp : "+" term
 			| "-" term
 			| empty '''
-	print("cycle exp")
-	pass
+	# print("cycle exp")
+	
 
 def p_errorCyExp(p):
 	'''errorCyExp : '''
 	global errorMsg
 	errorMsg = "Error in rule CYEXP"
-	pass
+	
 
 def p_term(p):
 	'''term : fact cyTerm '''
-	print("term")
-	pass
+	# print("term")
+	
 
 def p_cyTerm(p):
 	'''cyTerm : "*" errorFact fact
 			| "/" fact
 			| empty '''
-	print("cycle term")
-	pass
+	# print("cycle term")
+	
 
 def p_fact(p):
 	'''fact : CTES
@@ -508,74 +627,89 @@ def p_fact(p):
 			| funcCall
 			| "(" expresion ")"
 			| ID opAccess errorOpAccess'''
-	print("fact")
-	pass	
+	# print("fact")
 
+		
 def p_errorFact(p):
 	'''errorFact : '''
 	global errorMsg
 	errorMsg = "Error in rule ERRORFACT"
-	pass
+	
 
 def p_opAccess(p):
 	'''opAccess : opStruct
 				| opDictionary
 				| empty '''
-	print("optional access")
-	pass
+	# print("optional access")
+	
 
 def p_errorOpAccess(p):
 	'''errorOpAccess : '''
 	global errorMsg
 	errorMsg = "Error in rule ERROROPACCESS"
-	pass
+	
 
 def p_opStruct(p):
 	'''opStruct : errorOpStruct "[" expresion "]" opMatrix '''
-	print("optional struct")
-	pass
+	# print("optional struct")
+	
 
 def p_errorOpStruct(p):
 	'''errorOpStruct : '''
 	global errorMsg
 	errorMsg = "Error in rule OPSTRUCT"
-	pass
+	
 
 def p_opMatrix(p):
 	'''opMatrix : errorOpMatrix "[" expresion "]"
 				| empty '''
-	print("optional matrix")
-	pass
+	# print("optional matrix")
+	
 
 def p_errorOpMatrix(p):
 	'''errorOpMatrix : '''
 	global errorMsg
 	errorMsg = "Error in rule ERROROPMATRIX"
-	pass
+	
 
 def p_opDictionary(p):
 	'''opDictionary : "." dictIndex '''
-	print("optional dictionary")
-	pass
+	# print("optional dictionary")
+	
 
 def p_dictIndex(p):
 	'''dictIndex : FIRST
 				| LAST '''
-	print("dictionary index")
-	pass
+	# print("dictionary index")
+	
 
 def p_cte(p):
 	'''cte : CTED
 		| CTEF 
 		| TRUE 
 		| FALSE '''
-	print("cte")
-	pass
+	# print("cte")
+	
 
 def p_empty(p):
-    'empty : '
-    print("EMPTY")
-    pass
+    '''empty : '''
+    # print("EMPTY")
+    
+
+def p_printTables(p):
+	'''printTables : '''
+	print
+	print("=========================================================")
+	print("This is DIR PROCS --> ")
+	print(dir_procs)
+	print("=========================================================")
+	print
+	print
+	print("=========================================================")
+	print("This is VARS GLOBAL --> ")
+	print(vars_global)
+	print("=========================================================")
+	print
 
 def p_error(p):
 	global line
@@ -587,5 +721,5 @@ def p_error(p):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input.txt", "r");
+file = open ("input3.txt", "r");
 yacc.parse(file.read())

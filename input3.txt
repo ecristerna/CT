@@ -1,52 +1,29 @@
 	program  a {
-	func g(int i, j; float h) {
-		vars int i, j;
-			struct k float[][3];
-			dict p (float : bool);
-	}
-	
-	func g(int i, j; float h; bool h, p) returns object {
-		vars int i, j;
-			struct k float[4][3];
-			dict p (float : bool);
+	vars int globalA, globalB;
+		float globalK;
+		bool globalL, globalM, globalN, globalO, gobalQ;
 
-		g();
-		return 0.9;
+	func g(int firstVar, secondVar; float thirdVar, fourthVar) returns float {
+		vars int hola, adios;
+			float bye, hello, maybe;
+			bool uno;
+
+		return 1;
 	}
 
-	func g {
+	func jota(int primerVar, segundoVar, terceraVar){
+
 	}
 
-	func g returns bool {
-		return 0;
+	func ge() {
+		vars int h1;
+	}
+
+	func ab() returns int {
+		return hola;
 	}
 
 	main {
-		vars int i, j;
-			struct k float[4][3];
-			dict p (float : bool);
-			struct r dict(int : int)[4][3];
-
-		i = 3 * 3;
-		k[i][0] = i;
-		p = (5.89 : "hola");
-
-		if (a > 7 and (8 <= 9 or j != o)) {
-			if (8 != i) {
-				j = f(id, "no");
-			}
-		} else {
-			j = (4 + 5) * (7 + (3 / 2));
-		}
-
-		while(i >= 0) {
-			i = k[1];
-		}
-
-		for (i = 0; i < 10; k[i] = k[i] + 1) {
-			g(parameter);
-			i = p.first;
-			i = p.last;
-		}
+		
 	}
 }
