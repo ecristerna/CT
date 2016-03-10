@@ -3,7 +3,7 @@ Created by PLY version 3.8 (http://www.dabeaz.com/ply)
 Grammar
 
 Rule 0     S' -> program
-Rule 1     program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main }
+Rule 1     program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main } printTables
 Rule 2     changeCurrentScope -> <empty>
 Rule 3     saveType -> <empty>
 Rule 4     saveProc -> <empty>
@@ -21,7 +21,7 @@ Rule 15    type -> STRING
 Rule 16    type -> OBJECT
 Rule 17    type -> BOOL
 Rule 18    errorType -> <empty>
-Rule 19    main -> errorMain MAIN saveMain { opVars body }
+Rule 19    main -> errorMain MAIN saveMain { opVars body } clearVarsTable
 Rule 20    saveMain -> <empty>
 Rule 21    errorMain -> <empty>
 Rule 22    instr -> basicStatements ;
@@ -153,6 +153,7 @@ Rule 147   cte -> CTEF
 Rule 148   cte -> TRUE
 Rule 149   cte -> FALSE
 Rule 150   empty -> <empty>
+Rule 151   printTables -> <empty>
 
 Terminals, with rules where they appear
 
@@ -215,7 +216,7 @@ basicDeclare         : 27
 basicStatements      : 22
 body                 : 19 58 59 73 76 78 98 100
 changeCurrentScope   : 1
-clearVarsTable       : 48
+clearVarsTable       : 19 48
 condition            : 23
 cte                  : 37 129
 cyDeclare            : 62 64 66
@@ -289,6 +290,7 @@ opVars               : 1 19 58 59
 optionalElse         : 98
 optionalMatrix       : 93
 param                : 42 53
+printTables          : 1
 program              : 0
 return               : 58
 sExp                 : 105
@@ -312,7 +314,7 @@ Parsing method: LALR
 state 0
 
     (0) S' -> . program
-    (1) program -> . errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main }
+    (1) program -> . errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main } printTables
     (5) errorProgram -> .
 
     PROGRAM         reduce using rule 5 (errorProgram -> .)
@@ -328,14 +330,14 @@ state 1
 
 state 2
 
-    (1) program -> errorProgram . PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main }
+    (1) program -> errorProgram . PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main } printTables
 
     PROGRAM         shift and go to state 3
 
 
 state 3
 
-    (1) program -> errorProgram PROGRAM . saveType ID saveProc { opVars changeCurrentScope opFunctions main }
+    (1) program -> errorProgram PROGRAM . saveType ID saveProc { opVars changeCurrentScope opFunctions main } printTables
     (3) saveType -> .
 
     ID              reduce using rule 3 (saveType -> .)
@@ -344,14 +346,14 @@ state 3
 
 state 4
 
-    (1) program -> errorProgram PROGRAM saveType . ID saveProc { opVars changeCurrentScope opFunctions main }
+    (1) program -> errorProgram PROGRAM saveType . ID saveProc { opVars changeCurrentScope opFunctions main } printTables
 
     ID              shift and go to state 5
 
 
 state 5
 
-    (1) program -> errorProgram PROGRAM saveType ID . saveProc { opVars changeCurrentScope opFunctions main }
+    (1) program -> errorProgram PROGRAM saveType ID . saveProc { opVars changeCurrentScope opFunctions main } printTables
     (4) saveProc -> .
 
     {               reduce using rule 4 (saveProc -> .)
@@ -360,14 +362,14 @@ state 5
 
 state 6
 
-    (1) program -> errorProgram PROGRAM saveType ID saveProc . { opVars changeCurrentScope opFunctions main }
+    (1) program -> errorProgram PROGRAM saveType ID saveProc . { opVars changeCurrentScope opFunctions main } printTables
 
     {               shift and go to state 7
 
 
 state 7
 
-    (1) program -> errorProgram PROGRAM saveType ID saveProc { . opVars changeCurrentScope opFunctions main }
+    (1) program -> errorProgram PROGRAM saveType ID saveProc { . opVars changeCurrentScope opFunctions main } printTables
     (6) opVars -> . vars
     (7) opVars -> . empty
     (10) vars -> . errorVars VARS declare
@@ -387,19 +389,19 @@ state 8
 
     (6) opVars -> vars .
 
-    RETURN          reduce using rule 6 (opVars -> vars .)
     ID              reduce using rule 6 (opVars -> vars .)
     IF              reduce using rule 6 (opVars -> vars .)
     FOR             reduce using rule 6 (opVars -> vars .)
     WHILE           reduce using rule 6 (opVars -> vars .)
+    }               reduce using rule 6 (opVars -> vars .)
     MAIN            reduce using rule 6 (opVars -> vars .)
     FUNC            reduce using rule 6 (opVars -> vars .)
-    }               reduce using rule 6 (opVars -> vars .)
+    RETURN          reduce using rule 6 (opVars -> vars .)
 
 
 state 9
 
-    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars . changeCurrentScope opFunctions main }
+    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars . changeCurrentScope opFunctions main } printTables
     (2) changeCurrentScope -> .
 
     MAIN            reduce using rule 2 (changeCurrentScope -> .)
@@ -418,19 +420,19 @@ state 11
 
     (7) opVars -> empty .
 
-    RETURN          reduce using rule 7 (opVars -> empty .)
     ID              reduce using rule 7 (opVars -> empty .)
     IF              reduce using rule 7 (opVars -> empty .)
     FOR             reduce using rule 7 (opVars -> empty .)
     WHILE           reduce using rule 7 (opVars -> empty .)
+    }               reduce using rule 7 (opVars -> empty .)
     MAIN            reduce using rule 7 (opVars -> empty .)
     FUNC            reduce using rule 7 (opVars -> empty .)
-    }               reduce using rule 7 (opVars -> empty .)
+    RETURN          reduce using rule 7 (opVars -> empty .)
 
 
 state 12
 
-    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope . opFunctions main }
+    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope . opFunctions main } printTables
     (8) opFunctions -> . function opFunctions
     (9) opFunctions -> . empty
     (48) function -> . errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
@@ -440,10 +442,10 @@ state 12
     MAIN            reduce using rule 150 (empty -> .)
     FUNC            reduce using rule 49 (errorFunction -> .)
 
-    function                       shift and go to state 14
-    errorFunction                  shift and go to state 15
-    empty                          shift and go to state 16
-    opFunctions                    shift and go to state 17
+    function                       shift and go to state 16
+    errorFunction                  shift and go to state 17
+    empty                          shift and go to state 15
+    opFunctions                    shift and go to state 14
 
 state 13
 
@@ -476,6 +478,24 @@ state 13
 
 state 14
 
+    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions . main } printTables
+    (19) main -> . errorMain MAIN saveMain { opVars body } clearVarsTable
+    (21) errorMain -> .
+
+    MAIN            reduce using rule 21 (errorMain -> .)
+
+    main                           shift and go to state 25
+    errorMain                      shift and go to state 26
+
+state 15
+
+    (9) opFunctions -> empty .
+
+    MAIN            reduce using rule 9 (opFunctions -> empty .)
+
+
+state 16
+
     (8) opFunctions -> function . opFunctions
     (8) opFunctions -> . function opFunctions
     (9) opFunctions -> . empty
@@ -486,35 +506,17 @@ state 14
     MAIN            reduce using rule 150 (empty -> .)
     FUNC            reduce using rule 49 (errorFunction -> .)
 
-    function                       shift and go to state 14
-    errorFunction                  shift and go to state 15
-    empty                          shift and go to state 16
-    opFunctions                    shift and go to state 25
-
-state 15
-
-    (48) function -> errorFunction . FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
-
-    FUNC            shift and go to state 26
-
-
-state 16
-
-    (9) opFunctions -> empty .
-
-    MAIN            reduce using rule 9 (opFunctions -> empty .)
-
+    function                       shift and go to state 16
+    errorFunction                  shift and go to state 17
+    empty                          shift and go to state 15
+    opFunctions                    shift and go to state 27
 
 state 17
 
-    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions . main }
-    (19) main -> . errorMain MAIN saveMain { opVars body }
-    (21) errorMain -> .
+    (48) function -> errorFunction . FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
 
-    MAIN            reduce using rule 21 (errorMain -> .)
+    FUNC            shift and go to state 28
 
-    main                           shift and go to state 27
-    errorMain                      shift and go to state 28
 
 state 18
 
@@ -595,45 +597,45 @@ state 24
 
     (10) vars -> errorVars VARS declare .
 
-    }               reduce using rule 10 (vars -> errorVars VARS declare .)
+    RETURN          reduce using rule 10 (vars -> errorVars VARS declare .)
     ID              reduce using rule 10 (vars -> errorVars VARS declare .)
     IF              reduce using rule 10 (vars -> errorVars VARS declare .)
     FOR             reduce using rule 10 (vars -> errorVars VARS declare .)
     WHILE           reduce using rule 10 (vars -> errorVars VARS declare .)
+    }               reduce using rule 10 (vars -> errorVars VARS declare .)
     MAIN            reduce using rule 10 (vars -> errorVars VARS declare .)
     FUNC            reduce using rule 10 (vars -> errorVars VARS declare .)
-    RETURN          reduce using rule 10 (vars -> errorVars VARS declare .)
 
 
 state 25
+
+    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main . } printTables
+
+    }               shift and go to state 37
+
+
+state 26
+
+    (19) main -> errorMain . MAIN saveMain { opVars body } clearVarsTable
+
+    MAIN            shift and go to state 38
+
+
+state 27
 
     (8) opFunctions -> function opFunctions .
 
     MAIN            reduce using rule 8 (opFunctions -> function opFunctions .)
 
 
-state 26
+state 28
 
     (48) function -> errorFunction FUNC . saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
     (3) saveType -> .
 
     ID              reduce using rule 3 (saveType -> .)
 
-    saveType                       shift and go to state 37
-
-state 27
-
-    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main . }
-
-    }               shift and go to state 38
-
-
-state 28
-
-    (19) main -> errorMain . MAIN saveMain { opVars body }
-
-    MAIN            shift and go to state 39
-
+    saveType                       shift and go to state 39
 
 state 29
 
@@ -641,9 +643,9 @@ state 29
 
     ID              reduce using rule 14 (type -> FLOAT .)
     {               reduce using rule 14 (type -> FLOAT .)
+    [               reduce using rule 14 (type -> FLOAT .)
     )               reduce using rule 14 (type -> FLOAT .)
     :               reduce using rule 14 (type -> FLOAT .)
-    [               reduce using rule 14 (type -> FLOAT .)
 
 
 state 30
@@ -652,9 +654,9 @@ state 30
 
     ID              reduce using rule 15 (type -> STRING .)
     {               reduce using rule 15 (type -> STRING .)
+    [               reduce using rule 15 (type -> STRING .)
     )               reduce using rule 15 (type -> STRING .)
     :               reduce using rule 15 (type -> STRING .)
-    [               reduce using rule 15 (type -> STRING .)
 
 
 state 31
@@ -670,9 +672,9 @@ state 32
 
     ID              reduce using rule 16 (type -> OBJECT .)
     {               reduce using rule 16 (type -> OBJECT .)
+    [               reduce using rule 16 (type -> OBJECT .)
     )               reduce using rule 16 (type -> OBJECT .)
     :               reduce using rule 16 (type -> OBJECT .)
-    [               reduce using rule 16 (type -> OBJECT .)
 
 
 state 33
@@ -681,9 +683,9 @@ state 33
 
     ID              reduce using rule 17 (type -> BOOL .)
     {               reduce using rule 17 (type -> BOOL .)
+    [               reduce using rule 17 (type -> BOOL .)
     )               reduce using rule 17 (type -> BOOL .)
     :               reduce using rule 17 (type -> BOOL .)
-    [               reduce using rule 17 (type -> BOOL .)
 
 
 state 34
@@ -711,26 +713,28 @@ state 36
 
 state 37
 
-    (48) function -> errorFunction FUNC saveType . ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
+    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main } . printTables
+    (151) printTables -> .
 
-    ID              shift and go to state 44
+    $end            reduce using rule 151 (printTables -> .)
 
+    printTables                    shift and go to state 44
 
 state 38
 
-    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main } .
-
-    $end            reduce using rule 1 (program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main } .)
-
-
-state 39
-
-    (19) main -> errorMain MAIN . saveMain { opVars body }
+    (19) main -> errorMain MAIN . saveMain { opVars body } clearVarsTable
     (20) saveMain -> .
 
     {               reduce using rule 20 (saveMain -> .)
 
     saveMain                       shift and go to state 45
+
+state 39
+
+    (48) function -> errorFunction FUNC saveType . ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
+
+    ID              shift and go to state 46
+
 
 state 40
 
@@ -738,16 +742,16 @@ state 40
 
     ID              reduce using rule 13 (type -> errorType INT .)
     {               reduce using rule 13 (type -> errorType INT .)
+    [               reduce using rule 13 (type -> errorType INT .)
     )               reduce using rule 13 (type -> errorType INT .)
     :               reduce using rule 13 (type -> errorType INT .)
-    [               reduce using rule 13 (type -> errorType INT .)
 
 
 state 41
 
     (62) basicDeclare -> saveType type errorBasicDeclare . ID cyTypeParam saveID ; cyDeclare
 
-    ID              shift and go to state 46
+    ID              shift and go to state 47
 
 
 state 42
@@ -758,8 +762,8 @@ state 42
 
     (               reduce using rule 104 (errorDict -> .)
 
-    dict                           shift and go to state 48
-    errorDict                      shift and go to state 47
+    dict                           shift and go to state 49
+    errorDict                      shift and go to state 48
 
 state 43
 
@@ -774,76 +778,83 @@ state 43
     (17) type -> . BOOL
     (18) errorType -> .
 
-    DICT            shift and go to state 51
+    DICT            shift and go to state 52
     FLOAT           shift and go to state 29
     STRING          shift and go to state 30
     OBJECT          shift and go to state 32
     BOOL            shift and go to state 33
     INT             reduce using rule 18 (errorType -> .)
 
-    structType                     shift and go to state 49
-    struct                         shift and go to state 50
+    structType                     shift and go to state 50
+    struct                         shift and go to state 51
     errorType                      shift and go to state 31
-    type                           shift and go to state 52
+    type                           shift and go to state 53
 
 state 44
 
-    (48) function -> errorFunction FUNC saveType ID . saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
-    (4) saveProc -> .
+    (1) program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main } printTables .
 
-    (               reduce using rule 4 (saveProc -> .)
+    $end            reduce using rule 1 (program -> errorProgram PROGRAM saveType ID saveProc { opVars changeCurrentScope opFunctions main } printTables .)
 
-    saveProc                       shift and go to state 53
 
 state 45
 
-    (19) main -> errorMain MAIN saveMain . { opVars body }
+    (19) main -> errorMain MAIN saveMain . { opVars body } clearVarsTable
 
     {               shift and go to state 54
 
 
 state 46
 
+    (48) function -> errorFunction FUNC saveType ID . saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
+    (4) saveProc -> .
+
+    (               reduce using rule 4 (saveProc -> .)
+
+    saveProc                       shift and go to state 55
+
+state 47
+
     (62) basicDeclare -> saveType type errorBasicDeclare ID . cyTypeParam saveID ; cyDeclare
     (44) cyTypeParam -> . , saveID saveTypeParam ID cyTypeParam
     (45) cyTypeParam -> . empty
     (150) empty -> .
 
-    ,               shift and go to state 55
+    ,               shift and go to state 56
     ;               reduce using rule 150 (empty -> .)
 
-    empty                          shift and go to state 56
-    cyTypeParam                    shift and go to state 57
-
-state 47
-
-    (103) dict -> errorDict . ( type : type )
-
-    (               shift and go to state 58
-
+    empty                          shift and go to state 57
+    cyTypeParam                    shift and go to state 58
 
 state 48
 
-    (66) dictDeclare -> errorDictDeclare DICT ID dict . ; cyDeclare
+    (103) dict -> errorDict . ( type : type )
 
-    ;               shift and go to state 59
+    (               shift and go to state 59
 
 
 state 49
 
-    (93) struct -> structType . [ CTED ] optionalMatrix
+    (66) dictDeclare -> errorDictDeclare DICT ID dict . ; cyDeclare
 
-    [               shift and go to state 60
+    ;               shift and go to state 60
 
 
 state 50
 
-    (64) structDeclare -> errorStructDeclare STRUCT ID struct . ; cyDeclare
+    (93) struct -> structType . [ CTED ] optionalMatrix
 
-    ;               shift and go to state 61
+    [               shift and go to state 61
 
 
 state 51
+
+    (64) structDeclare -> errorStructDeclare STRUCT ID struct . ; cyDeclare
+
+    ;               shift and go to state 62
+
+
+state 52
 
     (95) structType -> DICT . dict
     (103) dict -> . errorDict ( type : type )
@@ -851,28 +862,19 @@ state 51
 
     (               reduce using rule 104 (errorDict -> .)
 
-    dict                           shift and go to state 62
-    errorDict                      shift and go to state 47
+    dict                           shift and go to state 63
+    errorDict                      shift and go to state 48
 
-state 52
+state 53
 
     (94) structType -> type .
 
     [               reduce using rule 94 (structType -> type .)
 
 
-state 53
-
-    (48) function -> errorFunction FUNC saveType ID saveProc . flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
-    (55) flagParameters -> .
-
-    (               reduce using rule 55 (flagParameters -> .)
-
-    flagParameters                 shift and go to state 63
-
 state 54
 
-    (19) main -> errorMain MAIN saveMain { . opVars body }
+    (19) main -> errorMain MAIN saveMain { . opVars body } clearVarsTable
     (6) opVars -> . vars
     (7) opVars -> . empty
     (10) vars -> . errorVars VARS declare
@@ -893,14 +895,23 @@ state 54
 
 state 55
 
+    (48) function -> errorFunction FUNC saveType ID saveProc . flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable
+    (55) flagParameters -> .
+
+    (               reduce using rule 55 (flagParameters -> .)
+
+    flagParameters                 shift and go to state 65
+
+state 56
+
     (44) cyTypeParam -> , . saveID saveTypeParam ID cyTypeParam
     (11) saveID -> .
 
     ID              reduce using rule 11 (saveID -> .)
 
-    saveID                         shift and go to state 65
+    saveID                         shift and go to state 66
 
-state 56
+state 57
 
     (45) cyTypeParam -> empty .
 
@@ -908,16 +919,16 @@ state 56
     )               reduce using rule 45 (cyTypeParam -> empty .)
 
 
-state 57
+state 58
 
     (62) basicDeclare -> saveType type errorBasicDeclare ID cyTypeParam . saveID ; cyDeclare
     (11) saveID -> .
 
     ;               reduce using rule 11 (saveID -> .)
 
-    saveID                         shift and go to state 66
+    saveID                         shift and go to state 67
 
-state 58
+state 59
 
     (103) dict -> errorDict ( . type : type )
     (13) type -> . errorType INT
@@ -934,9 +945,9 @@ state 58
     INT             reduce using rule 18 (errorType -> .)
 
     errorType                      shift and go to state 31
-    type                           shift and go to state 67
+    type                           shift and go to state 68
 
-state 59
+state 60
 
     (66) dictDeclare -> errorDictDeclare DICT ID dict ; . cyDeclare
     (68) cyDeclare -> . declare
@@ -969,23 +980,23 @@ state 59
     DICT            reduce using rule 67 (errorDictDeclare -> .)
 
     dictDeclare                    shift and go to state 18
-    cyDeclare                      shift and go to state 68
+    cyDeclare                      shift and go to state 69
     saveType                       shift and go to state 19
     structDeclare                  shift and go to state 21
     errorDictDeclare               shift and go to state 20
     errorStructDeclare             shift and go to state 22
     basicDeclare                   shift and go to state 23
-    declare                        shift and go to state 69
-    empty                          shift and go to state 70
+    declare                        shift and go to state 70
+    empty                          shift and go to state 71
 
-state 60
+state 61
 
     (93) struct -> structType [ . CTED ] optionalMatrix
 
-    CTED            shift and go to state 71
+    CTED            shift and go to state 72
 
 
-state 61
+state 62
 
     (64) structDeclare -> errorStructDeclare STRUCT ID struct ; . cyDeclare
     (68) cyDeclare -> . declare
@@ -1018,32 +1029,25 @@ state 61
     DICT            reduce using rule 67 (errorDictDeclare -> .)
 
     dictDeclare                    shift and go to state 18
-    cyDeclare                      shift and go to state 72
+    cyDeclare                      shift and go to state 73
     saveType                       shift and go to state 19
     errorDictDeclare               shift and go to state 20
     structDeclare                  shift and go to state 21
     basicDeclare                   shift and go to state 23
-    declare                        shift and go to state 69
-    empty                          shift and go to state 70
+    declare                        shift and go to state 70
+    empty                          shift and go to state 71
     errorStructDeclare             shift and go to state 22
 
-state 62
+state 63
 
     (95) structType -> DICT dict .
 
     [               reduce using rule 95 (structType -> DICT dict .)
 
 
-state 63
-
-    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters . ( opParameters ) flagParameters opReturns } clearVarsTable
-
-    (               shift and go to state 73
-
-
 state 64
 
-    (19) main -> errorMain MAIN saveMain { opVars . body }
+    (19) main -> errorMain MAIN saveMain { opVars . body } clearVarsTable
     (70) body -> . errorBody cyInstruction
     (71) body -> . empty
     (72) errorBody -> .
@@ -1061,28 +1065,35 @@ state 64
 
 state 65
 
+    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters . ( opParameters ) flagParameters opReturns } clearVarsTable
+
+    (               shift and go to state 77
+
+
+state 66
+
     (44) cyTypeParam -> , saveID . saveTypeParam ID cyTypeParam
     (46) saveTypeParam -> .
 
     ID              reduce using rule 46 (saveTypeParam -> .)
 
-    saveTypeParam                  shift and go to state 77
-
-state 66
-
-    (62) basicDeclare -> saveType type errorBasicDeclare ID cyTypeParam saveID . ; cyDeclare
-
-    ;               shift and go to state 78
-
+    saveTypeParam                  shift and go to state 78
 
 state 67
 
-    (103) dict -> errorDict ( type . : type )
+    (62) basicDeclare -> saveType type errorBasicDeclare ID cyTypeParam saveID . ; cyDeclare
 
-    :               shift and go to state 79
+    ;               shift and go to state 79
 
 
 state 68
+
+    (103) dict -> errorDict ( type . : type )
+
+    :               shift and go to state 80
+
+
+state 69
 
     (66) dictDeclare -> errorDictDeclare DICT ID dict ; cyDeclare .
 
@@ -1096,7 +1107,7 @@ state 68
     RETURN          reduce using rule 66 (dictDeclare -> errorDictDeclare DICT ID dict ; cyDeclare .)
 
 
-state 69
+state 70
 
     (68) cyDeclare -> declare .
 
@@ -1110,7 +1121,7 @@ state 69
     RETURN          reduce using rule 68 (cyDeclare -> declare .)
 
 
-state 70
+state 71
 
     (69) cyDeclare -> empty .
 
@@ -1124,14 +1135,14 @@ state 70
     RETURN          reduce using rule 69 (cyDeclare -> empty .)
 
 
-state 71
+state 72
 
     (93) struct -> structType [ CTED . ] optionalMatrix
 
-    ]               shift and go to state 80
+    ]               shift and go to state 81
 
 
-state 72
+state 73
 
     (64) structDeclare -> errorStructDeclare STRUCT ID struct ; cyDeclare .
 
@@ -1145,32 +1156,11 @@ state 72
     RETURN          reduce using rule 64 (structDeclare -> errorStructDeclare STRUCT ID struct ; cyDeclare .)
 
 
-state 73
-
-    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( . opParameters ) flagParameters opReturns } clearVarsTable
-    (53) opParameters -> . param saveParamToDirProc errorOpParameters
-    (54) opParameters -> . empty
-    (40) param -> . saveType type errorParam ID cyTypeParam cyParam
-    (150) empty -> .
-    (3) saveType -> .
-
-    )               reduce using rule 150 (empty -> .)
-    FLOAT           reduce using rule 3 (saveType -> .)
-    STRING          reduce using rule 3 (saveType -> .)
-    OBJECT          reduce using rule 3 (saveType -> .)
-    BOOL            reduce using rule 3 (saveType -> .)
-    INT             reduce using rule 3 (saveType -> .)
-
-    opParameters                   shift and go to state 83
-    param                          shift and go to state 81
-    saveType                       shift and go to state 82
-    empty                          shift and go to state 84
-
 state 74
 
-    (19) main -> errorMain MAIN saveMain { opVars body . }
+    (19) main -> errorMain MAIN saveMain { opVars body . } clearVarsTable
 
-    }               shift and go to state 85
+    }               shift and go to state 82
 
 
 state 75
@@ -1193,23 +1183,23 @@ state 75
     (79) errorForCycle -> .
     (77) errorWhileCycle -> .
 
-    ID              shift and go to state 95
+    ID              shift and go to state 92
     IF              reduce using rule 99 (errorCondition -> .)
     FOR             reduce using rule 79 (errorForCycle -> .)
     WHILE           reduce using rule 77 (errorWhileCycle -> .)
 
-    errorWhileCycle                shift and go to state 89
-    funcCall                       shift and go to state 96
-    instr                          shift and go to state 86
-    forCycle                       shift and go to state 88
-    assign                         shift and go to state 98
-    whileCycle                     shift and go to state 87
-    basicStatements                shift and go to state 93
-    errorForCycle                  shift and go to state 94
-    errorCondition                 shift and go to state 97
-    cyInstruction                  shift and go to state 90
-    condition                      shift and go to state 91
-    cycle                          shift and go to state 92
+    errorWhileCycle                shift and go to state 86
+    funcCall                       shift and go to state 93
+    instr                          shift and go to state 83
+    forCycle                       shift and go to state 85
+    assign                         shift and go to state 95
+    whileCycle                     shift and go to state 84
+    basicStatements                shift and go to state 90
+    errorForCycle                  shift and go to state 91
+    errorCondition                 shift and go to state 94
+    cyInstruction                  shift and go to state 87
+    condition                      shift and go to state 88
+    cycle                          shift and go to state 89
 
 state 76
 
@@ -1221,12 +1211,33 @@ state 76
 
 state 77
 
-    (44) cyTypeParam -> , saveID saveTypeParam . ID cyTypeParam
+    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( . opParameters ) flagParameters opReturns } clearVarsTable
+    (53) opParameters -> . param saveParamToDirProc errorOpParameters
+    (54) opParameters -> . empty
+    (40) param -> . saveType type errorParam ID cyTypeParam cyParam
+    (150) empty -> .
+    (3) saveType -> .
 
-    ID              shift and go to state 99
+    )               reduce using rule 150 (empty -> .)
+    FLOAT           reduce using rule 3 (saveType -> .)
+    STRING          reduce using rule 3 (saveType -> .)
+    OBJECT          reduce using rule 3 (saveType -> .)
+    BOOL            reduce using rule 3 (saveType -> .)
+    INT             reduce using rule 3 (saveType -> .)
 
+    opParameters                   shift and go to state 98
+    param                          shift and go to state 96
+    saveType                       shift and go to state 97
+    empty                          shift and go to state 99
 
 state 78
+
+    (44) cyTypeParam -> , saveID saveTypeParam . ID cyTypeParam
+
+    ID              shift and go to state 100
+
+
+state 79
 
     (62) basicDeclare -> saveType type errorBasicDeclare ID cyTypeParam saveID ; . cyDeclare
     (68) cyDeclare -> . declare
@@ -1259,16 +1270,16 @@ state 78
     DICT            reduce using rule 67 (errorDictDeclare -> .)
 
     dictDeclare                    shift and go to state 18
-    cyDeclare                      shift and go to state 100
+    cyDeclare                      shift and go to state 101
     basicDeclare                   shift and go to state 23
     saveType                       shift and go to state 19
     errorDictDeclare               shift and go to state 20
-    empty                          shift and go to state 70
+    empty                          shift and go to state 71
     structDeclare                  shift and go to state 21
     errorStructDeclare             shift and go to state 22
-    declare                        shift and go to state 69
+    declare                        shift and go to state 70
 
-state 79
+state 80
 
     (103) dict -> errorDict ( type : . type )
     (13) type -> . errorType INT
@@ -1285,31 +1296,169 @@ state 79
     INT             reduce using rule 18 (errorType -> .)
 
     errorType                      shift and go to state 31
-    type                           shift and go to state 101
+    type                           shift and go to state 102
 
-state 80
+state 81
 
     (93) struct -> structType [ CTED ] . optionalMatrix
     (96) optionalMatrix -> . [ CTED ]
     (97) optionalMatrix -> . empty
     (150) empty -> .
 
-    [               shift and go to state 103
+    [               shift and go to state 104
     ;               reduce using rule 150 (empty -> .)
 
-    empty                          shift and go to state 104
-    optionalMatrix                 shift and go to state 102
+    empty                          shift and go to state 105
+    optionalMatrix                 shift and go to state 103
 
-state 81
+state 82
+
+    (19) main -> errorMain MAIN saveMain { opVars body } . clearVarsTable
+    (50) clearVarsTable -> .
+
+    }               reduce using rule 50 (clearVarsTable -> .)
+
+    clearVarsTable                 shift and go to state 106
+
+state 83
+
+    (73) cyInstruction -> instr . body
+    (70) body -> . errorBody cyInstruction
+    (71) body -> . empty
+    (72) errorBody -> .
+    (150) empty -> .
+
+    ID              reduce using rule 72 (errorBody -> .)
+    IF              reduce using rule 72 (errorBody -> .)
+    FOR             reduce using rule 72 (errorBody -> .)
+    WHILE           reduce using rule 72 (errorBody -> .)
+    }               reduce using rule 150 (empty -> .)
+    RETURN          reduce using rule 150 (empty -> .)
+
+    body                           shift and go to state 107
+    errorBody                      shift and go to state 75
+    empty                          shift and go to state 76
+
+state 84
+
+    (75) cycle -> whileCycle .
+
+    ID              reduce using rule 75 (cycle -> whileCycle .)
+    IF              reduce using rule 75 (cycle -> whileCycle .)
+    FOR             reduce using rule 75 (cycle -> whileCycle .)
+    WHILE           reduce using rule 75 (cycle -> whileCycle .)
+    }               reduce using rule 75 (cycle -> whileCycle .)
+    RETURN          reduce using rule 75 (cycle -> whileCycle .)
+
+
+state 85
+
+    (74) cycle -> forCycle .
+
+    ID              reduce using rule 74 (cycle -> forCycle .)
+    IF              reduce using rule 74 (cycle -> forCycle .)
+    FOR             reduce using rule 74 (cycle -> forCycle .)
+    WHILE           reduce using rule 74 (cycle -> forCycle .)
+    }               reduce using rule 74 (cycle -> forCycle .)
+    RETURN          reduce using rule 74 (cycle -> forCycle .)
+
+
+state 86
+
+    (76) whileCycle -> errorWhileCycle . WHILE ( expresion ) { body }
+
+    WHILE           shift and go to state 108
+
+
+state 87
+
+    (70) body -> errorBody cyInstruction .
+
+    }               reduce using rule 70 (body -> errorBody cyInstruction .)
+    RETURN          reduce using rule 70 (body -> errorBody cyInstruction .)
+
+
+state 88
+
+    (23) instr -> condition .
+
+    ID              reduce using rule 23 (instr -> condition .)
+    IF              reduce using rule 23 (instr -> condition .)
+    FOR             reduce using rule 23 (instr -> condition .)
+    WHILE           reduce using rule 23 (instr -> condition .)
+    }               reduce using rule 23 (instr -> condition .)
+    RETURN          reduce using rule 23 (instr -> condition .)
+
+
+state 89
+
+    (24) instr -> cycle .
+
+    ID              reduce using rule 24 (instr -> cycle .)
+    IF              reduce using rule 24 (instr -> cycle .)
+    FOR             reduce using rule 24 (instr -> cycle .)
+    WHILE           reduce using rule 24 (instr -> cycle .)
+    }               reduce using rule 24 (instr -> cycle .)
+    RETURN          reduce using rule 24 (instr -> cycle .)
+
+
+state 90
+
+    (22) instr -> basicStatements . ;
+
+    ;               shift and go to state 109
+
+
+state 91
+
+    (78) forCycle -> errorForCycle . FOR ( assign ; expresion ; assign ) { body }
+
+    FOR             shift and go to state 110
+
+
+state 92
+
+    (80) assign -> ID . errorAssign assignOptions
+    (88) funcCall -> ID . ( opParamCall )
+    (81) errorAssign -> .
+
+    (               shift and go to state 111
+    [               reduce using rule 81 (errorAssign -> .)
+    =               reduce using rule 81 (errorAssign -> .)
+
+    errorAssign                    shift and go to state 112
+
+state 93
+
+    (26) basicStatements -> funcCall .
+
+    ;               reduce using rule 26 (basicStatements -> funcCall .)
+
+
+state 94
+
+    (98) condition -> errorCondition . IF ( expresion ) { body } optionalElse
+
+    IF              shift and go to state 113
+
+
+state 95
+
+    (25) basicStatements -> assign .
+
+    ;               reduce using rule 25 (basicStatements -> assign .)
+
+
+state 96
 
     (53) opParameters -> param . saveParamToDirProc errorOpParameters
     (56) saveParamToDirProc -> .
 
     )               reduce using rule 56 (saveParamToDirProc -> .)
 
-    saveParamToDirProc             shift and go to state 105
+    saveParamToDirProc             shift and go to state 114
 
-state 82
+state 97
 
     (40) param -> saveType . type errorParam ID cyTypeParam cyParam
     (13) type -> . errorType INT
@@ -1325,174 +1474,38 @@ state 82
     BOOL            shift and go to state 33
     INT             reduce using rule 18 (errorType -> .)
 
-    type                           shift and go to state 106
+    type                           shift and go to state 115
     errorType                      shift and go to state 31
 
-state 83
+state 98
 
     (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters . ) flagParameters opReturns } clearVarsTable
 
-    )               shift and go to state 107
+    )               shift and go to state 116
 
 
-state 84
+state 99
 
     (54) opParameters -> empty .
 
     )               reduce using rule 54 (opParameters -> empty .)
 
 
-state 85
-
-    (19) main -> errorMain MAIN saveMain { opVars body } .
-
-    }               reduce using rule 19 (main -> errorMain MAIN saveMain { opVars body } .)
-
-
-state 86
-
-    (73) cyInstruction -> instr . body
-    (70) body -> . errorBody cyInstruction
-    (71) body -> . empty
-    (72) errorBody -> .
-    (150) empty -> .
-
-    ID              reduce using rule 72 (errorBody -> .)
-    IF              reduce using rule 72 (errorBody -> .)
-    FOR             reduce using rule 72 (errorBody -> .)
-    WHILE           reduce using rule 72 (errorBody -> .)
-    }               reduce using rule 150 (empty -> .)
-    RETURN          reduce using rule 150 (empty -> .)
-
-    body                           shift and go to state 108
-    errorBody                      shift and go to state 75
-    empty                          shift and go to state 76
-
-state 87
-
-    (75) cycle -> whileCycle .
-
-    ID              reduce using rule 75 (cycle -> whileCycle .)
-    IF              reduce using rule 75 (cycle -> whileCycle .)
-    FOR             reduce using rule 75 (cycle -> whileCycle .)
-    WHILE           reduce using rule 75 (cycle -> whileCycle .)
-    }               reduce using rule 75 (cycle -> whileCycle .)
-    RETURN          reduce using rule 75 (cycle -> whileCycle .)
-
-
-state 88
-
-    (74) cycle -> forCycle .
-
-    ID              reduce using rule 74 (cycle -> forCycle .)
-    IF              reduce using rule 74 (cycle -> forCycle .)
-    FOR             reduce using rule 74 (cycle -> forCycle .)
-    WHILE           reduce using rule 74 (cycle -> forCycle .)
-    }               reduce using rule 74 (cycle -> forCycle .)
-    RETURN          reduce using rule 74 (cycle -> forCycle .)
-
-
-state 89
-
-    (76) whileCycle -> errorWhileCycle . WHILE ( expresion ) { body }
-
-    WHILE           shift and go to state 109
-
-
-state 90
-
-    (70) body -> errorBody cyInstruction .
-
-    }               reduce using rule 70 (body -> errorBody cyInstruction .)
-    RETURN          reduce using rule 70 (body -> errorBody cyInstruction .)
-
-
-state 91
-
-    (23) instr -> condition .
-
-    ID              reduce using rule 23 (instr -> condition .)
-    IF              reduce using rule 23 (instr -> condition .)
-    FOR             reduce using rule 23 (instr -> condition .)
-    WHILE           reduce using rule 23 (instr -> condition .)
-    }               reduce using rule 23 (instr -> condition .)
-    RETURN          reduce using rule 23 (instr -> condition .)
-
-
-state 92
-
-    (24) instr -> cycle .
-
-    ID              reduce using rule 24 (instr -> cycle .)
-    IF              reduce using rule 24 (instr -> cycle .)
-    FOR             reduce using rule 24 (instr -> cycle .)
-    WHILE           reduce using rule 24 (instr -> cycle .)
-    }               reduce using rule 24 (instr -> cycle .)
-    RETURN          reduce using rule 24 (instr -> cycle .)
-
-
-state 93
-
-    (22) instr -> basicStatements . ;
-
-    ;               shift and go to state 110
-
-
-state 94
-
-    (78) forCycle -> errorForCycle . FOR ( assign ; expresion ; assign ) { body }
-
-    FOR             shift and go to state 111
-
-
-state 95
-
-    (80) assign -> ID . errorAssign assignOptions
-    (88) funcCall -> ID . ( opParamCall )
-    (81) errorAssign -> .
-
-    (               shift and go to state 112
-    [               reduce using rule 81 (errorAssign -> .)
-    =               reduce using rule 81 (errorAssign -> .)
-
-    errorAssign                    shift and go to state 113
-
-state 96
-
-    (26) basicStatements -> funcCall .
-
-    ;               reduce using rule 26 (basicStatements -> funcCall .)
-
-
-state 97
-
-    (98) condition -> errorCondition . IF ( expresion ) { body } optionalElse
-
-    IF              shift and go to state 114
-
-
-state 98
-
-    (25) basicStatements -> assign .
-
-    ;               reduce using rule 25 (basicStatements -> assign .)
-
-
-state 99
+state 100
 
     (44) cyTypeParam -> , saveID saveTypeParam ID . cyTypeParam
     (44) cyTypeParam -> . , saveID saveTypeParam ID cyTypeParam
     (45) cyTypeParam -> . empty
     (150) empty -> .
 
-    ,               shift and go to state 55
+    ,               shift and go to state 56
     ;               reduce using rule 150 (empty -> .)
     )               reduce using rule 150 (empty -> .)
 
-    cyTypeParam                    shift and go to state 115
-    empty                          shift and go to state 56
+    cyTypeParam                    shift and go to state 117
+    empty                          shift and go to state 57
 
-state 100
+state 101
 
     (62) basicDeclare -> saveType type errorBasicDeclare ID cyTypeParam saveID ; cyDeclare .
 
@@ -1506,63 +1519,42 @@ state 100
     RETURN          reduce using rule 62 (basicDeclare -> saveType type errorBasicDeclare ID cyTypeParam saveID ; cyDeclare .)
 
 
-state 101
+state 102
 
     (103) dict -> errorDict ( type : type . )
 
-    )               shift and go to state 116
+    )               shift and go to state 118
 
 
-state 102
+state 103
 
     (93) struct -> structType [ CTED ] optionalMatrix .
 
     ;               reduce using rule 93 (struct -> structType [ CTED ] optionalMatrix .)
 
 
-state 103
+state 104
 
     (96) optionalMatrix -> [ . CTED ]
 
-    CTED            shift and go to state 117
+    CTED            shift and go to state 119
 
 
-state 104
+state 105
 
     (97) optionalMatrix -> empty .
 
     ;               reduce using rule 97 (optionalMatrix -> empty .)
 
 
-state 105
-
-    (53) opParameters -> param saveParamToDirProc . errorOpParameters
-    (57) errorOpParameters -> .
-
-    )               reduce using rule 57 (errorOpParameters -> .)
-
-    errorOpParameters              shift and go to state 118
-
 state 106
 
-    (40) param -> saveType type . errorParam ID cyTypeParam cyParam
-    (41) errorParam -> .
+    (19) main -> errorMain MAIN saveMain { opVars body } clearVarsTable .
 
-    ID              reduce using rule 41 (errorParam -> .)
+    }               reduce using rule 19 (main -> errorMain MAIN saveMain { opVars body } clearVarsTable .)
 
-    errorParam                     shift and go to state 119
 
 state 107
-
-    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) . flagParameters opReturns } clearVarsTable
-    (55) flagParameters -> .
-
-    {               reduce using rule 55 (flagParameters -> .)
-    RETURNS         reduce using rule 55 (flagParameters -> .)
-
-    flagParameters                 shift and go to state 120
-
-state 108
 
     (73) cyInstruction -> instr body .
 
@@ -1570,14 +1562,14 @@ state 108
     RETURN          reduce using rule 73 (cyInstruction -> instr body .)
 
 
-state 109
+state 108
 
     (76) whileCycle -> errorWhileCycle WHILE . ( expresion ) { body }
 
-    (               shift and go to state 121
+    (               shift and go to state 120
 
 
-state 110
+state 109
 
     (22) instr -> basicStatements ; .
 
@@ -1589,14 +1581,14 @@ state 110
     RETURN          reduce using rule 22 (instr -> basicStatements ; .)
 
 
-state 111
+state 110
 
     (78) forCycle -> errorForCycle FOR . ( assign ; expresion ; assign ) { body }
 
-    (               shift and go to state 122
+    (               shift and go to state 121
 
 
-state 112
+state 111
 
     (88) funcCall -> ID ( . opParamCall )
     (89) opParamCall -> . expresion cyParamCall
@@ -1618,25 +1610,25 @@ state 112
     (88) funcCall -> . ID ( opParamCall )
 
     )               reduce using rule 150 (empty -> .)
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 130
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    fact                           shift and go to state 138
-    exp                            shift and go to state 137
-    opParamCall                    shift and go to state 123
-    empty                          shift and go to state 127
+    expresion                      shift and go to state 129
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    fact                           shift and go to state 137
+    exp                            shift and go to state 136
+    opParamCall                    shift and go to state 122
+    empty                          shift and go to state 126
 
-state 113
+state 112
 
     (80) assign -> ID errorAssign . assignOptions
     (82) assignOptions -> . init
@@ -1645,21 +1637,49 @@ state 113
     (30) init -> . = initWith errorInit
     (34) initDict -> . = ( dictType : dictType ) errorInitDict
 
-    [               shift and go to state 143
-    =               shift and go to state 139
+    [               shift and go to state 142
+    =               shift and go to state 138
 
-    initDict                       shift and go to state 140
-    assignOptions                  shift and go to state 141
-    init                           shift and go to state 142
+    initDict                       shift and go to state 139
+    assignOptions                  shift and go to state 140
+    init                           shift and go to state 141
 
-state 114
+state 113
 
     (98) condition -> errorCondition IF . ( expresion ) { body } optionalElse
 
-    (               shift and go to state 144
+    (               shift and go to state 143
 
+
+state 114
+
+    (53) opParameters -> param saveParamToDirProc . errorOpParameters
+    (57) errorOpParameters -> .
+
+    )               reduce using rule 57 (errorOpParameters -> .)
+
+    errorOpParameters              shift and go to state 144
 
 state 115
+
+    (40) param -> saveType type . errorParam ID cyTypeParam cyParam
+    (41) errorParam -> .
+
+    ID              reduce using rule 41 (errorParam -> .)
+
+    errorParam                     shift and go to state 145
+
+state 116
+
+    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) . flagParameters opReturns } clearVarsTable
+    (55) flagParameters -> .
+
+    {               reduce using rule 55 (flagParameters -> .)
+    RETURNS         reduce using rule 55 (flagParameters -> .)
+
+    flagParameters                 shift and go to state 146
+
+state 117
 
     (44) cyTypeParam -> , saveID saveTypeParam ID cyTypeParam .
 
@@ -1667,7 +1687,7 @@ state 115
     )               reduce using rule 44 (cyTypeParam -> , saveID saveTypeParam ID cyTypeParam .)
 
 
-state 116
+state 118
 
     (103) dict -> errorDict ( type : type ) .
 
@@ -1675,41 +1695,14 @@ state 116
     [               reduce using rule 103 (dict -> errorDict ( type : type ) .)
 
 
-state 117
+state 119
 
     (96) optionalMatrix -> [ CTED . ]
 
-    ]               shift and go to state 145
-
-
-state 118
-
-    (53) opParameters -> param saveParamToDirProc errorOpParameters .
-
-    )               reduce using rule 53 (opParameters -> param saveParamToDirProc errorOpParameters .)
-
-
-state 119
-
-    (40) param -> saveType type errorParam . ID cyTypeParam cyParam
-
-    ID              shift and go to state 146
+    ]               shift and go to state 147
 
 
 state 120
-
-    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters . opReturns } clearVarsTable
-    (58) opReturns -> . errorOpReturns RETURNS type saveReturnType { opVars body return
-    (59) opReturns -> . { opVars body
-    (61) errorOpReturns -> .
-
-    {               shift and go to state 148
-    RETURNS         reduce using rule 61 (errorOpReturns -> .)
-
-    errorOpReturns                 shift and go to state 147
-    opReturns                      shift and go to state 149
-
-state 121
 
     (76) whileCycle -> errorWhileCycle WHILE ( . expresion ) { body }
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -1727,39 +1720,39 @@ state 121
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 150
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 148
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 122
+state 121
 
     (78) forCycle -> errorForCycle FOR ( . assign ; expresion ; assign ) { body }
     (80) assign -> . ID errorAssign assignOptions
 
-    ID              shift and go to state 151
+    ID              shift and go to state 149
 
-    assign                         shift and go to state 152
+    assign                         shift and go to state 150
 
-state 123
+state 122
 
     (88) funcCall -> ID ( opParamCall . )
 
-    )               shift and go to state 153
+    )               shift and go to state 151
 
 
-state 124
+state 123
 
     (148) cte -> TRUE .
 
@@ -1767,22 +1760,22 @@ state 124
     /               reduce using rule 148 (cte -> TRUE .)
     +               reduce using rule 148 (cte -> TRUE .)
     -               reduce using rule 148 (cte -> TRUE .)
+    AND             reduce using rule 148 (cte -> TRUE .)
+    OR              reduce using rule 148 (cte -> TRUE .)
+    ,               reduce using rule 148 (cte -> TRUE .)
+    )               reduce using rule 148 (cte -> TRUE .)
+    ;               reduce using rule 148 (cte -> TRUE .)
+    ]               reduce using rule 148 (cte -> TRUE .)
     EQ              reduce using rule 148 (cte -> TRUE .)
     DIF             reduce using rule 148 (cte -> TRUE .)
     LTOEQ           reduce using rule 148 (cte -> TRUE .)
     GTOEQ           reduce using rule 148 (cte -> TRUE .)
     >               reduce using rule 148 (cte -> TRUE .)
     <               reduce using rule 148 (cte -> TRUE .)
-    AND             reduce using rule 148 (cte -> TRUE .)
-    OR              reduce using rule 148 (cte -> TRUE .)
-    ]               reduce using rule 148 (cte -> TRUE .)
-    ,               reduce using rule 148 (cte -> TRUE .)
-    )               reduce using rule 148 (cte -> TRUE .)
-    ;               reduce using rule 148 (cte -> TRUE .)
     :               reduce using rule 148 (cte -> TRUE .)
 
 
-state 125
+state 124
 
     (131) fact -> ( . expresion )
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -1800,23 +1793,23 @@ state 125
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 154
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 152
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 126
+state 125
 
     (105) expresion -> sExp . cyExpresion errorExpresion
     (107) cyExpresion -> . AND expresion
@@ -1824,24 +1817,24 @@ state 126
     (109) cyExpresion -> . empty
     (150) empty -> .
 
-    AND             shift and go to state 155
-    OR              shift and go to state 157
+    AND             shift and go to state 153
+    OR              shift and go to state 155
     ,               reduce using rule 150 (empty -> .)
     )               reduce using rule 150 (empty -> .)
     ;               reduce using rule 150 (empty -> .)
     ]               reduce using rule 150 (empty -> .)
 
-    cyExpresion                    shift and go to state 156
-    empty                          shift and go to state 158
+    cyExpresion                    shift and go to state 154
+    empty                          shift and go to state 156
 
-state 127
+state 126
 
     (90) opParamCall -> empty .
 
     )               reduce using rule 90 (opParamCall -> empty .)
 
 
-state 128
+state 127
 
     (146) cte -> CTED .
 
@@ -1849,22 +1842,22 @@ state 128
     /               reduce using rule 146 (cte -> CTED .)
     +               reduce using rule 146 (cte -> CTED .)
     -               reduce using rule 146 (cte -> CTED .)
+    AND             reduce using rule 146 (cte -> CTED .)
+    OR              reduce using rule 146 (cte -> CTED .)
+    ,               reduce using rule 146 (cte -> CTED .)
+    )               reduce using rule 146 (cte -> CTED .)
+    ;               reduce using rule 146 (cte -> CTED .)
+    ]               reduce using rule 146 (cte -> CTED .)
     EQ              reduce using rule 146 (cte -> CTED .)
     DIF             reduce using rule 146 (cte -> CTED .)
     LTOEQ           reduce using rule 146 (cte -> CTED .)
     GTOEQ           reduce using rule 146 (cte -> CTED .)
     >               reduce using rule 146 (cte -> CTED .)
     <               reduce using rule 146 (cte -> CTED .)
-    AND             reduce using rule 146 (cte -> CTED .)
-    OR              reduce using rule 146 (cte -> CTED .)
-    ]               reduce using rule 146 (cte -> CTED .)
-    ,               reduce using rule 146 (cte -> CTED .)
-    )               reduce using rule 146 (cte -> CTED .)
-    ;               reduce using rule 146 (cte -> CTED .)
     :               reduce using rule 146 (cte -> CTED .)
 
 
-state 129
+state 128
 
     (132) fact -> ID . opAccess errorOpAccess
     (88) funcCall -> ID . ( opParamCall )
@@ -1876,8 +1869,8 @@ state 129
     (150) empty -> .
     (139) errorOpStruct -> .
 
-    (               shift and go to state 112
-    .               shift and go to state 163
+    (               shift and go to state 111
+    .               shift and go to state 161
     *               reduce using rule 150 (empty -> .)
     /               reduce using rule 150 (empty -> .)
     +               reduce using rule 150 (empty -> .)
@@ -1896,26 +1889,26 @@ state 129
     ;               reduce using rule 150 (empty -> .)
     [               reduce using rule 139 (errorOpStruct -> .)
 
-    errorOpStruct                  shift and go to state 159
-    opDictionary                   shift and go to state 164
-    opStruct                       shift and go to state 160
-    opAccess                       shift and go to state 161
-    empty                          shift and go to state 162
+    errorOpStruct                  shift and go to state 157
+    opDictionary                   shift and go to state 162
+    opStruct                       shift and go to state 158
+    opAccess                       shift and go to state 159
+    empty                          shift and go to state 160
 
-state 130
+state 129
 
     (89) opParamCall -> expresion . cyParamCall
     (91) cyParamCall -> . , expresion cyParamCall
     (92) cyParamCall -> . empty
     (150) empty -> .
 
-    ,               shift and go to state 166
+    ,               shift and go to state 164
     )               reduce using rule 150 (empty -> .)
 
-    cyParamCall                    shift and go to state 165
-    empty                          shift and go to state 167
+    cyParamCall                    shift and go to state 163
+    empty                          shift and go to state 165
 
-state 131
+state 130
 
     (128) fact -> CTES .
 
@@ -1923,21 +1916,21 @@ state 131
     /               reduce using rule 128 (fact -> CTES .)
     +               reduce using rule 128 (fact -> CTES .)
     -               reduce using rule 128 (fact -> CTES .)
+    AND             reduce using rule 128 (fact -> CTES .)
+    OR              reduce using rule 128 (fact -> CTES .)
+    ,               reduce using rule 128 (fact -> CTES .)
+    )               reduce using rule 128 (fact -> CTES .)
+    ;               reduce using rule 128 (fact -> CTES .)
+    ]               reduce using rule 128 (fact -> CTES .)
     EQ              reduce using rule 128 (fact -> CTES .)
     DIF             reduce using rule 128 (fact -> CTES .)
     LTOEQ           reduce using rule 128 (fact -> CTES .)
     GTOEQ           reduce using rule 128 (fact -> CTES .)
     >               reduce using rule 128 (fact -> CTES .)
     <               reduce using rule 128 (fact -> CTES .)
-    AND             reduce using rule 128 (fact -> CTES .)
-    OR              reduce using rule 128 (fact -> CTES .)
-    ;               reduce using rule 128 (fact -> CTES .)
-    )               reduce using rule 128 (fact -> CTES .)
-    ,               reduce using rule 128 (fact -> CTES .)
-    ]               reduce using rule 128 (fact -> CTES .)
 
 
-state 132
+state 131
 
     (119) exp -> term . errorCyExp cyExp
     (123) errorCyExp -> .
@@ -1957,9 +1950,9 @@ state 132
     ;               reduce using rule 123 (errorCyExp -> .)
     ]               reduce using rule 123 (errorCyExp -> .)
 
-    errorCyExp                     shift and go to state 168
+    errorCyExp                     shift and go to state 166
 
-state 133
+state 132
 
     (149) cte -> FALSE .
 
@@ -1967,22 +1960,22 @@ state 133
     /               reduce using rule 149 (cte -> FALSE .)
     +               reduce using rule 149 (cte -> FALSE .)
     -               reduce using rule 149 (cte -> FALSE .)
+    AND             reduce using rule 149 (cte -> FALSE .)
+    OR              reduce using rule 149 (cte -> FALSE .)
+    ,               reduce using rule 149 (cte -> FALSE .)
+    )               reduce using rule 149 (cte -> FALSE .)
+    ;               reduce using rule 149 (cte -> FALSE .)
+    ]               reduce using rule 149 (cte -> FALSE .)
     EQ              reduce using rule 149 (cte -> FALSE .)
     DIF             reduce using rule 149 (cte -> FALSE .)
     LTOEQ           reduce using rule 149 (cte -> FALSE .)
     GTOEQ           reduce using rule 149 (cte -> FALSE .)
     >               reduce using rule 149 (cte -> FALSE .)
     <               reduce using rule 149 (cte -> FALSE .)
-    AND             reduce using rule 149 (cte -> FALSE .)
-    OR              reduce using rule 149 (cte -> FALSE .)
-    ]               reduce using rule 149 (cte -> FALSE .)
-    ,               reduce using rule 149 (cte -> FALSE .)
-    )               reduce using rule 149 (cte -> FALSE .)
-    ;               reduce using rule 149 (cte -> FALSE .)
     :               reduce using rule 149 (cte -> FALSE .)
 
 
-state 134
+state 133
 
     (130) fact -> funcCall .
 
@@ -2004,7 +1997,7 @@ state 134
     <               reduce using rule 130 (fact -> funcCall .)
 
 
-state 135
+state 134
 
     (129) fact -> cte .
 
@@ -2012,21 +2005,21 @@ state 135
     /               reduce using rule 129 (fact -> cte .)
     +               reduce using rule 129 (fact -> cte .)
     -               reduce using rule 129 (fact -> cte .)
+    AND             reduce using rule 129 (fact -> cte .)
+    OR              reduce using rule 129 (fact -> cte .)
+    ,               reduce using rule 129 (fact -> cte .)
+    )               reduce using rule 129 (fact -> cte .)
+    ;               reduce using rule 129 (fact -> cte .)
+    ]               reduce using rule 129 (fact -> cte .)
     EQ              reduce using rule 129 (fact -> cte .)
     DIF             reduce using rule 129 (fact -> cte .)
     LTOEQ           reduce using rule 129 (fact -> cte .)
     GTOEQ           reduce using rule 129 (fact -> cte .)
     >               reduce using rule 129 (fact -> cte .)
     <               reduce using rule 129 (fact -> cte .)
-    AND             reduce using rule 129 (fact -> cte .)
-    OR              reduce using rule 129 (fact -> cte .)
-    ;               reduce using rule 129 (fact -> cte .)
-    )               reduce using rule 129 (fact -> cte .)
-    ,               reduce using rule 129 (fact -> cte .)
-    ]               reduce using rule 129 (fact -> cte .)
 
 
-state 136
+state 135
 
     (147) cte -> CTEF .
 
@@ -2034,22 +2027,22 @@ state 136
     /               reduce using rule 147 (cte -> CTEF .)
     +               reduce using rule 147 (cte -> CTEF .)
     -               reduce using rule 147 (cte -> CTEF .)
+    AND             reduce using rule 147 (cte -> CTEF .)
+    OR              reduce using rule 147 (cte -> CTEF .)
+    ,               reduce using rule 147 (cte -> CTEF .)
+    )               reduce using rule 147 (cte -> CTEF .)
+    ;               reduce using rule 147 (cte -> CTEF .)
+    ]               reduce using rule 147 (cte -> CTEF .)
     EQ              reduce using rule 147 (cte -> CTEF .)
     DIF             reduce using rule 147 (cte -> CTEF .)
     LTOEQ           reduce using rule 147 (cte -> CTEF .)
     GTOEQ           reduce using rule 147 (cte -> CTEF .)
     >               reduce using rule 147 (cte -> CTEF .)
     <               reduce using rule 147 (cte -> CTEF .)
-    AND             reduce using rule 147 (cte -> CTEF .)
-    OR              reduce using rule 147 (cte -> CTEF .)
-    ]               reduce using rule 147 (cte -> CTEF .)
-    ,               reduce using rule 147 (cte -> CTEF .)
-    )               reduce using rule 147 (cte -> CTEF .)
-    ;               reduce using rule 147 (cte -> CTEF .)
     :               reduce using rule 147 (cte -> CTEF .)
 
 
-state 137
+state 136
 
     (110) sExp -> exp . errorOpSExp opSExp
     (118) errorOpSExp -> .
@@ -2067,9 +2060,9 @@ state 137
     ;               reduce using rule 118 (errorOpSExp -> .)
     ]               reduce using rule 118 (errorOpSExp -> .)
 
-    errorOpSExp                    shift and go to state 169
+    errorOpSExp                    shift and go to state 167
 
-state 138
+state 137
 
     (124) term -> fact . cyTerm
     (125) cyTerm -> . * errorFact fact
@@ -2077,8 +2070,8 @@ state 138
     (127) cyTerm -> . empty
     (150) empty -> .
 
-    *               shift and go to state 170
-    /               shift and go to state 171
+    *               shift and go to state 168
+    /               shift and go to state 169
     +               reduce using rule 150 (empty -> .)
     -               reduce using rule 150 (empty -> .)
     EQ              reduce using rule 150 (empty -> .)
@@ -2094,10 +2087,10 @@ state 138
     ;               reduce using rule 150 (empty -> .)
     ]               reduce using rule 150 (empty -> .)
 
-    cyTerm                         shift and go to state 172
-    empty                          shift and go to state 173
+    cyTerm                         shift and go to state 170
+    empty                          shift and go to state 171
 
-state 139
+state 138
 
     (30) init -> = . initWith errorInit
     (34) initDict -> = . ( dictType : dictType ) errorInitDict
@@ -2118,24 +2111,24 @@ state 139
     (148) cte -> . TRUE
     (149) cte -> . FALSE
 
-    (               shift and go to state 175
-    ID              shift and go to state 176
-    CTES            shift and go to state 131
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    (               shift and go to state 173
+    ID              shift and go to state 174
+    CTES            shift and go to state 130
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 177
-    initWith                       shift and go to state 174
-    funcCall                       shift and go to state 178
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    term                           shift and go to state 132
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 175
+    initWith                       shift and go to state 172
+    funcCall                       shift and go to state 176
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    term                           shift and go to state 131
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 140
+state 139
 
     (83) assignOptions -> initDict .
 
@@ -2143,7 +2136,7 @@ state 140
     )               reduce using rule 83 (assignOptions -> initDict .)
 
 
-state 141
+state 140
 
     (80) assign -> ID errorAssign assignOptions .
 
@@ -2151,7 +2144,7 @@ state 141
     ;               reduce using rule 80 (assign -> ID errorAssign assignOptions .)
 
 
-state 142
+state 141
 
     (82) assignOptions -> init .
 
@@ -2159,7 +2152,7 @@ state 142
     )               reduce using rule 82 (assignOptions -> init .)
 
 
-state 143
+state 142
 
     (84) assignOptions -> [ . expresion ] assignMatrix init
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -2177,23 +2170,23 @@ state 143
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 179
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 177
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 144
+state 143
 
     (98) condition -> errorCondition IF ( . expresion ) { body } optionalElse
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -2211,86 +2204,64 @@ state 144
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 180
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 178
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
+
+state 144
+
+    (53) opParameters -> param saveParamToDirProc errorOpParameters .
+
+    )               reduce using rule 53 (opParameters -> param saveParamToDirProc errorOpParameters .)
+
 
 state 145
+
+    (40) param -> saveType type errorParam . ID cyTypeParam cyParam
+
+    ID              shift and go to state 179
+
+
+state 146
+
+    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters . opReturns } clearVarsTable
+    (58) opReturns -> . errorOpReturns RETURNS type saveReturnType { opVars body return
+    (59) opReturns -> . { opVars body
+    (61) errorOpReturns -> .
+
+    {               shift and go to state 181
+    RETURNS         reduce using rule 61 (errorOpReturns -> .)
+
+    errorOpReturns                 shift and go to state 180
+    opReturns                      shift and go to state 182
+
+state 147
 
     (96) optionalMatrix -> [ CTED ] .
 
     ;               reduce using rule 96 (optionalMatrix -> [ CTED ] .)
 
 
-state 146
-
-    (40) param -> saveType type errorParam ID . cyTypeParam cyParam
-    (44) cyTypeParam -> . , saveID saveTypeParam ID cyTypeParam
-    (45) cyTypeParam -> . empty
-    (150) empty -> .
-
-    ,               shift and go to state 55
-    ;               reduce using rule 150 (empty -> .)
-    )               reduce using rule 150 (empty -> .)
-
-    empty                          shift and go to state 56
-    cyTypeParam                    shift and go to state 181
-
-state 147
-
-    (58) opReturns -> errorOpReturns . RETURNS type saveReturnType { opVars body return
-
-    RETURNS         shift and go to state 182
-
-
 state 148
-
-    (59) opReturns -> { . opVars body
-    (6) opVars -> . vars
-    (7) opVars -> . empty
-    (10) vars -> . errorVars VARS declare
-    (150) empty -> .
-    (12) errorVars -> .
-
-    ID              reduce using rule 150 (empty -> .)
-    IF              reduce using rule 150 (empty -> .)
-    FOR             reduce using rule 150 (empty -> .)
-    WHILE           reduce using rule 150 (empty -> .)
-    }               reduce using rule 150 (empty -> .)
-    VARS            reduce using rule 12 (errorVars -> .)
-
-    vars                           shift and go to state 8
-    opVars                         shift and go to state 183
-    errorVars                      shift and go to state 10
-    empty                          shift and go to state 11
-
-state 149
-
-    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns . } clearVarsTable
-
-    }               shift and go to state 184
-
-
-state 150
 
     (76) whileCycle -> errorWhileCycle WHILE ( expresion . ) { body }
 
-    )               shift and go to state 185
+    )               shift and go to state 183
 
 
-state 151
+state 149
 
     (80) assign -> ID . errorAssign assignOptions
     (81) errorAssign -> .
@@ -2298,16 +2269,16 @@ state 151
     [               reduce using rule 81 (errorAssign -> .)
     =               reduce using rule 81 (errorAssign -> .)
 
-    errorAssign                    shift and go to state 113
+    errorAssign                    shift and go to state 112
 
-state 152
+state 150
 
     (78) forCycle -> errorForCycle FOR ( assign . ; expresion ; assign ) { body }
 
-    ;               shift and go to state 186
+    ;               shift and go to state 184
 
 
-state 153
+state 151
 
     (88) funcCall -> ID ( opParamCall ) .
 
@@ -2315,28 +2286,28 @@ state 153
     /               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
     +               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
     -               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
-    AND             reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
-    OR              reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
-    ,               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
-    )               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
-    ;               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
-    ]               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
     EQ              reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
     DIF             reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
     LTOEQ           reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
     GTOEQ           reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
     >               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
     <               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
+    AND             reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
+    OR              reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
+    ]               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
+    ,               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
+    )               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
+    ;               reduce using rule 88 (funcCall -> ID ( opParamCall ) .)
 
 
-state 154
+state 152
 
     (131) fact -> ( expresion . )
 
-    )               shift and go to state 187
+    )               shift and go to state 185
 
 
-state 155
+state 153
 
     (107) cyExpresion -> AND . expresion
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -2354,23 +2325,23 @@ state 155
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 188
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 186
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 156
+state 154
 
     (105) expresion -> sExp cyExpresion . errorExpresion
     (106) errorExpresion -> .
@@ -2380,9 +2351,9 @@ state 156
     ;               reduce using rule 106 (errorExpresion -> .)
     ]               reduce using rule 106 (errorExpresion -> .)
 
-    errorExpresion                 shift and go to state 189
+    errorExpresion                 shift and go to state 187
 
-state 157
+state 155
 
     (108) cyExpresion -> OR . expresion
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -2400,23 +2371,23 @@ state 157
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 190
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 188
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 158
+state 156
 
     (109) cyExpresion -> empty .
 
@@ -2426,14 +2397,14 @@ state 158
     ]               reduce using rule 109 (cyExpresion -> empty .)
 
 
-state 159
+state 157
 
     (138) opStruct -> errorOpStruct . [ expresion ] opMatrix
 
-    [               shift and go to state 191
+    [               shift and go to state 189
 
 
-state 160
+state 158
 
     (134) opAccess -> opStruct .
 
@@ -2455,7 +2426,7 @@ state 160
     ]               reduce using rule 134 (opAccess -> opStruct .)
 
 
-state 161
+state 159
 
     (132) fact -> ID opAccess . errorOpAccess
     (137) errorOpAccess -> .
@@ -2477,9 +2448,9 @@ state 161
     ;               reduce using rule 137 (errorOpAccess -> .)
     ]               reduce using rule 137 (errorOpAccess -> .)
 
-    errorOpAccess                  shift and go to state 192
+    errorOpAccess                  shift and go to state 190
 
-state 162
+state 160
 
     (136) opAccess -> empty .
 
@@ -2501,18 +2472,18 @@ state 162
     ]               reduce using rule 136 (opAccess -> empty .)
 
 
-state 163
+state 161
 
     (143) opDictionary -> . . dictIndex
     (144) dictIndex -> . FIRST
     (145) dictIndex -> . LAST
 
-    FIRST           shift and go to state 193
-    LAST            shift and go to state 194
+    FIRST           shift and go to state 191
+    LAST            shift and go to state 192
 
-    dictIndex                      shift and go to state 195
+    dictIndex                      shift and go to state 193
 
-state 164
+state 162
 
     (135) opAccess -> opDictionary .
 
@@ -2534,14 +2505,14 @@ state 164
     ]               reduce using rule 135 (opAccess -> opDictionary .)
 
 
-state 165
+state 163
 
     (89) opParamCall -> expresion cyParamCall .
 
     )               reduce using rule 89 (opParamCall -> expresion cyParamCall .)
 
 
-state 166
+state 164
 
     (91) cyParamCall -> , . expresion cyParamCall
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -2559,30 +2530,30 @@ state 166
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 196
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 194
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 167
+state 165
 
     (92) cyParamCall -> empty .
 
     )               reduce using rule 92 (cyParamCall -> empty .)
 
 
-state 168
+state 166
 
     (119) exp -> term errorCyExp . cyExp
     (120) cyExp -> . + term
@@ -2590,8 +2561,8 @@ state 168
     (122) cyExp -> . empty
     (150) empty -> .
 
-    +               shift and go to state 198
-    -               shift and go to state 199
+    +               shift and go to state 196
+    -               shift and go to state 197
     EQ              reduce using rule 150 (empty -> .)
     DIF             reduce using rule 150 (empty -> .)
     LTOEQ           reduce using rule 150 (empty -> .)
@@ -2605,10 +2576,10 @@ state 168
     ;               reduce using rule 150 (empty -> .)
     ]               reduce using rule 150 (empty -> .)
 
-    cyExp                          shift and go to state 197
-    empty                          shift and go to state 200
+    cyExp                          shift and go to state 195
+    empty                          shift and go to state 198
 
-state 169
+state 167
 
     (110) sExp -> exp errorOpSExp . opSExp
     (111) opSExp -> . EQ exp
@@ -2620,12 +2591,12 @@ state 169
     (117) opSExp -> . empty
     (150) empty -> .
 
-    EQ              shift and go to state 201
-    DIF             shift and go to state 202
-    LTOEQ           shift and go to state 205
-    GTOEQ           shift and go to state 203
-    >               shift and go to state 204
-    <               shift and go to state 206
+    EQ              shift and go to state 199
+    DIF             shift and go to state 200
+    LTOEQ           shift and go to state 203
+    GTOEQ           shift and go to state 201
+    >               shift and go to state 202
+    <               shift and go to state 204
     AND             reduce using rule 150 (empty -> .)
     OR              reduce using rule 150 (empty -> .)
     ,               reduce using rule 150 (empty -> .)
@@ -2633,10 +2604,10 @@ state 169
     ;               reduce using rule 150 (empty -> .)
     ]               reduce using rule 150 (empty -> .)
 
-    empty                          shift and go to state 207
-    opSExp                         shift and go to state 208
+    empty                          shift and go to state 205
+    opSExp                         shift and go to state 206
 
-state 170
+state 168
 
     (125) cyTerm -> * . errorFact fact
     (133) errorFact -> .
@@ -2649,9 +2620,9 @@ state 170
     TRUE            reduce using rule 133 (errorFact -> .)
     FALSE           reduce using rule 133 (errorFact -> .)
 
-    errorFact                      shift and go to state 209
+    errorFact                      shift and go to state 207
 
-state 171
+state 169
 
     (126) cyTerm -> / . fact
     (128) fact -> . CTES
@@ -2665,19 +2636,19 @@ state 171
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    fact                           shift and go to state 210
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    fact                           shift and go to state 208
 
-state 172
+state 170
 
     (124) term -> fact cyTerm .
 
@@ -2697,7 +2668,7 @@ state 172
     ]               reduce using rule 124 (term -> fact cyTerm .)
 
 
-state 173
+state 171
 
     (127) cyTerm -> empty .
 
@@ -2717,7 +2688,7 @@ state 173
     ]               reduce using rule 127 (cyTerm -> empty .)
 
 
-state 174
+state 172
 
     (30) init -> = initWith . errorInit
     (31) errorInit -> .
@@ -2725,9 +2696,9 @@ state 174
     ;               reduce using rule 31 (errorInit -> .)
     )               reduce using rule 31 (errorInit -> .)
 
-    errorInit                      shift and go to state 211
+    errorInit                      shift and go to state 209
 
-state 175
+state 173
 
     (34) initDict -> = ( . dictType : dictType ) errorInitDict
     (131) fact -> ( . expresion )
@@ -2751,27 +2722,27 @@ state 175
     (88) funcCall -> . ID ( opParamCall )
 
   ! shift/reduce conflict for CTES resolved as shift
-    ID              shift and go to state 214
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
-    CTES            shift and go to state 131
-    (               shift and go to state 125
+    ID              shift and go to state 212
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
+    CTES            shift and go to state 130
+    (               shift and go to state 124
 
   ! CTES            [ reduce using rule 39 (errorDictType -> .) ]
 
-    dictType                       shift and go to state 212
-    expresion                      shift and go to state 154
-    term                           shift and go to state 132
-    errorDictType                  shift and go to state 213
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 215
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    dictType                       shift and go to state 210
+    expresion                      shift and go to state 152
+    term                           shift and go to state 131
+    errorDictType                  shift and go to state 211
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 213
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 176
+state 174
 
     (88) funcCall -> ID . ( opParamCall )
     (132) fact -> ID . opAccess errorOpAccess
@@ -2783,8 +2754,8 @@ state 176
     (150) empty -> .
     (139) errorOpStruct -> .
 
-    (               shift and go to state 112
-    .               shift and go to state 163
+    (               shift and go to state 111
+    .               shift and go to state 161
     *               reduce using rule 150 (empty -> .)
     /               reduce using rule 150 (empty -> .)
     +               reduce using rule 150 (empty -> .)
@@ -2801,13 +2772,13 @@ state 176
     )               reduce using rule 150 (empty -> .)
     [               reduce using rule 139 (errorOpStruct -> .)
 
-    errorOpStruct                  shift and go to state 159
-    opDictionary                   shift and go to state 164
-    opStruct                       shift and go to state 160
-    opAccess                       shift and go to state 161
-    empty                          shift and go to state 162
+    errorOpStruct                  shift and go to state 157
+    opDictionary                   shift and go to state 162
+    opStruct                       shift and go to state 158
+    opAccess                       shift and go to state 159
+    empty                          shift and go to state 160
 
-state 177
+state 175
 
     (32) initWith -> expresion .
 
@@ -2815,7 +2786,7 @@ state 177
     )               reduce using rule 32 (initWith -> expresion .)
 
 
-state 178
+state 176
 
     (33) initWith -> funcCall .
     (130) fact -> funcCall .
@@ -2841,90 +2812,77 @@ state 178
   ! )               [ reduce using rule 130 (fact -> funcCall .) ]
 
 
-state 179
+state 177
 
     (84) assignOptions -> [ expresion . ] assignMatrix init
 
-    ]               shift and go to state 216
+    ]               shift and go to state 214
 
 
-state 180
+state 178
 
     (98) condition -> errorCondition IF ( expresion . ) { body } optionalElse
 
-    )               shift and go to state 217
+    )               shift and go to state 215
+
+
+state 179
+
+    (40) param -> saveType type errorParam ID . cyTypeParam cyParam
+    (44) cyTypeParam -> . , saveID saveTypeParam ID cyTypeParam
+    (45) cyTypeParam -> . empty
+    (150) empty -> .
+
+    ,               shift and go to state 56
+    ;               reduce using rule 150 (empty -> .)
+    )               reduce using rule 150 (empty -> .)
+
+    empty                          shift and go to state 57
+    cyTypeParam                    shift and go to state 216
+
+state 180
+
+    (58) opReturns -> errorOpReturns . RETURNS type saveReturnType { opVars body return
+
+    RETURNS         shift and go to state 217
 
 
 state 181
 
-    (40) param -> saveType type errorParam ID cyTypeParam . cyParam
-    (42) cyParam -> . errorCyParam saveID saveTypeParam ; param
-    (43) cyParam -> . empty saveID saveTypeParam
-    (47) errorCyParam -> .
+    (59) opReturns -> { . opVars body
+    (6) opVars -> . vars
+    (7) opVars -> . empty
+    (10) vars -> . errorVars VARS declare
     (150) empty -> .
+    (12) errorVars -> .
 
-    ;               reduce using rule 47 (errorCyParam -> .)
-    )               reduce using rule 150 (empty -> .)
+    ID              reduce using rule 150 (empty -> .)
+    IF              reduce using rule 150 (empty -> .)
+    FOR             reduce using rule 150 (empty -> .)
+    WHILE           reduce using rule 150 (empty -> .)
+    }               reduce using rule 150 (empty -> .)
+    VARS            reduce using rule 12 (errorVars -> .)
 
-    empty                          shift and go to state 218
-    cyParam                        shift and go to state 220
-    errorCyParam                   shift and go to state 219
+    vars                           shift and go to state 8
+    opVars                         shift and go to state 218
+    errorVars                      shift and go to state 10
+    empty                          shift and go to state 11
 
 state 182
 
-    (58) opReturns -> errorOpReturns RETURNS . type saveReturnType { opVars body return
-    (13) type -> . errorType INT
-    (14) type -> . FLOAT
-    (15) type -> . STRING
-    (16) type -> . OBJECT
-    (17) type -> . BOOL
-    (18) errorType -> .
+    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns . } clearVarsTable
 
-    FLOAT           shift and go to state 29
-    STRING          shift and go to state 30
-    OBJECT          shift and go to state 32
-    BOOL            shift and go to state 33
-    INT             reduce using rule 18 (errorType -> .)
+    }               shift and go to state 219
 
-    errorType                      shift and go to state 31
-    type                           shift and go to state 221
 
 state 183
 
-    (59) opReturns -> { opVars . body
-    (70) body -> . errorBody cyInstruction
-    (71) body -> . empty
-    (72) errorBody -> .
-    (150) empty -> .
-
-    ID              reduce using rule 72 (errorBody -> .)
-    IF              reduce using rule 72 (errorBody -> .)
-    FOR             reduce using rule 72 (errorBody -> .)
-    WHILE           reduce using rule 72 (errorBody -> .)
-    }               reduce using rule 150 (empty -> .)
-
-    body                           shift and go to state 222
-    empty                          shift and go to state 76
-    errorBody                      shift and go to state 75
-
-state 184
-
-    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } . clearVarsTable
-    (50) clearVarsTable -> .
-
-    FUNC            reduce using rule 50 (clearVarsTable -> .)
-    MAIN            reduce using rule 50 (clearVarsTable -> .)
-
-    clearVarsTable                 shift and go to state 223
-
-state 185
-
     (76) whileCycle -> errorWhileCycle WHILE ( expresion ) . { body }
 
-    {               shift and go to state 224
+    {               shift and go to state 220
 
 
-state 186
+state 184
 
     (78) forCycle -> errorForCycle FOR ( assign ; . expresion ; assign ) { body }
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -2942,23 +2900,23 @@ state 186
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 225
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 221
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 187
+state 185
 
     (131) fact -> ( expresion ) .
 
@@ -2966,21 +2924,21 @@ state 187
     /               reduce using rule 131 (fact -> ( expresion ) .)
     +               reduce using rule 131 (fact -> ( expresion ) .)
     -               reduce using rule 131 (fact -> ( expresion ) .)
+    AND             reduce using rule 131 (fact -> ( expresion ) .)
+    OR              reduce using rule 131 (fact -> ( expresion ) .)
+    ,               reduce using rule 131 (fact -> ( expresion ) .)
+    )               reduce using rule 131 (fact -> ( expresion ) .)
+    ;               reduce using rule 131 (fact -> ( expresion ) .)
+    ]               reduce using rule 131 (fact -> ( expresion ) .)
     EQ              reduce using rule 131 (fact -> ( expresion ) .)
     DIF             reduce using rule 131 (fact -> ( expresion ) .)
     LTOEQ           reduce using rule 131 (fact -> ( expresion ) .)
     GTOEQ           reduce using rule 131 (fact -> ( expresion ) .)
     >               reduce using rule 131 (fact -> ( expresion ) .)
     <               reduce using rule 131 (fact -> ( expresion ) .)
-    AND             reduce using rule 131 (fact -> ( expresion ) .)
-    OR              reduce using rule 131 (fact -> ( expresion ) .)
-    ;               reduce using rule 131 (fact -> ( expresion ) .)
-    )               reduce using rule 131 (fact -> ( expresion ) .)
-    ,               reduce using rule 131 (fact -> ( expresion ) .)
-    ]               reduce using rule 131 (fact -> ( expresion ) .)
 
 
-state 188
+state 186
 
     (107) cyExpresion -> AND expresion .
 
@@ -2990,17 +2948,17 @@ state 188
     ]               reduce using rule 107 (cyExpresion -> AND expresion .)
 
 
-state 189
+state 187
 
     (105) expresion -> sExp cyExpresion errorExpresion .
 
-    ]               reduce using rule 105 (expresion -> sExp cyExpresion errorExpresion .)
     ;               reduce using rule 105 (expresion -> sExp cyExpresion errorExpresion .)
     )               reduce using rule 105 (expresion -> sExp cyExpresion errorExpresion .)
+    ]               reduce using rule 105 (expresion -> sExp cyExpresion errorExpresion .)
     ,               reduce using rule 105 (expresion -> sExp cyExpresion errorExpresion .)
 
 
-state 190
+state 188
 
     (108) cyExpresion -> OR expresion .
 
@@ -3010,7 +2968,7 @@ state 190
     ]               reduce using rule 108 (cyExpresion -> OR expresion .)
 
 
-state 191
+state 189
 
     (138) opStruct -> errorOpStruct [ . expresion ] opMatrix
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -3028,23 +2986,23 @@ state 191
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 226
-    term                           shift and go to state 132
-    exp                            shift and go to state 137
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 222
+    term                           shift and go to state 131
+    exp                            shift and go to state 136
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    fact                           shift and go to state 137
 
-state 192
+state 190
 
     (132) fact -> ID opAccess errorOpAccess .
 
@@ -3052,21 +3010,21 @@ state 192
     /               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
     +               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
     -               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
+    AND             reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
+    OR              reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
+    ,               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
+    )               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
+    ;               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
+    ]               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
     EQ              reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
     DIF             reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
     LTOEQ           reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
     GTOEQ           reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
     >               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
     <               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
-    AND             reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
-    OR              reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
-    ;               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
-    )               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
-    ,               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
-    ]               reduce using rule 132 (fact -> ID opAccess errorOpAccess .)
 
 
-state 193
+state 191
 
     (144) dictIndex -> FIRST .
 
@@ -3088,7 +3046,7 @@ state 193
     ;               reduce using rule 144 (dictIndex -> FIRST .)
 
 
-state 194
+state 192
 
     (145) dictIndex -> LAST .
 
@@ -3110,7 +3068,7 @@ state 194
     ;               reduce using rule 145 (dictIndex -> LAST .)
 
 
-state 195
+state 193
 
     (143) opDictionary -> . dictIndex .
 
@@ -3132,20 +3090,20 @@ state 195
     ;               reduce using rule 143 (opDictionary -> . dictIndex .)
 
 
-state 196
+state 194
 
     (91) cyParamCall -> , expresion . cyParamCall
     (91) cyParamCall -> . , expresion cyParamCall
     (92) cyParamCall -> . empty
     (150) empty -> .
 
-    ,               shift and go to state 166
+    ,               shift and go to state 164
     )               reduce using rule 150 (empty -> .)
 
-    cyParamCall                    shift and go to state 227
-    empty                          shift and go to state 167
+    cyParamCall                    shift and go to state 223
+    empty                          shift and go to state 165
 
-state 197
+state 195
 
     (119) exp -> term errorCyExp cyExp .
 
@@ -3157,13 +3115,13 @@ state 197
     <               reduce using rule 119 (exp -> term errorCyExp cyExp .)
     AND             reduce using rule 119 (exp -> term errorCyExp cyExp .)
     OR              reduce using rule 119 (exp -> term errorCyExp cyExp .)
-    ;               reduce using rule 119 (exp -> term errorCyExp cyExp .)
-    )               reduce using rule 119 (exp -> term errorCyExp cyExp .)
-    ,               reduce using rule 119 (exp -> term errorCyExp cyExp .)
     ]               reduce using rule 119 (exp -> term errorCyExp cyExp .)
+    ,               reduce using rule 119 (exp -> term errorCyExp cyExp .)
+    )               reduce using rule 119 (exp -> term errorCyExp cyExp .)
+    ;               reduce using rule 119 (exp -> term errorCyExp cyExp .)
 
 
-state 198
+state 196
 
     (120) cyExp -> + . term
     (124) term -> . fact cyTerm
@@ -3178,20 +3136,20 @@ state 198
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    term                           shift and go to state 228
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    fact                           shift and go to state 138
+    term                           shift and go to state 224
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    fact                           shift and go to state 137
 
-state 199
+state 197
 
     (121) cyExp -> - . term
     (124) term -> . fact cyTerm
@@ -3206,20 +3164,20 @@ state 199
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    term                           shift and go to state 229
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    fact                           shift and go to state 138
+    term                           shift and go to state 225
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    fact                           shift and go to state 137
 
-state 200
+state 198
 
     (122) cyExp -> empty .
 
@@ -3237,7 +3195,7 @@ state 200
     ]               reduce using rule 122 (cyExp -> empty .)
 
 
-state 201
+state 199
 
     (111) opSExp -> EQ . exp
     (119) exp -> . term errorCyExp cyExp
@@ -3253,21 +3211,21 @@ state 201
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    exp                            shift and go to state 230
-    fact                           shift and go to state 138
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    exp                            shift and go to state 226
+    fact                           shift and go to state 137
 
-state 202
+state 200
 
     (112) opSExp -> DIF . exp
     (119) exp -> . term errorCyExp cyExp
@@ -3283,21 +3241,21 @@ state 202
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    exp                            shift and go to state 231
-    fact                           shift and go to state 138
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    exp                            shift and go to state 227
+    fact                           shift and go to state 137
 
-state 203
+state 201
 
     (114) opSExp -> GTOEQ . exp
     (119) exp -> . term errorCyExp cyExp
@@ -3313,21 +3271,21 @@ state 203
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    exp                            shift and go to state 232
-    fact                           shift and go to state 138
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    exp                            shift and go to state 228
+    fact                           shift and go to state 137
 
-state 204
+state 202
 
     (115) opSExp -> > . exp
     (119) exp -> . term errorCyExp cyExp
@@ -3343,21 +3301,21 @@ state 204
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    exp                            shift and go to state 233
-    fact                           shift and go to state 138
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    exp                            shift and go to state 229
+    fact                           shift and go to state 137
 
-state 205
+state 203
 
     (113) opSExp -> LTOEQ . exp
     (119) exp -> . term errorCyExp cyExp
@@ -3373,21 +3331,21 @@ state 205
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    exp                            shift and go to state 234
-    fact                           shift and go to state 138
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    exp                            shift and go to state 230
+    fact                           shift and go to state 137
 
-state 206
+state 204
 
     (116) opSExp -> < . exp
     (119) exp -> . term errorCyExp cyExp
@@ -3403,21 +3361,21 @@ state 206
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    exp                            shift and go to state 235
-    fact                           shift and go to state 138
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    exp                            shift and go to state 231
+    fact                           shift and go to state 137
 
-state 207
+state 205
 
     (117) opSExp -> empty .
 
@@ -3429,19 +3387,19 @@ state 207
     ]               reduce using rule 117 (opSExp -> empty .)
 
 
-state 208
+state 206
 
     (110) sExp -> exp errorOpSExp opSExp .
 
     AND             reduce using rule 110 (sExp -> exp errorOpSExp opSExp .)
     OR              reduce using rule 110 (sExp -> exp errorOpSExp opSExp .)
+    ;               reduce using rule 110 (sExp -> exp errorOpSExp opSExp .)
     ,               reduce using rule 110 (sExp -> exp errorOpSExp opSExp .)
     )               reduce using rule 110 (sExp -> exp errorOpSExp opSExp .)
-    ;               reduce using rule 110 (sExp -> exp errorOpSExp opSExp .)
     ]               reduce using rule 110 (sExp -> exp errorOpSExp opSExp .)
 
 
-state 209
+state 207
 
     (125) cyTerm -> * errorFact . fact
     (128) fact -> . CTES
@@ -3455,19 +3413,19 @@ state 209
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    funcCall                       shift and go to state 134
-    cte                            shift and go to state 135
-    fact                           shift and go to state 236
+    funcCall                       shift and go to state 133
+    cte                            shift and go to state 134
+    fact                           shift and go to state 232
 
-state 210
+state 208
 
     (126) cyTerm -> / fact .
 
@@ -3487,7 +3445,7 @@ state 210
     ]               reduce using rule 126 (cyTerm -> / fact .)
 
 
-state 211
+state 209
 
     (30) init -> = initWith errorInit .
 
@@ -3495,21 +3453,21 @@ state 211
     )               reduce using rule 30 (init -> = initWith errorInit .)
 
 
-state 212
+state 210
 
     (34) initDict -> = ( dictType . : dictType ) errorInitDict
 
-    :               shift and go to state 237
+    :               shift and go to state 233
 
 
-state 213
+state 211
 
     (36) dictType -> errorDictType . CTES
 
-    CTES            shift and go to state 238
+    CTES            shift and go to state 234
 
 
-state 214
+state 212
 
     (38) dictType -> ID .
     (132) fact -> ID . opAccess errorOpAccess
@@ -3523,8 +3481,8 @@ state 214
     (139) errorOpStruct -> .
 
     :               reduce using rule 38 (dictType -> ID .)
-    (               shift and go to state 112
-    .               shift and go to state 163
+    (               shift and go to state 111
+    .               shift and go to state 161
     *               reduce using rule 150 (empty -> .)
     /               reduce using rule 150 (empty -> .)
     +               reduce using rule 150 (empty -> .)
@@ -3540,13 +3498,13 @@ state 214
     )               reduce using rule 150 (empty -> .)
     [               reduce using rule 139 (errorOpStruct -> .)
 
-    errorOpStruct                  shift and go to state 159
-    opDictionary                   shift and go to state 164
-    opStruct                       shift and go to state 160
-    opAccess                       shift and go to state 161
-    empty                          shift and go to state 162
+    errorOpStruct                  shift and go to state 157
+    opDictionary                   shift and go to state 162
+    opStruct                       shift and go to state 158
+    opAccess                       shift and go to state 159
+    empty                          shift and go to state 160
 
-state 215
+state 213
 
     (37) dictType -> cte .
     (129) fact -> cte .
@@ -3567,76 +3525,89 @@ state 215
     )               reduce using rule 129 (fact -> cte .)
 
 
-state 216
+state 214
 
     (84) assignOptions -> [ expresion ] . assignMatrix init
     (85) assignMatrix -> . [ expresion ] errorAssignMatrix
     (86) assignMatrix -> . empty
     (150) empty -> .
 
-    [               shift and go to state 240
+    [               shift and go to state 236
     =               reduce using rule 150 (empty -> .)
 
-    assignMatrix                   shift and go to state 239
-    empty                          shift and go to state 241
+    assignMatrix                   shift and go to state 235
+    empty                          shift and go to state 237
 
-state 217
+state 215
 
     (98) condition -> errorCondition IF ( expresion ) . { body } optionalElse
 
-    {               shift and go to state 242
+    {               shift and go to state 238
 
+
+state 216
+
+    (40) param -> saveType type errorParam ID cyTypeParam . cyParam
+    (42) cyParam -> . errorCyParam saveID saveTypeParam ; param
+    (43) cyParam -> . empty saveID saveTypeParam
+    (47) errorCyParam -> .
+    (150) empty -> .
+
+    ;               reduce using rule 47 (errorCyParam -> .)
+    )               reduce using rule 150 (empty -> .)
+
+    empty                          shift and go to state 239
+    cyParam                        shift and go to state 241
+    errorCyParam                   shift and go to state 240
+
+state 217
+
+    (58) opReturns -> errorOpReturns RETURNS . type saveReturnType { opVars body return
+    (13) type -> . errorType INT
+    (14) type -> . FLOAT
+    (15) type -> . STRING
+    (16) type -> . OBJECT
+    (17) type -> . BOOL
+    (18) errorType -> .
+
+    FLOAT           shift and go to state 29
+    STRING          shift and go to state 30
+    OBJECT          shift and go to state 32
+    BOOL            shift and go to state 33
+    INT             reduce using rule 18 (errorType -> .)
+
+    errorType                      shift and go to state 31
+    type                           shift and go to state 242
 
 state 218
 
-    (43) cyParam -> empty . saveID saveTypeParam
-    (11) saveID -> .
+    (59) opReturns -> { opVars . body
+    (70) body -> . errorBody cyInstruction
+    (71) body -> . empty
+    (72) errorBody -> .
+    (150) empty -> .
 
-    )               reduce using rule 11 (saveID -> .)
+    ID              reduce using rule 72 (errorBody -> .)
+    IF              reduce using rule 72 (errorBody -> .)
+    FOR             reduce using rule 72 (errorBody -> .)
+    WHILE           reduce using rule 72 (errorBody -> .)
+    }               reduce using rule 150 (empty -> .)
 
-    saveID                         shift and go to state 243
+    body                           shift and go to state 243
+    empty                          shift and go to state 76
+    errorBody                      shift and go to state 75
 
 state 219
 
-    (42) cyParam -> errorCyParam . saveID saveTypeParam ; param
-    (11) saveID -> .
+    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } . clearVarsTable
+    (50) clearVarsTable -> .
 
-    ;               reduce using rule 11 (saveID -> .)
+    FUNC            reduce using rule 50 (clearVarsTable -> .)
+    MAIN            reduce using rule 50 (clearVarsTable -> .)
 
-    saveID                         shift and go to state 244
+    clearVarsTable                 shift and go to state 244
 
 state 220
-
-    (40) param -> saveType type errorParam ID cyTypeParam cyParam .
-
-    )               reduce using rule 40 (param -> saveType type errorParam ID cyTypeParam cyParam .)
-
-
-state 221
-
-    (58) opReturns -> errorOpReturns RETURNS type . saveReturnType { opVars body return
-    (60) saveReturnType -> .
-
-    {               reduce using rule 60 (saveReturnType -> .)
-
-    saveReturnType                 shift and go to state 245
-
-state 222
-
-    (59) opReturns -> { opVars body .
-
-    }               reduce using rule 59 (opReturns -> { opVars body .)
-
-
-state 223
-
-    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable .
-
-    FUNC            reduce using rule 48 (function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable .)
-    MAIN            reduce using rule 48 (function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable .)
-
-
-state 224
 
     (76) whileCycle -> errorWhileCycle WHILE ( expresion ) { . body }
     (70) body -> . errorBody cyInstruction
@@ -3650,32 +3621,32 @@ state 224
     WHILE           reduce using rule 72 (errorBody -> .)
     }               reduce using rule 150 (empty -> .)
 
-    body                           shift and go to state 246
+    body                           shift and go to state 245
     errorBody                      shift and go to state 75
     empty                          shift and go to state 76
 
-state 225
+state 221
 
     (78) forCycle -> errorForCycle FOR ( assign ; expresion . ; assign ) { body }
 
-    ;               shift and go to state 247
+    ;               shift and go to state 246
 
 
-state 226
+state 222
 
     (138) opStruct -> errorOpStruct [ expresion . ] opMatrix
 
-    ]               shift and go to state 248
+    ]               shift and go to state 247
 
 
-state 227
+state 223
 
     (91) cyParamCall -> , expresion cyParamCall .
 
     )               reduce using rule 91 (cyParamCall -> , expresion cyParamCall .)
 
 
-state 228
+state 224
 
     (120) cyExp -> + term .
 
@@ -3693,7 +3664,7 @@ state 228
     ]               reduce using rule 120 (cyExp -> + term .)
 
 
-state 229
+state 225
 
     (121) cyExp -> - term .
 
@@ -3711,7 +3682,7 @@ state 229
     ]               reduce using rule 121 (cyExp -> - term .)
 
 
-state 230
+state 226
 
     (111) opSExp -> EQ exp .
 
@@ -3723,7 +3694,7 @@ state 230
     ]               reduce using rule 111 (opSExp -> EQ exp .)
 
 
-state 231
+state 227
 
     (112) opSExp -> DIF exp .
 
@@ -3735,7 +3706,7 @@ state 231
     ]               reduce using rule 112 (opSExp -> DIF exp .)
 
 
-state 232
+state 228
 
     (114) opSExp -> GTOEQ exp .
 
@@ -3747,7 +3718,7 @@ state 232
     ]               reduce using rule 114 (opSExp -> GTOEQ exp .)
 
 
-state 233
+state 229
 
     (115) opSExp -> > exp .
 
@@ -3759,7 +3730,7 @@ state 233
     ]               reduce using rule 115 (opSExp -> > exp .)
 
 
-state 234
+state 230
 
     (113) opSExp -> LTOEQ exp .
 
@@ -3771,7 +3742,7 @@ state 234
     ]               reduce using rule 113 (opSExp -> LTOEQ exp .)
 
 
-state 235
+state 231
 
     (116) opSExp -> < exp .
 
@@ -3783,7 +3754,7 @@ state 235
     ]               reduce using rule 116 (opSExp -> < exp .)
 
 
-state 236
+state 232
 
     (125) cyTerm -> * errorFact fact .
 
@@ -3803,7 +3774,7 @@ state 236
     ]               reduce using rule 125 (cyTerm -> * errorFact fact .)
 
 
-state 237
+state 233
 
     (34) initDict -> = ( dictType : . dictType ) errorInitDict
     (36) dictType -> . errorDictType CTES
@@ -3815,18 +3786,18 @@ state 237
     (148) cte -> . TRUE
     (149) cte -> . FALSE
 
-    ID              shift and go to state 251
+    ID              shift and go to state 250
     CTES            reduce using rule 39 (errorDictType -> .)
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    dictType                       shift and go to state 249
-    errorDictType                  shift and go to state 213
-    cte                            shift and go to state 250
+    dictType                       shift and go to state 248
+    errorDictType                  shift and go to state 211
+    cte                            shift and go to state 249
 
-state 238
+state 234
 
     (36) dictType -> errorDictType CTES .
 
@@ -3834,16 +3805,16 @@ state 238
     :               reduce using rule 36 (dictType -> errorDictType CTES .)
 
 
-state 239
+state 235
 
     (84) assignOptions -> [ expresion ] assignMatrix . init
     (30) init -> . = initWith errorInit
 
-    =               shift and go to state 253
+    =               shift and go to state 252
 
-    init                           shift and go to state 252
+    init                           shift and go to state 251
 
-state 240
+state 236
 
     (85) assignMatrix -> [ . expresion ] errorAssignMatrix
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -3861,30 +3832,30 @@ state 240
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 254
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 253
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 241
+state 237
 
     (86) assignMatrix -> empty .
 
     =               reduce using rule 86 (assignMatrix -> empty .)
 
 
-state 242
+state 238
 
     (98) condition -> errorCondition IF ( expresion ) { . body } optionalElse
     (70) body -> . errorBody cyInstruction
@@ -3898,52 +3869,76 @@ state 242
     WHILE           reduce using rule 72 (errorBody -> .)
     }               reduce using rule 150 (empty -> .)
 
-    body                           shift and go to state 255
+    body                           shift and go to state 254
     errorBody                      shift and go to state 75
     empty                          shift and go to state 76
 
+state 239
+
+    (43) cyParam -> empty . saveID saveTypeParam
+    (11) saveID -> .
+
+    )               reduce using rule 11 (saveID -> .)
+
+    saveID                         shift and go to state 255
+
+state 240
+
+    (42) cyParam -> errorCyParam . saveID saveTypeParam ; param
+    (11) saveID -> .
+
+    ;               reduce using rule 11 (saveID -> .)
+
+    saveID                         shift and go to state 256
+
+state 241
+
+    (40) param -> saveType type errorParam ID cyTypeParam cyParam .
+
+    )               reduce using rule 40 (param -> saveType type errorParam ID cyTypeParam cyParam .)
+
+
+state 242
+
+    (58) opReturns -> errorOpReturns RETURNS type . saveReturnType { opVars body return
+    (60) saveReturnType -> .
+
+    {               reduce using rule 60 (saveReturnType -> .)
+
+    saveReturnType                 shift and go to state 257
+
 state 243
 
-    (43) cyParam -> empty saveID . saveTypeParam
-    (46) saveTypeParam -> .
+    (59) opReturns -> { opVars body .
 
-    )               reduce using rule 46 (saveTypeParam -> .)
+    }               reduce using rule 59 (opReturns -> { opVars body .)
 
-    saveTypeParam                  shift and go to state 256
 
 state 244
 
-    (42) cyParam -> errorCyParam saveID . saveTypeParam ; param
-    (46) saveTypeParam -> .
+    (48) function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable .
 
-    ;               reduce using rule 46 (saveTypeParam -> .)
+    FUNC            reduce using rule 48 (function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable .)
+    MAIN            reduce using rule 48 (function -> errorFunction FUNC saveType ID saveProc flagParameters ( opParameters ) flagParameters opReturns } clearVarsTable .)
 
-    saveTypeParam                  shift and go to state 257
 
 state 245
 
-    (58) opReturns -> errorOpReturns RETURNS type saveReturnType . { opVars body return
+    (76) whileCycle -> errorWhileCycle WHILE ( expresion ) { body . }
 
-    {               shift and go to state 258
+    }               shift and go to state 258
 
 
 state 246
 
-    (76) whileCycle -> errorWhileCycle WHILE ( expresion ) { body . }
-
-    }               shift and go to state 259
-
-
-state 247
-
     (78) forCycle -> errorForCycle FOR ( assign ; expresion ; . assign ) { body }
     (80) assign -> . ID errorAssign assignOptions
 
-    ID              shift and go to state 151
+    ID              shift and go to state 149
 
-    assign                         shift and go to state 260
+    assign                         shift and go to state 259
 
-state 248
+state 247
 
     (138) opStruct -> errorOpStruct [ expresion ] . opMatrix
     (140) opMatrix -> . errorOpMatrix [ expresion ]
@@ -3969,32 +3964,32 @@ state 248
     ]               reduce using rule 150 (empty -> .)
     ;               reduce using rule 150 (empty -> .)
 
-    empty                          shift and go to state 263
-    errorOpMatrix                  shift and go to state 261
-    opMatrix                       shift and go to state 262
+    empty                          shift and go to state 262
+    errorOpMatrix                  shift and go to state 260
+    opMatrix                       shift and go to state 261
 
-state 249
+state 248
 
     (34) initDict -> = ( dictType : dictType . ) errorInitDict
 
-    )               shift and go to state 264
+    )               shift and go to state 263
 
 
-state 250
+state 249
 
     (37) dictType -> cte .
 
     )               reduce using rule 37 (dictType -> cte .)
 
 
-state 251
+state 250
 
     (38) dictType -> ID .
 
     )               reduce using rule 38 (dictType -> ID .)
 
 
-state 252
+state 251
 
     (84) assignOptions -> [ expresion ] assignMatrix init .
 
@@ -4002,7 +3997,7 @@ state 252
     )               reduce using rule 84 (assignOptions -> [ expresion ] assignMatrix init .)
 
 
-state 253
+state 252
 
     (30) init -> = . initWith errorInit
     (32) initWith -> . expresion
@@ -4022,73 +4017,63 @@ state 253
     (148) cte -> . TRUE
     (149) cte -> . FALSE
 
-    ID              shift and go to state 176
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    ID              shift and go to state 174
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 177
-    initWith                       shift and go to state 174
-    funcCall                       shift and go to state 178
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    term                           shift and go to state 132
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 175
+    initWith                       shift and go to state 172
+    funcCall                       shift and go to state 176
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    term                           shift and go to state 131
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 254
+state 253
 
     (85) assignMatrix -> [ expresion . ] errorAssignMatrix
 
-    ]               shift and go to state 265
+    ]               shift and go to state 264
+
+
+state 254
+
+    (98) condition -> errorCondition IF ( expresion ) { body . } optionalElse
+
+    }               shift and go to state 265
 
 
 state 255
 
-    (98) condition -> errorCondition IF ( expresion ) { body . } optionalElse
+    (43) cyParam -> empty saveID . saveTypeParam
+    (46) saveTypeParam -> .
 
-    }               shift and go to state 266
+    )               reduce using rule 46 (saveTypeParam -> .)
 
+    saveTypeParam                  shift and go to state 266
 
 state 256
 
-    (43) cyParam -> empty saveID saveTypeParam .
+    (42) cyParam -> errorCyParam saveID . saveTypeParam ; param
+    (46) saveTypeParam -> .
 
-    )               reduce using rule 43 (cyParam -> empty saveID saveTypeParam .)
+    ;               reduce using rule 46 (saveTypeParam -> .)
 
+    saveTypeParam                  shift and go to state 267
 
 state 257
 
-    (42) cyParam -> errorCyParam saveID saveTypeParam . ; param
+    (58) opReturns -> errorOpReturns RETURNS type saveReturnType . { opVars body return
 
-    ;               shift and go to state 267
+    {               shift and go to state 268
 
 
 state 258
-
-    (58) opReturns -> errorOpReturns RETURNS type saveReturnType { . opVars body return
-    (6) opVars -> . vars
-    (7) opVars -> . empty
-    (10) vars -> . errorVars VARS declare
-    (150) empty -> .
-    (12) errorVars -> .
-
-    RETURN          reduce using rule 150 (empty -> .)
-    ID              reduce using rule 150 (empty -> .)
-    IF              reduce using rule 150 (empty -> .)
-    FOR             reduce using rule 150 (empty -> .)
-    WHILE           reduce using rule 150 (empty -> .)
-    VARS            reduce using rule 12 (errorVars -> .)
-
-    vars                           shift and go to state 8
-    opVars                         shift and go to state 268
-    errorVars                      shift and go to state 10
-    empty                          shift and go to state 11
-
-state 259
 
     (76) whileCycle -> errorWhileCycle WHILE ( expresion ) { body } .
 
@@ -4100,21 +4085,21 @@ state 259
     RETURN          reduce using rule 76 (whileCycle -> errorWhileCycle WHILE ( expresion ) { body } .)
 
 
-state 260
+state 259
 
     (78) forCycle -> errorForCycle FOR ( assign ; expresion ; assign . ) { body }
 
     )               shift and go to state 269
 
 
-state 261
+state 260
 
     (140) opMatrix -> errorOpMatrix . [ expresion ]
 
     [               shift and go to state 270
 
 
-state 262
+state 261
 
     (138) opStruct -> errorOpStruct [ expresion ] opMatrix .
 
@@ -4130,13 +4115,13 @@ state 262
     <               reduce using rule 138 (opStruct -> errorOpStruct [ expresion ] opMatrix .)
     AND             reduce using rule 138 (opStruct -> errorOpStruct [ expresion ] opMatrix .)
     OR              reduce using rule 138 (opStruct -> errorOpStruct [ expresion ] opMatrix .)
+    ;               reduce using rule 138 (opStruct -> errorOpStruct [ expresion ] opMatrix .)
     )               reduce using rule 138 (opStruct -> errorOpStruct [ expresion ] opMatrix .)
     ,               reduce using rule 138 (opStruct -> errorOpStruct [ expresion ] opMatrix .)
     ]               reduce using rule 138 (opStruct -> errorOpStruct [ expresion ] opMatrix .)
-    ;               reduce using rule 138 (opStruct -> errorOpStruct [ expresion ] opMatrix .)
 
 
-state 263
+state 262
 
     (141) opMatrix -> empty .
 
@@ -4158,7 +4143,7 @@ state 263
     ;               reduce using rule 141 (opMatrix -> empty .)
 
 
-state 264
+state 263
 
     (34) initDict -> = ( dictType : dictType ) . errorInitDict
     (35) errorInitDict -> .
@@ -4168,7 +4153,7 @@ state 264
 
     errorInitDict                  shift and go to state 271
 
-state 265
+state 264
 
     (85) assignMatrix -> [ expresion ] . errorAssignMatrix
     (87) errorAssignMatrix -> .
@@ -4177,7 +4162,7 @@ state 265
 
     errorAssignMatrix              shift and go to state 272
 
-state 266
+state 265
 
     (98) condition -> errorCondition IF ( expresion ) { body } . optionalElse
     (100) optionalElse -> . errorElse ELSE { body }
@@ -4197,38 +4182,40 @@ state 266
     optionalElse                   shift and go to state 274
     empty                          shift and go to state 275
 
+state 266
+
+    (43) cyParam -> empty saveID saveTypeParam .
+
+    )               reduce using rule 43 (cyParam -> empty saveID saveTypeParam .)
+
+
 state 267
 
-    (42) cyParam -> errorCyParam saveID saveTypeParam ; . param
-    (40) param -> . saveType type errorParam ID cyTypeParam cyParam
-    (3) saveType -> .
+    (42) cyParam -> errorCyParam saveID saveTypeParam . ; param
 
-    FLOAT           reduce using rule 3 (saveType -> .)
-    STRING          reduce using rule 3 (saveType -> .)
-    OBJECT          reduce using rule 3 (saveType -> .)
-    BOOL            reduce using rule 3 (saveType -> .)
-    INT             reduce using rule 3 (saveType -> .)
+    ;               shift and go to state 276
 
-    param                          shift and go to state 276
-    saveType                       shift and go to state 82
 
 state 268
 
-    (58) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars . body return
-    (70) body -> . errorBody cyInstruction
-    (71) body -> . empty
-    (72) errorBody -> .
+    (58) opReturns -> errorOpReturns RETURNS type saveReturnType { . opVars body return
+    (6) opVars -> . vars
+    (7) opVars -> . empty
+    (10) vars -> . errorVars VARS declare
     (150) empty -> .
+    (12) errorVars -> .
 
-    ID              reduce using rule 72 (errorBody -> .)
-    IF              reduce using rule 72 (errorBody -> .)
-    FOR             reduce using rule 72 (errorBody -> .)
-    WHILE           reduce using rule 72 (errorBody -> .)
     RETURN          reduce using rule 150 (empty -> .)
+    ID              reduce using rule 150 (empty -> .)
+    IF              reduce using rule 150 (empty -> .)
+    FOR             reduce using rule 150 (empty -> .)
+    WHILE           reduce using rule 150 (empty -> .)
+    VARS            reduce using rule 12 (errorVars -> .)
 
-    body                           shift and go to state 277
-    errorBody                      shift and go to state 75
-    empty                          shift and go to state 76
+    vars                           shift and go to state 8
+    opVars                         shift and go to state 277
+    errorVars                      shift and go to state 10
+    empty                          shift and go to state 11
 
 state 269
 
@@ -4255,21 +4242,21 @@ state 270
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
     expresion                      shift and go to state 279
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
 state 271
 
@@ -4319,21 +4306,36 @@ state 275
 
 state 276
 
-    (42) cyParam -> errorCyParam saveID saveTypeParam ; param .
+    (42) cyParam -> errorCyParam saveID saveTypeParam ; . param
+    (40) param -> . saveType type errorParam ID cyTypeParam cyParam
+    (3) saveType -> .
 
-    )               reduce using rule 42 (cyParam -> errorCyParam saveID saveTypeParam ; param .)
+    FLOAT           reduce using rule 3 (saveType -> .)
+    STRING          reduce using rule 3 (saveType -> .)
+    OBJECT          reduce using rule 3 (saveType -> .)
+    BOOL            reduce using rule 3 (saveType -> .)
+    INT             reduce using rule 3 (saveType -> .)
 
+    param                          shift and go to state 281
+    saveType                       shift and go to state 97
 
 state 277
 
-    (58) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars body . return
-    (51) return -> . errorReturn RETURN expresion ;
-    (52) errorReturn -> .
+    (58) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars . body return
+    (70) body -> . errorBody cyInstruction
+    (71) body -> . empty
+    (72) errorBody -> .
+    (150) empty -> .
 
-    RETURN          reduce using rule 52 (errorReturn -> .)
+    ID              reduce using rule 72 (errorBody -> .)
+    IF              reduce using rule 72 (errorBody -> .)
+    FOR             reduce using rule 72 (errorBody -> .)
+    WHILE           reduce using rule 72 (errorBody -> .)
+    RETURN          reduce using rule 150 (empty -> .)
 
-    return                         shift and go to state 281
-    errorReturn                    shift and go to state 282
+    body                           shift and go to state 282
+    errorBody                      shift and go to state 75
+    empty                          shift and go to state 76
 
 state 278
 
@@ -4369,23 +4371,27 @@ state 280
 
 state 281
 
-    (58) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars body return .
+    (42) cyParam -> errorCyParam saveID saveTypeParam ; param .
 
-    }               reduce using rule 58 (opReturns -> errorOpReturns RETURNS type saveReturnType { opVars body return .)
+    )               reduce using rule 42 (cyParam -> errorCyParam saveID saveTypeParam ; param .)
 
 
 state 282
 
-    (51) return -> errorReturn . RETURN expresion ;
+    (58) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars body . return
+    (51) return -> . errorReturn RETURN expresion ;
+    (52) errorReturn -> .
 
-    RETURN          shift and go to state 286
+    RETURN          reduce using rule 52 (errorReturn -> .)
 
+    return                         shift and go to state 286
+    errorReturn                    shift and go to state 287
 
 state 283
 
     (78) forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body . }
 
-    }               shift and go to state 287
+    }               shift and go to state 288
 
 
 state 284
@@ -4424,11 +4430,44 @@ state 285
     WHILE           reduce using rule 72 (errorBody -> .)
     }               reduce using rule 150 (empty -> .)
 
-    body                           shift and go to state 288
+    body                           shift and go to state 289
     empty                          shift and go to state 76
     errorBody                      shift and go to state 75
 
 state 286
+
+    (58) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars body return .
+
+    }               reduce using rule 58 (opReturns -> errorOpReturns RETURNS type saveReturnType { opVars body return .)
+
+
+state 287
+
+    (51) return -> errorReturn . RETURN expresion ;
+
+    RETURN          shift and go to state 290
+
+
+state 288
+
+    (78) forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .
+
+    ID              reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
+    IF              reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
+    FOR             reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
+    WHILE           reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
+    }               reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
+    RETURN          reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
+
+
+state 289
+
+    (100) optionalElse -> errorElse ELSE { body . }
+
+    }               shift and go to state 291
+
+
+state 290
 
     (51) return -> errorReturn RETURN . expresion ;
     (105) expresion -> . sExp cyExpresion errorExpresion
@@ -4446,49 +4485,23 @@ state 286
     (149) cte -> . FALSE
     (88) funcCall -> . ID ( opParamCall )
 
-    CTES            shift and go to state 131
-    (               shift and go to state 125
-    ID              shift and go to state 129
-    CTED            shift and go to state 128
-    CTEF            shift and go to state 136
-    TRUE            shift and go to state 124
-    FALSE           shift and go to state 133
+    CTES            shift and go to state 130
+    (               shift and go to state 124
+    ID              shift and go to state 128
+    CTED            shift and go to state 127
+    CTEF            shift and go to state 135
+    TRUE            shift and go to state 123
+    FALSE           shift and go to state 132
 
-    expresion                      shift and go to state 289
-    term                           shift and go to state 132
-    funcCall                       shift and go to state 134
-    sExp                           shift and go to state 126
-    cte                            shift and go to state 135
-    exp                            shift and go to state 137
-    fact                           shift and go to state 138
+    expresion                      shift and go to state 292
+    term                           shift and go to state 131
+    funcCall                       shift and go to state 133
+    sExp                           shift and go to state 125
+    cte                            shift and go to state 134
+    exp                            shift and go to state 136
+    fact                           shift and go to state 137
 
-state 287
-
-    (78) forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .
-
-    ID              reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
-    IF              reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
-    FOR             reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
-    WHILE           reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
-    }               reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
-    RETURN          reduce using rule 78 (forCycle -> errorForCycle FOR ( assign ; expresion ; assign ) { body } .)
-
-
-state 288
-
-    (100) optionalElse -> errorElse ELSE { body . }
-
-    }               shift and go to state 290
-
-
-state 289
-
-    (51) return -> errorReturn RETURN expresion . ;
-
-    ;               shift and go to state 291
-
-
-state 290
+state 291
 
     (100) optionalElse -> errorElse ELSE { body } .
 
@@ -4500,7 +4513,14 @@ state 290
     RETURN          reduce using rule 100 (optionalElse -> errorElse ELSE { body } .)
 
 
-state 291
+state 292
+
+    (51) return -> errorReturn RETURN expresion . ;
+
+    ;               shift and go to state 293
+
+
+state 293
 
     (51) return -> errorReturn RETURN expresion ; .
 
@@ -4509,6 +4529,6 @@ state 291
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: shift/reduce conflict for CTES in state 175 resolved as shift
-WARNING: reduce/reduce conflict in state 178 resolved using rule (initWith -> funcCall)
-WARNING: rejected rule (fact -> funcCall) in state 178
+WARNING: shift/reduce conflict for CTES in state 173 resolved as shift
+WARNING: reduce/reduce conflict in state 176 resolved using rule (initWith -> funcCall)
+WARNING: rejected rule (fact -> funcCall) in state 176

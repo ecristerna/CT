@@ -78,12 +78,11 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}"'''
-    print("program")
+    '''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}" printTables'''
+    # print("program")
 
 def p_changeCurrentScope(p):
     '''changeCurrentScope : '''
-    print("Enter Change Current")
     global currentScope
     currentScope = "local"
 
@@ -120,7 +119,7 @@ def p_errorProgram(p):
 def p_opVars(p):
 	'''opVars : vars
 			| empty'''
-	print("optional vars")
+	# print("optional vars")
 	
 
 def p_opFunctions(p):
@@ -130,27 +129,25 @@ def p_opFunctions(p):
 
 def p_vars(p):
 	'''vars : errorVars VARS declare '''
-	print("vars")
+	# print("vars")
 	
 
 def p_saveID(p):
 	'''saveID : '''
 	global currentScope
-	global vars_global
-	global vars_local
 	global currentType
 	global currentToken
-	print("CURRENT SCOPE ---- " + currentScope)
+	global semanticError
 	if currentScope is "global":
+		global vars_global
 		if currentToken in vars_global:
-			global semanticError
 			semanticError = "Varibale '" + currentToken + "' already declared"
 			semanticErrorHalt()
 		else:
 			vars_global[currentToken] = currentType
 	else:
+		global vars_local
 		if currentToken in vars_local:
-			global semanticError
 			semanticError = "Variable '" + currentToken + "' already declared on this scope"
 			semanticErrorHalt()
 		else:
@@ -159,7 +156,9 @@ def p_saveID(p):
 def semanticErrorHalt():
 	global semanticError
 	global currentToken
+	global line
 	print("Semantic Error: " + semanticError)
+	print("Line: %d" % line)
 	sys.exit()
 
 def p_errorVars(p):
@@ -174,7 +173,7 @@ def p_type(p):
 			| STRING
 			| OBJECT
 			| BOOL'''
-	print("type")
+	# print("type")
 
 
 def p_errorType(p):
@@ -184,8 +183,8 @@ def p_errorType(p):
 	
 
 def p_main(p):
-	'''main : errorMain MAIN saveMain "{" opVars body "}"'''
-	print("main")
+	'''main : errorMain MAIN saveMain "{" opVars body "}" clearVarsTable'''
+	# print("main")
 
 def p_saveMain(p):
 	'''saveMain : '''
@@ -205,7 +204,7 @@ def p_instr(p):
 	'''instr : basicStatements ";"
 			| condition
 			| cycle '''
-	print("instr")
+	# print("instr")
 	
 def p_basicStatements(p):
 	'''basicStatements : assign
@@ -216,12 +215,12 @@ def p_declare(p):
 	'''declare : basicDeclare
 			| structDeclare
 			| dictDeclare '''
-	print("declare")
+	# print("declare")
 	
 
 def p_init(p):
 	'''init : "=" initWith errorInit'''
-	print("init")
+	# print("init")
 	
 
 def p_errorInit(p):
@@ -233,12 +232,12 @@ def p_errorInit(p):
 def p_initWith(p):
 	'''initWith : expresion
 		| funcCall '''
-	print("init with")
+	# print("init with")
 	
 
 def p_initDict(p):
 	'''initDict : "=" "(" dictType ":" dictType ")" errorInitDict'''
-	print("initDict")
+	# print("initDict")
 	
 
 def p_errorInitDict(p):
@@ -251,7 +250,7 @@ def p_dictType(p):
 	'''dictType : errorDictType CTES
 				| cte
 				| ID '''
-	print("dict type")
+	# print("dict type")
 	
 
 def p_errorDictType(p):
@@ -262,7 +261,7 @@ def p_errorDictType(p):
 
 def p_param(p):
 	'''param : saveType type errorParam ID cyTypeParam cyParam '''
-	print("param")
+	# print("param")
 	
 
 def p_errorParam(p):
@@ -274,13 +273,13 @@ def p_errorParam(p):
 def p_cyParam(p):
 	'''cyParam : errorCyParam saveID saveTypeParam ";"  param
 		| empty saveID saveTypeParam'''
-	print("cycle param")
+	# print("cycle param")
 	
 
 def p_cyTypeParam(p):
 	'''cyTypeParam : "," saveID saveTypeParam ID cyTypeParam
 		| empty '''
-	print("cycle type param")
+	# print("cycle type param")
 
 def p_saveTypeParam(p):
         '''saveTypeParam : '''
@@ -299,7 +298,7 @@ def p_errorCyParam(p):
 
 def p_function(p):
 	'''function : errorFunction FUNC saveType ID saveProc flagParameters "(" opParameters ")" flagParameters opReturns  "}" clearVarsTable '''
-	print("function")
+	# print("function")
 
 def p_errorFunction(p):
 	'''errorFunction : '''
@@ -309,14 +308,17 @@ def p_errorFunction(p):
 def p_clearVarsTable(p):
     '''clearVarsTable : '''
     global vars_local
+    print
+    print("=========================================================")
     print("This is VARS LOCAL --> ")
     print(vars_local)
     print("=========================================================")
+    print
     vars_local = {}
 
 def p_return(p):
 	'''return : errorReturn RETURN expresion ";" '''
-	print("return")
+	# print("return")
 	
 
 def p_errorReturn(p):
@@ -328,7 +330,7 @@ def p_errorReturn(p):
 def p_opParameters(p):
 	'''opParameters : param saveParamToDirProc errorOpParameters
 					| empty '''
-	print("optional parameters")
+	# print("optional parameters")
 
 def p_flagParameters(p):
     '''flagParameters : '''
@@ -336,11 +338,11 @@ def p_flagParameters(p):
     declaringParameters = not declaringParameters
 
 def p_saveParamToDirProc(p):
-        '''saveParamToDirProc : '''
-        global param_types
-        global dir_procs
-        dir_procs[len(dir_procs) - 1][2] = param_types
-        param_types = []
+    '''saveParamToDirProc : '''
+    global param_types
+    global dir_procs
+    dir_procs[len(dir_procs) - 1][2] = param_types
+    param_types = []
  
 
 def p_errorOpParameters(p):
@@ -352,7 +354,7 @@ def p_errorOpParameters(p):
 def p_opReturns(p):
 	'''opReturns : errorOpReturns RETURNS type saveReturnType "{" opVars body return
 		| "{" opVars body '''
-	print("returns")
+	# print("returns")
 	
 
 def p_saveReturnType(p):
@@ -369,7 +371,7 @@ def p_errorOpReturns(p):
 
 def p_basicDeclare(p):
 	'''basicDeclare : saveType type errorBasicDeclare ID cyTypeParam saveID ";" cyDeclare '''
-	print("basic declare")
+	# print("basic declare")
 	
 
 def p_errorBasicDeclare(p):
@@ -380,7 +382,7 @@ def p_errorBasicDeclare(p):
 
 def p_structDeclare(p):
 	'''structDeclare : errorStructDeclare STRUCT ID struct ";" cyDeclare '''
-	print("struct declare")
+	# print("struct declare")
 	
 
 def p_errorStructDeclare(p):
@@ -391,7 +393,7 @@ def p_errorStructDeclare(p):
 
 def p_dictDeclare(p):
 	'''dictDeclare : errorDictDeclare DICT ID dict ";" cyDeclare '''
-	print("dict declare")
+	# print("dict declare")
 	
 
 def p_errorDictDeclare(p):
@@ -403,13 +405,13 @@ def p_errorDictDeclare(p):
 def p_cyDeclare(p):
 	'''cyDeclare : declare
 		| empty '''
-	print("cycle declare")
+	# print("cycle declare")
 	
 
 def p_body(p):
 	'''body : errorBody cyInstruction
 			| empty '''
-	print("body")
+	# print("body")
 	
 
 def p_errorBody(p):
@@ -420,18 +422,18 @@ def p_errorBody(p):
 
 def p_cyInstruction(p):
 	'''cyInstruction : instr body '''
-	print("cycleInstruction")
+	# print("cycleInstruction")
 	
 
 def p_cycle(p):
 	'''cycle : forCycle
 			| whileCycle '''
-	print("cycle")
+	# print("cycle")
 	
 
 def p_whileCycle(p):
 	'''whileCycle : errorWhileCycle WHILE "(" expresion ")" "{" body "}" '''
-	print("while")
+	# print("while")
 	
 
 def p_errorWhileCycle(p):
@@ -442,7 +444,7 @@ def p_errorWhileCycle(p):
 
 def p_forCycle(p):
 	'''forCycle : errorForCycle FOR "(" assign ";" expresion ";" assign ")" "{" body "}" '''
-	print("for")
+	# print("for")
 	
 
 def p_errorForCycle(p):
@@ -453,7 +455,7 @@ def p_errorForCycle(p):
 
 def p_assign(p):
 	'''assign :  ID errorAssign assignOptions '''
-	print("assign")
+	# print("assign")
 	
     
 def p_errorAssign(p):
@@ -466,13 +468,13 @@ def p_assignOptions(p):
 	'''assignOptions : init
 					| initDict
 					| "[" expresion "]" assignMatrix init '''
-	print("assignOptions")
+	# print("assignOptions")
 	
 
 def p_assignMatrix(p):
 	'''assignMatrix : "[" expresion "]" errorAssignMatrix
 					| empty '''
-	print("assignMatrix")
+	# print("assignMatrix")
 	
 
 def p_errorAssignMatrix(p):
@@ -483,41 +485,41 @@ def p_errorAssignMatrix(p):
 
 def p_funcCall(p):
 	'''funcCall : ID "(" opParamCall ")" '''
-	print("funcCall")
+	# print("funcCall")
 	
 
 def p_opParamCall(p):
 	'''opParamCall : expresion cyParamCall
 				| empty '''
-	print("function parameter")
+	# print("function parameter")
 	
 
 def p_cyParamCall(p):
 	'''cyParamCall : "," expresion cyParamCall
 				| empty '''
-	print("cycle parameter call")
+	# print("cycle parameter call")
 	
 
 def p_struct(p):
 	'''struct : structType "[" CTED "]" optionalMatrix '''
-	print("struct")
+	# print("struct")
 	
 
 def p_structType(p):
 	'''structType : type
 				| DICT dict '''
-	print("struct type")
+	# print("struct type")
 	
 
 def p_optionalMatrix(p):
 	'''optionalMatrix : "[" CTED "]"
 					| empty '''
-	print("matrix")
+	# print("matrix")
 	
 
 def p_condition(p):
 	'''condition : errorCondition IF "(" expresion ")" "{" body "}" optionalElse '''
-	print("condition")
+	# print("condition")
 	
 
 def p_errorCondition(p):
@@ -529,7 +531,7 @@ def p_errorCondition(p):
 def p_optionalElse(p):
 	'''optionalElse : errorElse ELSE "{" body "}"
 					| empty '''
-	print("else")
+	# print("else")
 	
 
 def p_errorElse(p):
@@ -540,7 +542,7 @@ def p_errorElse(p):
 
 def p_dict(p):
 	'''dict : errorDict "(" type ":" type ")" '''
-	print("dict")
+	# print("dict")
 	
 
 def p_errorDict(p):
@@ -551,7 +553,7 @@ def p_errorDict(p):
 
 def p_expresion(p):
 	'''expresion : sExp cyExpresion errorExpresion '''
-	print("expresion")
+	# print("expresion")
 	
 
 def p_errorExpresion(p):
@@ -564,12 +566,12 @@ def p_cyExpresion(p):
 	'''cyExpresion : AND expresion
 				| OR expresion
 				| empty '''
-	print("cycle expresion")
+	# print("cycle expresion")
 	
 
 def p_sExp(p):
 	'''sExp : exp errorOpSExp opSExp '''
-	print("super expresion")
+	# print("super expresion")
 	
 
 def p_opSExp(p):
@@ -580,7 +582,7 @@ def p_opSExp(p):
 			| ">" exp
 			| "<" exp
 			| empty '''
-	print("cycle super expresion")
+	# print("cycle super expresion")
 	
 
 def p_errorOpSExp(p):
@@ -591,14 +593,14 @@ def p_errorOpSExp(p):
 
 def p_exp(p):
 	'''exp : term errorCyExp cyExp '''
-	print("exp")
+	# print("exp")
 	
 
 def p_cyExp(p):
 	'''cyExp : "+" term
 			| "-" term
 			| empty '''
-	print("cycle exp")
+	# print("cycle exp")
 	
 
 def p_errorCyExp(p):
@@ -609,14 +611,14 @@ def p_errorCyExp(p):
 
 def p_term(p):
 	'''term : fact cyTerm '''
-	print("term")
+	# print("term")
 	
 
 def p_cyTerm(p):
 	'''cyTerm : "*" errorFact fact
 			| "/" fact
 			| empty '''
-	print("cycle term")
+	# print("cycle term")
 	
 
 def p_fact(p):
@@ -625,7 +627,7 @@ def p_fact(p):
 			| funcCall
 			| "(" expresion ")"
 			| ID opAccess errorOpAccess'''
-	print("fact")
+	# print("fact")
 
 		
 def p_errorFact(p):
@@ -638,7 +640,7 @@ def p_opAccess(p):
 	'''opAccess : opStruct
 				| opDictionary
 				| empty '''
-	print("optional access")
+	# print("optional access")
 	
 
 def p_errorOpAccess(p):
@@ -649,7 +651,7 @@ def p_errorOpAccess(p):
 
 def p_opStruct(p):
 	'''opStruct : errorOpStruct "[" expresion "]" opMatrix '''
-	print("optional struct")
+	# print("optional struct")
 	
 
 def p_errorOpStruct(p):
@@ -661,7 +663,7 @@ def p_errorOpStruct(p):
 def p_opMatrix(p):
 	'''opMatrix : errorOpMatrix "[" expresion "]"
 				| empty '''
-	print("optional matrix")
+	# print("optional matrix")
 	
 
 def p_errorOpMatrix(p):
@@ -672,13 +674,13 @@ def p_errorOpMatrix(p):
 
 def p_opDictionary(p):
 	'''opDictionary : "." dictIndex '''
-	print("optional dictionary")
+	# print("optional dictionary")
 	
 
 def p_dictIndex(p):
 	'''dictIndex : FIRST
 				| LAST '''
-	print("dictionary index")
+	# print("dictionary index")
 	
 
 def p_cte(p):
@@ -686,36 +688,34 @@ def p_cte(p):
 		| CTEF 
 		| TRUE 
 		| FALSE '''
-	print("cte")
-	global currentToken
-	print(currentToken)
+	# print("cte")
 	
 
 def p_empty(p):
     '''empty : '''
-    print("EMPTY")
+    # print("EMPTY")
     
 
-def p_error(p):
-	global line
-	global errorMsg
-	global currentScope
-	global currentType
-	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
-	print('%s' % errorMsg)
+def p_printTables(p):
+	'''printTables : '''
 	print
 	print("=========================================================")
 	print("This is DIR PROCS --> ")
 	print(dir_procs)
 	print("=========================================================")
+	print
+	print
+	print("=========================================================")
 	print("This is VARS GLOBAL --> ")
 	print(vars_global)
 	print("=========================================================")
-	print("This is VARS LOCAL --> ")
-	print(vars_local)
-	print("=========================================================")
 	print
 
+def p_error(p):
+	global line
+	global errorMsg
+	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
+	print('%s' % errorMsg)
 	sys.exit()
 
 import ply.yacc as yacc
