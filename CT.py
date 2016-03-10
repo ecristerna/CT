@@ -721,5 +721,5 @@ def p_error(p):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input3.txt", "r");
+file = open ("input.txt", "r");
 yacc.parse(file.read())

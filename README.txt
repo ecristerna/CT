@@ -6,7 +6,7 @@ Instrucciones para ejectuar:
 Para probar diferentes archivos:
 
 1. Abrir archivo tarea3.py
-2. Ubicar línea 590
+2. Ubicar línea 724
 3. Cambiar nombre del archivo de entrada
 
 NOTA: input.txt es exitoso; input2.txt e input3.txt son erróneos.
