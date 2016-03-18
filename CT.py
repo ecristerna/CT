@@ -22,6 +22,8 @@ currentToken = ""
 semanticError = ""
 declaringParameters = False
 
+# Addresses
+
 MIN_INT = 1000
 MAX_INT = 1999
 MIN_FLOAT = 2000
@@ -30,17 +32,41 @@ MIN_BOOL = 3000
 MAX_BOOL = 3999
 MIN_STRING = 4000
 MAX_STRING = 4999
+MIN_TEMP = 5000
+MAX_TEMP = 6999
+MIN_CONST = 7000
+MAX_CONST= 9999
 
 contInt = MIN_INT
 contFloat = MIN_FLOAT
 contBool = MIN_BOOL
 contString = MIN_STRING
+contTemp = MIN_TEMP
+contConst = MIN_CONST
+
+# Types & Operators Codes
 
 INT = 10
 FLOAT = 20
 BOOL = 30
 STRING = 40
 ERROR = 50
+
+ADD = 100
+SUBSTRACT = 110
+MULTIPLY = 120
+DIVISION = 130
+LESS_THAN = 140
+GREATER_TAN = 150
+LESS_EQUAL = 160
+GREATER_EQUAL = 170
+EQUAL = 180
+DIFFERENT = 190
+AND = 200
+OR = 210
+ASSIGN = 220
+
+# Semantic Cube
 
 			# 	 +	   	 -      *      /      <      >     <=     >=     ==     !=     AND    OR     =   
 semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, INT], 	 # Int vs Int
@@ -60,6 +86,7 @@ semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
 
+# Instructions Matrix
 
 cuadruplos = []
 
@@ -751,8 +778,8 @@ def p_printTables(p):
 	print(vars_global)
 	print("=========================================================")
 	print
-	print(semanticCube)
 	print(cuadruplos)
+	print(typesValidator(BOOL, BOOL, EQUAL))
 
 def p_error(p):
 	global line
@@ -778,21 +805,30 @@ def getAdressForType(type):
 
 	typeCode = typeToCode(type)
 	
-	if typeCode is 10:
+	if typeCode is INT:
 		contInt += 1
 		return contInt - 1
 
-	if typeCode is 20:
+	if typeCode is FLOAT:
 		contFloat += 1
 		return contFloat - 1
 
-	if typeCode is 30:
+	if typeCode is BOOL:
 		contBool += 1
 		return contBool - 1
 
-	if typeCode is 40:
+	if typeCode is STRING:
 		contString += 1
 		return contString - 1
+
+def typesValidator(left, right, operator):
+	opMap = operator / 10 % 10
+
+	if operator >= 200:
+		opMap += 10
+	
+	return semanticCube[(left / 10 - 1) * 4 + (right / 10 - 1)][opMap]
+
 
 import ply.yacc as yacc
 parser = yacc.yacc()
