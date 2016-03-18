@@ -94,72 +94,6 @@ cuadruplos = []
 
 t_ignore = " \t"
 
-def t_PLUS(t):
-	r'\+'
-	global currentToken
-	currentToken = '+'
-	return t
-
-def t_MINUS(t):
-	r'-'
-	global currentToken
-	currentToken = '-'
-	return t
-
-def t_MULT(t):
-	r'\*'
-	global currentToken
-	currentToken = '*'
-	return t
-
-def t_DIV(t):
-	r'/'
-	global currentToken
-	currentToken = '/'
-	return t
-
-def t_ASGN(t):
-	r'='
-	global currentToken
-	currentToken = '='
-	return t
-
-def t_DIF(t):
-	r'!='
-	global currentToken
-	currentToken = '!='
-	return t
-
-def t_EQ(t):
-	r'=='
-	global currentToken
-	currentToken = '=='
-	return t
-
-def t_GTOEQ(t):
-	r'>='
-	global currentToken
-	currentToken = '>='
-	return t
-
-def t_LTOEQ(t):
-	r'<='
-	global currentToken
-	currentToken = '<='
-	return t
-
-def t_LT(t):
-	r'<'
-	global currentToken
-	currentToken = '<'
-	return t
-
-def t_GT(t):
-	r'>'
-	global currentToken
-	currentToken = '>'
-	return t
-
 def t_CTEF(t):
     r'(\d+)(\.\d+)'
     t.value = float(t.value)
@@ -187,6 +121,71 @@ def t_CTES(t):
     currentToken = t.value
     return t
 
+def t_PLUS(t):
+	r'\+'
+	global currentToken
+	currentToken = '+'
+	return t
+
+def t_MINUS(t):
+	r'-'
+	global currentToken
+	currentToken = '-'
+	return t
+
+def t_MULT(t):
+	r'\*'
+	global currentToken
+	currentToken = '*'
+	return t
+
+def t_DIV(t):
+	r'/'
+	global currentToken
+	currentToken = '/'
+	return t
+
+def t_EQ(t):
+	r'=='
+	global currentToken
+	currentToken = '=='
+	return t
+
+def t_ASGN(t):
+	r'='
+	global currentToken
+	currentToken = '='
+	return t
+
+def t_DIF(t):
+	r'!='
+	global currentToken
+	currentToken = '!='
+	return t
+
+def t_GTOEQ(t):
+	r'>='
+	global currentToken
+	currentToken = '>='
+	return t
+
+def t_LTOEQ(t):
+	r'<='
+	global currentToken
+	currentToken = '<='
+	return t
+
+def t_LT(t):
+	r'<'
+	global currentToken
+	currentToken = '<'
+	return t
+
+def t_GT(t):
+	r'>'
+	global currentToken
+	currentToken = '>'
+	return t
 
 reserved_map = { }
 for r in reserved:
