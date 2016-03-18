@@ -779,7 +779,7 @@ def p_printTables(p):
 	print("=========================================================")
 	print
 	print(cuadruplos)
-	print(typesValidator(BOOL, BOOL, EQUAL))
+	print(typesValidator(FLOAT, INT, operatorToCode('=')))
 
 def p_error(p):
 	global line
@@ -796,6 +796,24 @@ def typeToCode(type):
         "string": 40,
     }
     return switcher.get(type, 50)
+
+def operatorToCode(operator):
+    switcher = {
+        "+": 100,
+        "-": 110,
+        "*": 120,
+        "/": 130,
+        "<": 140,
+        ">": 150,
+        "LTOEQ": 160,
+        "GTOEQ": 170,
+        "EQ": 180,
+        "DIF": 190,
+        "AND": 200,
+        "OR": 210,
+        "=": 220,
+    }
+    return switcher.get(operator, 50)
 
 def getAdressForType(type):
 	global contInt
