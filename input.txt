@@ -1,7 +1,7 @@
 	program a {
 		vars int i, j;
 			float o, p, q, r;
-			object z;
+			string z;
 			struct k float[4][3];
 			dict p (float : bool);
 
@@ -11,7 +11,7 @@
 			dict r (float : bool);
 	}
 	
-	func p(int i, j; float h; bool m, p) returns object {
+	func p(int i, j; float h; bool m, p) returns string {
 		vars int t, y;
 			struct k float[4][3];
 			dict e (float : bool);

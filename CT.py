@@ -6,7 +6,7 @@ if sys.version_info[0] >= 3:
     raw_input = input
 
 literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':', '.']
-reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
+reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -21,6 +21,20 @@ currentTable = ""
 currentToken = ""
 semanticError = ""
 declaringParameters = False
+
+MIN_INT = 1000
+MAX_INT = 1999
+MIN_FLOAT = 2000
+MAX_FLOAT = 2999
+MIN_BOOL = 3000
+MAX_BOOL = 3999
+MIN_STRING = 4000
+MAX_STRING = 4999
+
+contInt = MIN_INT
+contFloat = MIN_FLOAT
+contBool = MIN_BOOL
+contString = MIN_STRING
 
 INT = 10
 FLOAT = 20
@@ -45,6 +59,9 @@ semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Float
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
+
+
+cuadruplos = []
 
 # Tokens
 
@@ -168,14 +185,14 @@ def p_saveID(p):
 			semanticError = "Varibale '" + currentToken + "' already declared"
 			semanticErrorHalt()
 		else:
-			vars_global[currentToken] = currentType
+			vars_global[currentToken] = getAdressForType(currentType)
 	else:
 		global vars_local
 		if currentToken in vars_local:
 			semanticError = "Variable '" + currentToken + "' already declared on this scope"
 			semanticErrorHalt()
 		else:
-			vars_local[currentToken] = currentType
+			vars_local[currentToken] = getAdressForType(currentType)
 
 def semanticErrorHalt():
 	global semanticError
@@ -195,7 +212,6 @@ def p_type(p):
 	'''type : errorType INT
 			| FLOAT
 			| STRING
-			| OBJECT
 			| BOOL'''
 	# print("type")
 
@@ -214,7 +230,7 @@ def p_saveMain(p):
 	'''saveMain : '''
 	global dir_procs
 	global currentToken
-	newProc = [currentToken, "main", None, None, None]
+	newProc = [currentToken, "main", None, None, vars_local]
 	dir_procs += [newProc]
 
 
@@ -311,7 +327,7 @@ def p_saveTypeParam(p):
         if declaringParameters:
             global currenType
             global param_types
-            param_types.append(currentType)
+            param_types.append(typeToCode(currentType))
 
 
 def p_errorCyParam(p):
@@ -385,7 +401,7 @@ def p_saveReturnType(p):
 	'''saveReturnType : '''
 	global dir_procs
 	global currentToken
-	dir_procs[len(dir_procs) - 1][3] = currentToken
+	dir_procs[len(dir_procs) - 1][3] = typeToCode(currentToken)
 
 def p_errorOpReturns(p):
 	'''errorOpReturns : '''
@@ -736,6 +752,7 @@ def p_printTables(p):
 	print("=========================================================")
 	print
 	print(semanticCube)
+	print(cuadruplos)
 
 def p_error(p):
 	global line
@@ -743,6 +760,39 @@ def p_error(p):
 	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
 	print('%s' % errorMsg)
 	sys.exit()
+
+def typeToCode(type):
+    switcher = {
+        "int": 10,
+        "float": 20,
+        "bool": 30,
+        "string": 40,
+    }
+    return switcher.get(type, 50)
+
+def getAdressForType(type):
+	global contInt
+	global contFloat
+	global contBool
+	global contString
+
+	typeCode = typeToCode(type)
+	
+	if typeCode is 10:
+		contInt += 1
+		return contInt - 1
+
+	if typeCode is 20:
+		contFloat += 1
+		return contFloat - 1
+
+	if typeCode is 30:
+		contBool += 1
+		return contBool - 1
+
+	if typeCode is 40:
+		contString += 1
+		return contString - 1
 
 import ply.yacc as yacc
 parser = yacc.yacc()
