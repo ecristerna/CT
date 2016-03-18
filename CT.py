@@ -5,9 +5,9 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':', '.']
+literals = ['{','}',',',';','(',')','[', ']', ':', '.']
 reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
-tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
+tokens = ['ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
 errorMsg = ""
@@ -93,10 +93,72 @@ cuadruplos = []
 # Tokens
 
 t_ignore = " \t"
-t_DIF = "!="
-t_EQ = "=="
-t_GTOEQ = ">="
-t_LTOEQ = "<="
+
+def t_PLUS(t):
+	r'\+'
+	global currentToken
+	currentToken = '+'
+	return t
+
+def t_MINUS(t):
+	r'-'
+	global currentToken
+	currentToken = '-'
+	return t
+
+def t_MULT(t):
+	r'\*'
+	global currentToken
+	currentToken = '*'
+	return t
+
+def t_DIV(t):
+	r'/'
+	global currentToken
+	currentToken = '/'
+	return t
+
+def t_ASGN(t):
+	r'='
+	global currentToken
+	currentToken = '='
+	return t
+
+def t_DIF(t):
+	r'!='
+	global currentToken
+	currentToken = '!='
+	return t
+
+def t_EQ(t):
+	r'=='
+	global currentToken
+	currentToken = '=='
+	return t
+
+def t_GTOEQ(t):
+	r'>='
+	global currentToken
+	currentToken = '>='
+	return t
+
+def t_LTOEQ(t):
+	r'<='
+	global currentToken
+	currentToken = '<='
+	return t
+
+def t_LT(t):
+	r'<'
+	global currentToken
+	currentToken = '<'
+	return t
+
+def t_GT(t):
+	r'>'
+	global currentToken
+	currentToken = '>'
+	return t
 
 def t_CTEF(t):
     r'(\d+)(\.\d+)'
@@ -286,7 +348,7 @@ def p_declare(p):
 
 
 def p_init(p):
-	'''init : "=" initWith errorInit'''
+	'''init : ASGN initWith errorInit'''
 	# print("init")
 
 
@@ -303,7 +365,7 @@ def p_initWith(p):
 
 
 def p_initDict(p):
-	'''initDict : "=" "(" dictType ":" dictType ")" errorInitDict'''
+	'''initDict : ASGN "(" dictType ":" dictType ")" errorInitDict'''
 	# print("initDict")
 
 
@@ -642,14 +704,19 @@ def p_sExp(p):
 
 
 def p_opSExp(p):
-	'''opSExp :  EQ exp
-			| DIF exp
-			| LTOEQ exp
-			| GTOEQ exp
-			| ">" exp
-			| "<" exp
+	'''opSExp : prueba EQ exp
+			| prueba DIF exp
+			| prueba LTOEQ exp
+			| prueba GTOEQ exp
+			| prueba GT exp
+			| prueba LT exp
 			| empty '''
 	# print("cycle super expresion")
+
+def p_prueba(p):
+	'''prueba : '''
+	print(currentToken)
+	print(operatorToCode(currentToken))
 
 
 def p_errorOpSExp(p):
@@ -664,8 +731,8 @@ def p_exp(p):
 
 
 def p_cyExp(p):
-	'''cyExp : "+" term
-			| "-" term
+	'''cyExp : PLUS term
+			| MINUS term
 			| empty '''
 	# print("cycle exp")
 
@@ -682,8 +749,8 @@ def p_term(p):
 
 
 def p_cyTerm(p):
-	'''cyTerm : "*" errorFact fact
-			| "/" fact
+	'''cyTerm : MULT errorFact fact
+			| DIV fact
 			| empty '''
 	# print("cycle term")
 
@@ -805,10 +872,10 @@ def operatorToCode(operator):
         "/": 130,
         "<": 140,
         ">": 150,
-        "LTOEQ": 160,
-        "GTOEQ": 170,
-        "EQ": 180,
-        "DIF": 190,
+        "<=": 160,
+        ">=": 170,
+        "==": 180,
+        "!=": 190,
         "AND": 200,
         "OR": 210,
         "=": 220,
