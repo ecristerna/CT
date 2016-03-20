@@ -4,6 +4,7 @@
 	vars int b, c, d;
 		bool e, f, g;
 
-		b = c + d * d / c;
+		
+		e = c > b * d and g;
 	}
 }

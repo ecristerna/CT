@@ -67,7 +67,7 @@ SUBSTRACT = 110
 MULTIPLY = 120
 DIVISION = 130
 LESS_THAN = 140
-GREATER_TAN = 150
+GREATER_THAN = 150
 LESS_EQUAL = 160
 GREATER_EQUAL = 170
 EQUAL = 180
@@ -109,6 +109,22 @@ pTipos = []
 # Tokens
 
 t_ignore = " \t"
+
+def t_AND(t):
+    r'and'
+    global currentToken
+    global previousToken
+    previousToken = currentToken
+    currentToken = 'AND'
+    return t
+
+def t_OR(t):
+    r'or'
+    global currentToken
+    global previousToken
+    previousToken = currentToken
+    currentToken = 'OR'
+    return t
 
 def t_CTEF(t):
     r'(\d+)(\.\d+)'
@@ -374,7 +390,7 @@ def p_errorMain(p):
 
 
 def p_instr(p):
-	'''instr : basicStatements prueba ";"
+	'''instr : basicStatements ";"
 			| condition
 			| cycle '''
 	# print("instr")
@@ -394,10 +410,6 @@ def p_declare(p):
 def p_init(p):
 	'''init : ASGN saveOperator initWith errorInit'''
 	# print("init")
-
-def p_prueba(p):
-	'''prueba : '''
-	print("Prueba " + currentToken)
 
 def p_errorInit(p):
 	'''errorInit : '''
@@ -749,9 +761,28 @@ def p_errorDict(p):
 
 
 def p_expresion(p):
-	'''expresion : sExp cyExpresion errorExpresion '''
+	'''expresion : sExp performAndOr cyExpresion errorExpresion '''
 	# print("expresion")
 
+def p_performAndOr(p):
+	'''performAndOr : '''
+	print("THIS IS PILAO")
+	print(pilaO)
+	if not pilaO:
+		print("RETURN")
+		return
+
+	operator = pilaO.pop()
+	print(operator)
+
+	if operator != AND and operator != OR:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
 
 def p_errorExpresion(p):
 	'''errorExpresion : '''
@@ -760,24 +791,42 @@ def p_errorExpresion(p):
 
 
 def p_cyExpresion(p):
-	'''cyExpresion : AND expresion
-				| OR expresion
+	'''cyExpresion : AND saveOperator expresion
+				| OR saveOperator expresion
 				| empty '''
 	# print("cycle expresion")
 
 
 def p_sExp(p):
-	'''sExp : exp errorOpSExp opSExp '''
+	'''sExp : exp performRelational errorOpSExp opSExp '''
 	# print("super expresion")
 
+def p_performRelational(p):
+	'''performRelational : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+	print("OPERATOR")
+	print(operator)
+
+	if operator != LESS_THAN and operator != GREATER_THAN and operator != LESS_EQUAL and operator != GREATER_EQUAL and operator != EQUAL and operator != DIFFERENT :
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
 
 def p_opSExp(p):
-	'''opSExp : EQ exp
-			| DIF exp
-			| LTOEQ exp
-			| GTOEQ exp
-			| GT exp
-			| LT exp
+	'''opSExp : EQ saveOperator exp performRelational
+			| DIF saveOperator exp performRelational
+			| LTOEQ saveOperator exp performRelational
+			| GTOEQ saveOperator exp performRelational
+			| GT saveOperator exp performRelational
+			| LT saveOperator exp performRelational
 			| empty '''
 	# print("cycle super expresion")
 
@@ -818,11 +867,9 @@ def generateQuadruple(operator):
 	tipoDer = pTipos.pop()
 
 	if not pTipos:
-		print("SEGUNDO")
 		semanticErrorHalt()
 
 	tipoIzq = pTipos.pop()
-
 	tipoRes = typesValidator(tipoIzq, tipoDer, operator)
 
 	if tipoRes == ERROR:
@@ -854,25 +901,41 @@ def p_cyExp(p):
 
 def p_saveOperator(p):
 	'''saveOperator : '''
-	if previousToken is '+':
+	if previousToken == '+':
 		pilaO.append(ADD)
-	elif previousToken is '-':
+	elif previousToken == '-':
 		pilaO.append(SUBSTRACT)
-	elif previousToken is '*':
+	elif previousToken == '*':
 		pilaO.append(MULTIPLY)
-	elif previousToken is '/':
+	elif previousToken == '/':
 		pilaO.append(DIVISION)
-	elif previousToken is '=':
+	elif previousToken == '<':
+		pilaO.append(LESS_THAN)
+	elif previousToken == '>':
+		pilaO.append(GREATER_THAN)
+	elif previousToken == '<=':
+		pilaO.append(LESS_EQUAL)
+	elif previousToken == '>=':
+		pilaO.append(GREATER_EQUAL)
+	elif previousToken == '==':
+		pilaO.append(EQUAL)
+	elif previousToken == '!=':
+		pilaO.append(DIFFERENT)
+	elif previousToken == 'AND':
+		pilaO.append(AND)
+	elif previousToken == 'OR':
+		pilaO.append(OR)
+	elif previousToken == '=':
 		pilaO.append(ASSIGN)
 
-	print("SAVE OPERATOR")
+	print("SAVED")
+	print(previousToken)
 	print(pilaO)
 
 def p_errorCyExp(p):
 	'''errorCyExp : '''
 	global errorMsg
 	errorMsg = "Error in rule CYEXP"
-
 
 def p_term(p):
 	'''term : fact performMulDiv cyTerm '''
@@ -921,7 +984,6 @@ def p_saveVariable(p):
 	elif (currentToken in vars_local) or (currentToken in vars_global):
 		variable = currentToken
 
-	print("WILL SAVE " + variable)
 	address = 0
 
 	if variable in vars_local:
@@ -935,9 +997,6 @@ def p_saveVariable(p):
 
 	pOper.append(address)
 	pTipos.append(getTypeForAddress(address))
-
-	print(pOper)
-	print(pTipos)
 
 def p_errorFact(p):
 	'''errorFact : '''
@@ -1020,9 +1079,7 @@ def p_printTables(p):
 	print("=========================================================")
 	print
 	print(cuadruplos)
-	print(pilaO)
-	# print(typesValidator(FLOAT, INT, operatorToCode('=')))
-	# print(getTypeForAddress(8005))
+	# print(pilaO)
 
 def p_error(p):
 	global line
