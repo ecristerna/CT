@@ -5,9 +5,9 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-literals = ['{','}',',',';','=','(',')','[', ']', '>', '<', '+','-','*','/', ':', '.']
-reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'OBJECT', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
-tokens = ['GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
+literals = ['{','}',',',';','(',')','[', ']', ':', '.']
+reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
+tokens = ['ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
 errorMsg = ""
@@ -22,11 +22,51 @@ currentToken = ""
 semanticError = ""
 declaringParameters = False
 
+# Addresses
+
+MIN_INT = 1000
+MAX_INT = 1999
+MIN_FLOAT = 2000
+MAX_FLOAT = 2999
+MIN_BOOL = 3000
+MAX_BOOL = 3999
+MIN_STRING = 4000
+MAX_STRING = 4999
+MIN_TEMP = 5000
+MAX_TEMP = 6999
+MIN_CONST = 7000
+MAX_CONST= 9999
+
+contInt = MIN_INT
+contFloat = MIN_FLOAT
+contBool = MIN_BOOL
+contString = MIN_STRING
+contTemp = MIN_TEMP
+contConst = MIN_CONST
+
+# Types & Operators Codes
+
 INT = 10
 FLOAT = 20
 BOOL = 30
 STRING = 40
 ERROR = 50
+
+ADD = 100
+SUBSTRACT = 110
+MULTIPLY = 120
+DIVISION = 130
+LESS_THAN = 140
+GREATER_TAN = 150
+LESS_EQUAL = 160
+GREATER_EQUAL = 170
+EQUAL = 180
+DIFFERENT = 190
+AND = 200
+OR = 210
+ASSIGN = 220
+
+# Semantic Cube
 
 			# 	 +	   	 -      *      /      <      >     <=     >=     ==     !=     AND    OR     =   
 semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, INT], 	 # Int vs Int
@@ -46,13 +86,13 @@ semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
 
+# Instructions Matrix
+
+cuadruplos = []
+
 # Tokens
 
 t_ignore = " \t"
-t_DIF = "!="
-t_EQ = "=="
-t_GTOEQ = ">="
-t_LTOEQ = "<="
 
 def t_CTEF(t):
     r'(\d+)(\.\d+)'
@@ -81,6 +121,71 @@ def t_CTES(t):
     currentToken = t.value
     return t
 
+def t_PLUS(t):
+	r'\+'
+	global currentToken
+	currentToken = '+'
+	return t
+
+def t_MINUS(t):
+	r'-'
+	global currentToken
+	currentToken = '-'
+	return t
+
+def t_MULT(t):
+	r'\*'
+	global currentToken
+	currentToken = '*'
+	return t
+
+def t_DIV(t):
+	r'/'
+	global currentToken
+	currentToken = '/'
+	return t
+
+def t_EQ(t):
+	r'=='
+	global currentToken
+	currentToken = '=='
+	return t
+
+def t_ASGN(t):
+	r'='
+	global currentToken
+	currentToken = '='
+	return t
+
+def t_DIF(t):
+	r'!='
+	global currentToken
+	currentToken = '!='
+	return t
+
+def t_GTOEQ(t):
+	r'>='
+	global currentToken
+	currentToken = '>='
+	return t
+
+def t_LTOEQ(t):
+	r'<='
+	global currentToken
+	currentToken = '<='
+	return t
+
+def t_LT(t):
+	r'<'
+	global currentToken
+	currentToken = '<'
+	return t
+
+def t_GT(t):
+	r'>'
+	global currentToken
+	currentToken = '>'
+	return t
 
 reserved_map = { }
 for r in reserved:
@@ -168,14 +273,14 @@ def p_saveID(p):
 			semanticError = "Varibale '" + currentToken + "' already declared"
 			semanticErrorHalt()
 		else:
-			vars_global[currentToken] = currentType
+			vars_global[currentToken] = getAdressForType(currentType)
 	else:
 		global vars_local
 		if currentToken in vars_local:
 			semanticError = "Variable '" + currentToken + "' already declared on this scope"
 			semanticErrorHalt()
 		else:
-			vars_local[currentToken] = currentType
+			vars_local[currentToken] = getAdressForType(currentType)
 
 def semanticErrorHalt():
 	global semanticError
@@ -195,7 +300,6 @@ def p_type(p):
 	'''type : errorType INT
 			| FLOAT
 			| STRING
-			| OBJECT
 			| BOOL'''
 	# print("type")
 
@@ -214,7 +318,7 @@ def p_saveMain(p):
 	'''saveMain : '''
 	global dir_procs
 	global currentToken
-	newProc = [currentToken, "main", None, None, None]
+	newProc = [currentToken, "main", None, None, vars_local]
 	dir_procs += [newProc]
 
 
@@ -243,7 +347,7 @@ def p_declare(p):
 
 
 def p_init(p):
-	'''init : "=" initWith errorInit'''
+	'''init : ASGN initWith errorInit'''
 	# print("init")
 
 
@@ -260,7 +364,7 @@ def p_initWith(p):
 
 
 def p_initDict(p):
-	'''initDict : "=" "(" dictType ":" dictType ")" errorInitDict'''
+	'''initDict : ASGN "(" dictType ":" dictType ")" errorInitDict'''
 	# print("initDict")
 
 
@@ -311,7 +415,7 @@ def p_saveTypeParam(p):
         if declaringParameters:
             global currenType
             global param_types
-            param_types.append(currentType)
+            param_types.append(typeToCode(currentType))
 
 
 def p_errorCyParam(p):
@@ -385,7 +489,7 @@ def p_saveReturnType(p):
 	'''saveReturnType : '''
 	global dir_procs
 	global currentToken
-	dir_procs[len(dir_procs) - 1][3] = currentToken
+	dir_procs[len(dir_procs) - 1][3] = typeToCode(currentToken)
 
 def p_errorOpReturns(p):
 	'''errorOpReturns : '''
@@ -599,14 +703,19 @@ def p_sExp(p):
 
 
 def p_opSExp(p):
-	'''opSExp :  EQ exp
-			| DIF exp
-			| LTOEQ exp
-			| GTOEQ exp
-			| ">" exp
-			| "<" exp
+	'''opSExp : prueba EQ exp
+			| prueba DIF exp
+			| prueba LTOEQ exp
+			| prueba GTOEQ exp
+			| prueba GT exp
+			| prueba LT exp
 			| empty '''
 	# print("cycle super expresion")
+
+def p_prueba(p):
+	'''prueba : '''
+	print(currentToken)
+	print(operatorToCode(currentToken))
 
 
 def p_errorOpSExp(p):
@@ -621,8 +730,8 @@ def p_exp(p):
 
 
 def p_cyExp(p):
-	'''cyExp : "+" term
-			| "-" term
+	'''cyExp : PLUS term
+			| MINUS term
 			| empty '''
 	# print("cycle exp")
 
@@ -639,8 +748,8 @@ def p_term(p):
 
 
 def p_cyTerm(p):
-	'''cyTerm : "*" errorFact fact
-			| "/" fact
+	'''cyTerm : MULT errorFact fact
+			| DIV fact
 			| empty '''
 	# print("cycle term")
 
@@ -735,7 +844,8 @@ def p_printTables(p):
 	print(vars_global)
 	print("=========================================================")
 	print
-	print(semanticCube)
+	print(cuadruplos)
+	print(typesValidator(FLOAT, INT, operatorToCode('=')))
 
 def p_error(p):
 	global line
@@ -743,6 +853,66 @@ def p_error(p):
 	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
 	print('%s' % errorMsg)
 	sys.exit()
+
+def typeToCode(type):
+    switcher = {
+        "int": 10,
+        "float": 20,
+        "bool": 30,
+        "string": 40,
+    }
+    return switcher.get(type, 50)
+
+def operatorToCode(operator):
+    switcher = {
+        "+": 100,
+        "-": 110,
+        "*": 120,
+        "/": 130,
+        "<": 140,
+        ">": 150,
+        "<=": 160,
+        ">=": 170,
+        "==": 180,
+        "!=": 190,
+        "AND": 200,
+        "OR": 210,
+        "=": 220,
+    }
+    return switcher.get(operator, 50)
+
+def getAdressForType(type):
+	global contInt
+	global contFloat
+	global contBool
+	global contString
+
+	typeCode = typeToCode(type)
+	
+	if typeCode is INT:
+		contInt += 1
+		return contInt - 1
+
+	if typeCode is FLOAT:
+		contFloat += 1
+		return contFloat - 1
+
+	if typeCode is BOOL:
+		contBool += 1
+		return contBool - 1
+
+	if typeCode is STRING:
+		contString += 1
+		return contString - 1
+
+def typesValidator(left, right, operator):
+	opMap = operator / 10 % 10
+
+	if operator >= 200:
+		opMap += 10
+	
+	return semanticCube[(left / 10 - 1) * 4 + (right / 10 - 1)][opMap]
+
 
 import ply.yacc as yacc
 parser = yacc.yacc()
