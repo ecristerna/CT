@@ -1,12 +1,9 @@
 	program  a {
-	vars int b, c;
-		float d;
-		bool e, f, g;
 
 	main {
 	vars int b, c, d;
 		bool e, f, g;
 
-		b = c + d - d;
+		b = c + d * d / c;
 	}
 }

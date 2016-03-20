@@ -875,13 +875,32 @@ def p_errorCyExp(p):
 
 
 def p_term(p):
-	'''term : fact cyTerm '''
+	'''term : fact performMulDiv cyTerm '''
 	# print("term")
 
+def p_performMulDiv(p):
+	'''performMulDiv : '''
+	print("THIS IS PILAO")
+	print(pilaO)
+	if not pilaO:
+		print("RETURN")
+		return
+
+	operator = pilaO.pop()
+	print(operator)
+
+	if operator != MULTIPLY and operator != DIVISION:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
 
 def p_cyTerm(p):
-	'''cyTerm : MULT errorFact term
-			| DIV term
+	'''cyTerm : MULT saveOperator errorFact term
+			| DIV saveOperator term
 			| empty '''
 	# print("cycle term")
 
