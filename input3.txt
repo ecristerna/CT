@@ -1,29 +1,12 @@
 	program  a {
-	vars int globalA, globalB;
-		float globalK;
-		bool globalL, globalM, globalN, globalO, gobalQ;
-
-	func g(int firstVar, secondVar; float thirdVar, fourthVar) returns float {
-		vars int hola, adios;
-			float bye, hello, maybe;
-			bool uno;
-
-		return 1;
-	}
-
-	func jota(int primerVar, segundoVar, terceraVar){
-
-	}
-
-	func g() {
-		vars int h1;
-	}
-
-	func ab() returns int {
-		return hola;
-	}
+	vars int b, c;
+		float d;
+		bool e, f, g;
 
 	main {
-		
+	vars int b, c, d;
+		bool e, f, g;
+
+		b = c + d - d;
 	}
 }

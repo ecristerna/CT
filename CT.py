@@ -19,6 +19,7 @@ param_types = []
 currentType = ""
 currentTable = ""
 currentToken = ""
+previousToken = ""
 semanticError = ""
 declaringParameters = False
 
@@ -32,16 +33,25 @@ MIN_BOOL = 3000
 MAX_BOOL = 3999
 MIN_STRING = 4000
 MAX_STRING = 4999
-MIN_TEMP = 5000
-MAX_TEMP = 6999
-MIN_CONST = 7000
+MIN_TEMP_INT = 5000
+MAX_TEMP_INT = 5999
+MIN_TEMP_FLOAT = 6000
+MAX_TEMP_FLOAT = 6999
+MIN_TEMP_BOOL = 7000
+MAX_TEMP_BOOL = 7999
+MIN_TEMP_STRING = 8000
+MAX_TEMP_STRING = 8999
+MIN_CONST = 9000
 MAX_CONST= 9999
 
 contInt = MIN_INT
 contFloat = MIN_FLOAT
 contBool = MIN_BOOL
 contString = MIN_STRING
-contTemp = MIN_TEMP
+contTempInt = MIN_TEMP_INT
+contTempFloat = MIN_TEMP_FLOAT
+contTempBool = MIN_TEMP_BOOL
+contTempString = MIN_TEMP_STRING
 contConst = MIN_CONST
 
 # Types & Operators Codes
@@ -86,9 +96,15 @@ semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
 
-# Instructions Matrix
+# Quadruples
 
 cuadruplos = []
+
+# Stacks
+
+pilaO = []
+pOper = []
+pTipos = []
 
 # Tokens
 
@@ -98,6 +114,8 @@ def t_CTEF(t):
     r'(\d+)(\.\d+)'
     t.value = float(t.value)
     global currentToken
+    global previousToken
+    previousToken = currentToken
     currentToken = t.value
     return t
 
@@ -105,6 +123,8 @@ def t_CTED(t):
 	r'\d+'
 	t.value = int(t.value)
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = t.value
 	return t
 
@@ -112,78 +132,104 @@ def t_ID(t):
     r'[A-Za-z_][\w_]*'
     t.type = reserved_map.get(t.value,"ID")
     global currentToken
+    global previousToken
+    previousToken = currentToken
     currentToken = t.value
     return t
 
 def t_CTES(t):
     r'\"([^\\\n]|(\\.))*?\"'
     global currentToken
+    global previousToken
+    previousToken = currentToken
     currentToken = t.value
     return t
 
 def t_PLUS(t):
 	r'\+'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '+'
 	return t
 
 def t_MINUS(t):
 	r'-'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '-'
 	return t
 
 def t_MULT(t):
 	r'\*'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '*'
 	return t
 
 def t_DIV(t):
 	r'/'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '/'
 	return t
 
 def t_EQ(t):
 	r'=='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '=='
 	return t
 
 def t_ASGN(t):
 	r'='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '='
 	return t
 
 def t_DIF(t):
 	r'!='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '!='
 	return t
 
 def t_GTOEQ(t):
 	r'>='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '>='
 	return t
 
 def t_LTOEQ(t):
 	r'<='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '<='
 	return t
 
 def t_LT(t):
 	r'<'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '<'
 	return t
 
 def t_GT(t):
 	r'>'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '>'
 	return t
 
@@ -284,7 +330,6 @@ def p_saveID(p):
 
 def semanticErrorHalt():
 	global semanticError
-	global currentToken
 	global line
 	print("Semantic Error: " + semanticError)
 	print("Line: %d" % line)
@@ -329,7 +374,7 @@ def p_errorMain(p):
 
 
 def p_instr(p):
-	'''instr : basicStatements ";"
+	'''instr : basicStatements prueba ";"
 			| condition
 			| cycle '''
 	# print("instr")
@@ -347,9 +392,12 @@ def p_declare(p):
 
 
 def p_init(p):
-	'''init : ASGN initWith errorInit'''
+	'''init : ASGN saveOperator initWith errorInit'''
 	# print("init")
 
+def p_prueba(p):
+	'''prueba : '''
+	print("Prueba " + currentToken)
 
 def p_errorInit(p):
 	'''errorInit : '''
@@ -358,9 +406,29 @@ def p_errorInit(p):
 
 
 def p_initWith(p):
-	'''initWith : expresion
+	'''initWith : expresion performAssign
 		| funcCall '''
 	# print("init with")
+
+def p_performAssign(p):
+	'''performAssign : '''
+	print("THIS IS PILAO")
+	print(pilaO)
+	if not pilaO:
+		print("RETURN")
+		return
+
+	operator = pilaO.pop()
+	print(operator)
+
+	if operator != ASSIGN:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
 
 
 def p_initDict(p):
@@ -412,6 +480,7 @@ def p_cyTypeParam(p):
 def p_saveTypeParam(p):
         '''saveTypeParam : '''
         global declaringParameters
+        
         if declaringParameters:
             global currenType
             global param_types
@@ -582,7 +651,7 @@ def p_errorForCycle(p):
 
 
 def p_assign(p):
-	'''assign :  ID errorAssign assignOptions '''
+	'''assign : ID saveVariable errorAssign assignOptions '''
 	# print("assign")
 
 
@@ -703,20 +772,14 @@ def p_sExp(p):
 
 
 def p_opSExp(p):
-	'''opSExp : prueba EQ exp
-			| prueba DIF exp
-			| prueba LTOEQ exp
-			| prueba GTOEQ exp
-			| prueba GT exp
-			| prueba LT exp
+	'''opSExp : EQ exp
+			| DIF exp
+			| LTOEQ exp
+			| GTOEQ exp
+			| GT exp
+			| LT exp
 			| empty '''
 	# print("cycle super expresion")
-
-def p_prueba(p):
-	'''prueba : '''
-	print(currentToken)
-	print(operatorToCode(currentToken))
-
 
 def p_errorOpSExp(p):
 	'''errorOpSExp : '''
@@ -725,16 +788,85 @@ def p_errorOpSExp(p):
 
 
 def p_exp(p):
-	'''exp : term errorCyExp cyExp '''
+	'''exp : term performAddSub errorCyExp cyExp '''
 	# print("exp")
+
+def p_performAddSub(p):
+	'''performAddSub : '''
+	print("THIS IS PILAO")
+	print(pilaO)
+	if not pilaO:
+		print("RETURN")
+		return
+
+	operator = pilaO.pop()
+	print(operator)
+
+	if operator != ADD and operator != SUBSTRACT:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def generateQuadruple(operator):
+	if not pTipos:
+		semanticErrorHalt()
+
+	tipoDer = pTipos.pop()
+
+	if not pTipos:
+		print("SEGUNDO")
+		semanticErrorHalt()
+
+	tipoIzq = pTipos.pop()
+
+	tipoRes = typesValidator(tipoIzq, tipoDer, operator)
+
+	if tipoRes == ERROR:
+		global semanticError
+		semanticError = "Types mismatch"
+		semanticErrorHalt()
+
+	opDer = pOper.pop()
+	opIzq = pOper.pop()
+
+	if operator is ASSIGN:
+		cuadruplo = (operator, opDer, "", opIzq)
+		pOper.append(opIzq)
+		pTipos.append(getTypeForAddress(opIzq))
+	else:
+		temp = getTempForType(tipoRes)
+		cuadruplo = (operator, opIzq, opDer, temp)
+		pOper.append(temp)
+		pTipos.append(tipoRes)
+	
+	cuadruplos.append(cuadruplo)
 
 
 def p_cyExp(p):
-	'''cyExp : PLUS term
-			| MINUS term
+	'''cyExp : PLUS saveOperator exp
+			| MINUS saveOperator exp
 			| empty '''
 	# print("cycle exp")
 
+def p_saveOperator(p):
+	'''saveOperator : '''
+	if previousToken is '+':
+		pilaO.append(ADD)
+	elif previousToken is '-':
+		pilaO.append(SUBSTRACT)
+	elif previousToken is '*':
+		pilaO.append(MULTIPLY)
+	elif previousToken is '/':
+		pilaO.append(DIVISION)
+	elif previousToken is '=':
+		pilaO.append(ASSIGN)
+
+	print("SAVE OPERATOR")
+	print(pilaO)
 
 def p_errorCyExp(p):
 	'''errorCyExp : '''
@@ -748,8 +880,8 @@ def p_term(p):
 
 
 def p_cyTerm(p):
-	'''cyTerm : MULT errorFact fact
-			| DIV fact
+	'''cyTerm : MULT errorFact term
+			| DIV term
 			| empty '''
 	# print("cycle term")
 
@@ -759,9 +891,34 @@ def p_fact(p):
 			| cte
 			| funcCall
 			| "(" expresion ")"
-			| ID opAccess errorOpAccess'''
+			| ID saveVariable opAccess errorOpAccess'''
 	# print("fact")
 
+def p_saveVariable(p):
+	'''saveVariable : '''
+	variable = ""
+	if (previousToken in vars_local) or (previousToken in vars_global):
+		variable = previousToken
+	elif (currentToken in vars_local) or (currentToken in vars_global):
+		variable = currentToken
+
+	print("WILL SAVE " + variable)
+	address = 0
+
+	if variable in vars_local:
+		address = vars_local[variable]
+	elif variable in vars_global:
+		address = vars_global[variable]
+	else:
+		global semanticError
+		semanticError = "Undeclared variable " + variable
+		semanticErrorHalt()
+
+	pOper.append(address)
+	pTipos.append(getTypeForAddress(address))
+
+	print(pOper)
+	print(pTipos)
 
 def p_errorFact(p):
 	'''errorFact : '''
@@ -780,7 +937,6 @@ def p_errorOpAccess(p):
 	'''errorOpAccess : '''
 	global errorMsg
 	errorMsg = "Error in rule ERROROPACCESS"
-
 
 def p_opStruct(p):
 	'''opStruct : errorOpStruct "[" expresion "]" opMatrix '''
@@ -845,7 +1001,9 @@ def p_printTables(p):
 	print("=========================================================")
 	print
 	print(cuadruplos)
-	print(typesValidator(FLOAT, INT, operatorToCode('=')))
+	print(pilaO)
+	# print(typesValidator(FLOAT, INT, operatorToCode('=')))
+	# print(getTypeForAddress(8005))
 
 def p_error(p):
 	global line
@@ -905,6 +1063,41 @@ def getAdressForType(type):
 		contString += 1
 		return contString - 1
 
+def getTempForType(type):
+	global contTempInt
+	global contTempFloat
+	global contTempBool
+	global contTempString
+	
+	if type is INT:
+		contTempInt += 1
+		return contTempInt - 1
+
+	if type is FLOAT:
+		contTempFloat += 1
+		return contTempFloat - 1
+
+	if type is BOOL:
+		contTempBool += 1
+		return contTempBool - 1
+
+	if type is STRING:
+		contTempString += 1
+		return contTempString - 1
+
+def getTypeForAddress(address):
+	if (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT):
+		return INT
+	
+	if (address >= MIN_FLOAT and address <= MAX_FLOAT) or (address >= MIN_TEMP_FLOAT and address <= MAX_TEMP_FLOAT):
+		return FLOAT
+	
+	if (address >= MIN_BOOL and address <= MAX_BOOL) or (address >= MIN_TEMP_BOOL and address <= MAX_TEMP_BOOL):
+		return BOOL
+	
+	if (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING):
+		return STRING
+
 def typesValidator(left, right, operator):
 	opMap = operator / 10 % 10
 
@@ -917,5 +1110,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input.txt", "r");
+file = open ("input3.txt", "r");
 yacc.parse(file.read())
