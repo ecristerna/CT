@@ -5,9 +5,9 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-literals = ['{','}',',',';','(',')','[', ']', ':', '.']
+literals = ['{','}',',',';','[', ']', ':', '.']
 reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
-tokens = ['ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
+tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
 errorMsg = ""
@@ -19,6 +19,7 @@ param_types = []
 currentType = ""
 currentTable = ""
 currentToken = ""
+previousToken = ""
 semanticError = ""
 declaringParameters = False
 
@@ -32,16 +33,25 @@ MIN_BOOL = 3000
 MAX_BOOL = 3999
 MIN_STRING = 4000
 MAX_STRING = 4999
-MIN_TEMP = 5000
-MAX_TEMP = 6999
-MIN_CONST = 7000
+MIN_TEMP_INT = 5000
+MAX_TEMP_INT = 5999
+MIN_TEMP_FLOAT = 6000
+MAX_TEMP_FLOAT = 6999
+MIN_TEMP_BOOL = 7000
+MAX_TEMP_BOOL = 7999
+MIN_TEMP_STRING = 8000
+MAX_TEMP_STRING = 8999
+MIN_CONST = 9000
 MAX_CONST= 9999
 
 contInt = MIN_INT
 contFloat = MIN_FLOAT
 contBool = MIN_BOOL
 contString = MIN_STRING
-contTemp = MIN_TEMP
+contTempInt = MIN_TEMP_INT
+contTempFloat = MIN_TEMP_FLOAT
+contTempBool = MIN_TEMP_BOOL
+contTempString = MIN_TEMP_STRING
 contConst = MIN_CONST
 
 # Types & Operators Codes
@@ -52,12 +62,14 @@ BOOL = 30
 STRING = 40
 ERROR = 50
 
+FONDO_FALSO = 99
+
 ADD = 100
 SUBSTRACT = 110
 MULTIPLY = 120
 DIVISION = 130
 LESS_THAN = 140
-GREATER_TAN = 150
+GREATER_THAN = 150
 LESS_EQUAL = 160
 GREATER_EQUAL = 170
 EQUAL = 180
@@ -86,18 +98,58 @@ semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
 
-# Instructions Matrix
+# Quadruples
 
 cuadruplos = []
+
+# Stacks
+
+pilaO = []
+pOper = []
+pTipos = []
 
 # Tokens
 
 t_ignore = " \t"
 
+def t_PARINI(t):
+    r'\('
+    global currentToken
+    global previousToken
+    previousToken = currentToken
+    currentToken = '('
+    return t
+
+def t_PARFIN(t):
+    r'\)'
+    global currentToken
+    global previousToken
+    previousToken = currentToken
+    currentToken = ')'
+    return t
+
+def t_AND(t):
+    r'and'
+    global currentToken
+    global previousToken
+    previousToken = currentToken
+    currentToken = 'AND'
+    return t
+
+def t_OR(t):
+    r'or'
+    global currentToken
+    global previousToken
+    previousToken = currentToken
+    currentToken = 'OR'
+    return t
+
 def t_CTEF(t):
     r'(\d+)(\.\d+)'
     t.value = float(t.value)
     global currentToken
+    global previousToken
+    previousToken = currentToken
     currentToken = t.value
     return t
 
@@ -105,6 +157,8 @@ def t_CTED(t):
 	r'\d+'
 	t.value = int(t.value)
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = t.value
 	return t
 
@@ -112,78 +166,104 @@ def t_ID(t):
     r'[A-Za-z_][\w_]*'
     t.type = reserved_map.get(t.value,"ID")
     global currentToken
+    global previousToken
+    previousToken = currentToken
     currentToken = t.value
     return t
 
 def t_CTES(t):
     r'\"([^\\\n]|(\\.))*?\"'
     global currentToken
+    global previousToken
+    previousToken = currentToken
     currentToken = t.value
     return t
 
 def t_PLUS(t):
 	r'\+'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '+'
 	return t
 
 def t_MINUS(t):
 	r'-'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '-'
 	return t
 
 def t_MULT(t):
 	r'\*'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '*'
 	return t
 
 def t_DIV(t):
 	r'/'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '/'
 	return t
 
 def t_EQ(t):
 	r'=='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '=='
 	return t
 
 def t_ASGN(t):
 	r'='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '='
 	return t
 
 def t_DIF(t):
 	r'!='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '!='
 	return t
 
 def t_GTOEQ(t):
 	r'>='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '>='
 	return t
 
 def t_LTOEQ(t):
 	r'<='
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '<='
 	return t
 
 def t_LT(t):
 	r'<'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '<'
 	return t
 
 def t_GT(t):
 	r'>'
 	global currentToken
+	global previousToken
+	previousToken = currentToken
 	currentToken = '>'
 	return t
 
@@ -229,11 +309,11 @@ def p_saveProc(p):
 	global currentType
 	global currentToken
 	for proc in dir_procs:
-		if proc[0] is currentToken:
+		if proc[0] == currentToken:
 			global semanticError
 			semanticError = "Function '" + currentToken + "' already declared"
 			semanticErrorHalt()
-	if currentScope is "global":
+	if currentScope == "global":
 		newProc = [currentToken, currentType, None, None, vars_global]
 	else:
 		newProc = [currentToken, currentType, None, None, vars_local]
@@ -267,7 +347,7 @@ def p_saveID(p):
 	global currentType
 	global currentToken
 	global semanticError
-	if currentScope is "global":
+	if currentScope == "global":
 		global vars_global
 		if currentToken in vars_global:
 			semanticError = "Varibale '" + currentToken + "' already declared"
@@ -284,7 +364,6 @@ def p_saveID(p):
 
 def semanticErrorHalt():
 	global semanticError
-	global currentToken
 	global line
 	print("Semantic Error: " + semanticError)
 	print("Line: %d" % line)
@@ -347,9 +426,8 @@ def p_declare(p):
 
 
 def p_init(p):
-	'''init : ASGN initWith errorInit'''
+	'''init : ASGN saveOperator errorInit initWith '''
 	# print("init")
-
 
 def p_errorInit(p):
 	'''errorInit : '''
@@ -359,12 +437,13 @@ def p_errorInit(p):
 
 def p_initWith(p):
 	'''initWith : expresion
+		| fact
 		| funcCall '''
 	# print("init with")
 
 
 def p_initDict(p):
-	'''initDict : ASGN "(" dictType ":" dictType ")" errorInitDict'''
+	'''initDict : ASGN PARINI dictType ":" dictType PARFIN errorInitDict'''
 	# print("initDict")
 
 
@@ -412,6 +491,7 @@ def p_cyTypeParam(p):
 def p_saveTypeParam(p):
         '''saveTypeParam : '''
         global declaringParameters
+        
         if declaringParameters:
             global currenType
             global param_types
@@ -425,7 +505,7 @@ def p_errorCyParam(p):
 
 
 def p_function(p):
-	'''function : errorFunction FUNC saveType ID saveProc flagParameters "(" opParameters ")" flagParameters opReturns  "}" clearVarsTable '''
+	'''function : errorFunction FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns  "}" clearVarsTable '''
 	# print("function")
 
 def p_errorFunction(p):
@@ -436,12 +516,6 @@ def p_errorFunction(p):
 def p_clearVarsTable(p):
     '''clearVarsTable : '''
     global vars_local
-    print
-    print("=========================================================")
-    print("This is VARS LOCAL --> ")
-    print(vars_local)
-    print("=========================================================")
-    print
     vars_local = {}
 
 def p_return(p):
@@ -560,7 +634,7 @@ def p_cycle(p):
 
 
 def p_whileCycle(p):
-	'''whileCycle : errorWhileCycle WHILE "(" expresion ")" "{" body "}" '''
+	'''whileCycle : errorWhileCycle WHILE PARINI expresion PARFIN "{" body "}" '''
 	# print("while")
 
 
@@ -571,7 +645,7 @@ def p_errorWhileCycle(p):
 
 
 def p_forCycle(p):
-	'''forCycle : errorForCycle FOR "(" assign ";" expresion ";" assign ")" "{" body "}" '''
+	'''forCycle : errorForCycle FOR PARINI assign ";" expresion ";" assign PARFIN "{" body "}" '''
 	# print("for")
 
 
@@ -582,7 +656,7 @@ def p_errorForCycle(p):
 
 
 def p_assign(p):
-	'''assign :  ID errorAssign assignOptions '''
+	'''assign : ID saveVariable errorAssign assignOptions performAssign'''
 	# print("assign")
 
 
@@ -612,7 +686,7 @@ def p_errorAssignMatrix(p):
 
 
 def p_funcCall(p):
-	'''funcCall : ID "(" opParamCall ")" '''
+	'''funcCall : ID PARINI opParamCall PARFIN '''
 	# print("funcCall")
 
 
@@ -646,7 +720,7 @@ def p_optionalMatrix(p):
 
 
 def p_condition(p):
-	'''condition : errorCondition IF "(" expresion ")" "{" body "}" optionalElse '''
+	'''condition : errorCondition IF PARINI expresion PARFIN "{" body "}" optionalElse '''
 	# print("condition")
 
 
@@ -669,7 +743,7 @@ def p_errorElse(p):
 
 
 def p_dict(p):
-	'''dict : errorDict "(" type ":" type ")" '''
+	'''dict : errorDict PARINI type ":" type PARFIN '''
 	# print("dict")
 
 
@@ -680,8 +754,9 @@ def p_errorDict(p):
 
 
 def p_expresion(p):
-	'''expresion : sExp cyExpresion errorExpresion '''
+	'''expresion : sExp performAndOr cyExpresion errorExpresion '''
 	# print("expresion")
+
 
 
 def p_errorExpresion(p):
@@ -691,32 +766,26 @@ def p_errorExpresion(p):
 
 
 def p_cyExpresion(p):
-	'''cyExpresion : AND expresion
-				| OR expresion
+	'''cyExpresion : AND saveOperator expresion
+				| OR saveOperator expresion
 				| empty '''
 	# print("cycle expresion")
 
 
 def p_sExp(p):
-	'''sExp : exp errorOpSExp opSExp '''
+	'''sExp : exp errorOpSExp opSExp performRelational'''
 	# print("super expresion")
 
 
 def p_opSExp(p):
-	'''opSExp : prueba EQ exp
-			| prueba DIF exp
-			| prueba LTOEQ exp
-			| prueba GTOEQ exp
-			| prueba GT exp
-			| prueba LT exp
+	'''opSExp : EQ saveOperator exp
+			| DIF saveOperator exp
+			| LTOEQ saveOperator exp
+			| GTOEQ saveOperator exp
+			| GT saveOperator exp
+			| LT saveOperator exp
 			| empty '''
 	# print("cycle super expresion")
-
-def p_prueba(p):
-	'''prueba : '''
-	print(currentToken)
-	print(operatorToCode(currentToken))
-
 
 def p_errorOpSExp(p):
 	'''errorOpSExp : '''
@@ -725,13 +794,13 @@ def p_errorOpSExp(p):
 
 
 def p_exp(p):
-	'''exp : term errorCyExp cyExp '''
+	'''exp : term performAddSub errorCyExp cyExp '''
 	# print("exp")
 
 
 def p_cyExp(p):
-	'''cyExp : PLUS term
-			| MINUS term
+	'''cyExp : PLUS saveOperator exp
+			| MINUS saveOperator exp
 			| empty '''
 	# print("cycle exp")
 
@@ -741,15 +810,14 @@ def p_errorCyExp(p):
 	global errorMsg
 	errorMsg = "Error in rule CYEXP"
 
-
 def p_term(p):
-	'''term : fact cyTerm '''
+	'''term : fact performMulDiv cyTerm '''
 	# print("term")
 
 
 def p_cyTerm(p):
-	'''cyTerm : MULT errorFact fact
-			| DIV fact
+	'''cyTerm : MULT saveOperator errorFact term
+			| DIV saveOperator term
 			| empty '''
 	# print("cycle term")
 
@@ -758,8 +826,8 @@ def p_fact(p):
 	'''fact : CTES
 			| cte
 			| funcCall
-			| "(" expresion ")"
-			| ID opAccess errorOpAccess'''
+			| PARINI putFondo expresion PARFIN takeFondo
+			| ID saveVariable opAccess errorOpAccess'''
 	# print("fact")
 
 
@@ -780,7 +848,6 @@ def p_errorOpAccess(p):
 	'''errorOpAccess : '''
 	global errorMsg
 	errorMsg = "Error in rule ERROROPACCESS"
-
 
 def p_opStruct(p):
 	'''opStruct : errorOpStruct "[" expresion "]" opMatrix '''
@@ -823,7 +890,6 @@ def p_cte(p):
 		| FALSE '''
 	# print("cte")
 
-
 def p_empty(p):
     '''empty : '''
     # print("EMPTY")
@@ -831,21 +897,7 @@ def p_empty(p):
 
 def p_printTables(p):
 	'''printTables : '''
-	# global semanticCube
-	print
-	print("=========================================================")
-	print("This is DIR PROCS --> ")
-	print(dir_procs)
-	print("=========================================================")
-	print
-	print
-	print("=========================================================")
-	print("This is VARS GLOBAL --> ")
-	print(vars_global)
-	print("=========================================================")
-	print
 	print(cuadruplos)
-	print(typesValidator(FLOAT, INT, operatorToCode('=')))
 
 def p_error(p):
 	global line
@@ -853,6 +905,217 @@ def p_error(p):
 	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
 	print('%s' % errorMsg)
 	sys.exit()
+
+# Save in Stacks
+
+def p_saveVariable(p):
+	'''saveVariable : '''
+
+	variable = ""
+	if (previousToken in vars_local) or (previousToken in vars_global):
+		variable = previousToken
+	elif (currentToken in vars_local) or (currentToken in vars_global):
+		variable = currentToken
+
+	address = 0
+
+	if variable in vars_local:
+		address = vars_local[variable]
+	elif variable in vars_global:
+		address = vars_global[variable]
+	else:
+		global semanticError
+		semanticError = "Undeclared variable " + variable
+		semanticErrorHalt()
+
+	pOper.append(address)
+	pTipos.append(getTypeForAddress(address))
+
+def p_saveOperator(p):
+	'''saveOperator : '''
+
+	if previousToken == '+':
+		pilaO.append(ADD)
+	elif previousToken == '-':
+		pilaO.append(SUBSTRACT)
+	elif previousToken == '*':
+		pilaO.append(MULTIPLY)
+	elif previousToken == '/':
+		pilaO.append(DIVISION)
+	elif previousToken == '<' or currentToken == '':
+		pilaO.append(LESS_THAN)
+	elif previousToken == ">" or currentToken == '>':
+		pilaO.append(GREATER_THAN)
+	elif previousToken == '<=' or currentToken == '<=':
+		pilaO.append(LESS_EQUAL)
+	elif previousToken == '>=' or currentToken == '>=':
+		pilaO.append(GREATER_EQUAL)
+	elif previousToken == '==' or currentToken == '==':
+		pilaO.append(EQUAL)
+	elif previousToken == "!=":
+		pilaO.append(DIFFERENT)
+	elif previousToken == 'AND':
+		pilaO.append(AND)
+	elif previousToken == 'OR':
+		pilaO.append(OR)
+	elif previousToken == '=':
+		pilaO.append(ASSIGN)
+
+def p_putFondo(p):
+	'''putFondo : '''
+
+	pilaO.append(FONDO_FALSO)
+
+def p_takeFondo(p):
+	'''takeFondo : '''
+
+	pilaO.pop()
+
+# Perform Semantic Actions Rules
+
+def p_performAssign(p):
+	'''performAssign : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator == FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != ASSIGN:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def p_performMulDiv(p):
+	'''performMulDiv : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator == FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != MULTIPLY and operator != DIVISION:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def p_performAddSub(p):
+	'''performAddSub : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator == FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != ADD and operator != SUBSTRACT:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def p_performRelational(p):
+	'''performRelational : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator == FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != LESS_THAN and operator != GREATER_THAN and operator != LESS_EQUAL and operator != GREATER_EQUAL and operator != EQUAL and operator != DIFFERENT :
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def p_performAndOr(p):
+	'''performAndOr : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator == FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != AND and operator != OR:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def generateQuadruple(operator):
+	if not pTipos:
+		semanticErrorHalt()
+
+	tipoDer = pTipos.pop()
+
+	if not pTipos:
+		semanticErrorHalt()
+
+	tipoIzq = pTipos.pop()
+	tipoRes = typesValidator(tipoIzq, tipoDer, operator)
+
+	if tipoRes == ERROR:
+		global semanticError
+		print(pilaO)
+		print(pOper)
+		print(tipoIzq)
+		print(operator)
+		print(tipoDer)
+		semanticError = "Types m==match " + str(tipoIzq) + " " + str(operator) + " " + str(tipoDer)
+		semanticErrorHalt()
+
+	opDer = pOper.pop()
+	opIzq = pOper.pop()
+
+	if operator == ASSIGN:
+		cuadruplo = (operator, opDer, "", opIzq)
+		pOper.append(opIzq)
+		pTipos.append(getTypeForAddress(opIzq))
+	else:
+		temp = getTempForType(tipoRes)
+		cuadruplo = (operator, opIzq, opDer, temp)
+		pOper.append(temp)
+		pTipos.append(tipoRes)
+	
+	cuadruplos.append(cuadruplo)
+
+# Helper Methods
 
 def typeToCode(type):
     switcher = {
@@ -889,21 +1152,56 @@ def getAdressForType(type):
 
 	typeCode = typeToCode(type)
 	
-	if typeCode is INT:
+	if typeCode == INT:
 		contInt += 1
 		return contInt - 1
 
-	if typeCode is FLOAT:
+	if typeCode == FLOAT:
 		contFloat += 1
 		return contFloat - 1
 
-	if typeCode is BOOL:
+	if typeCode == BOOL:
 		contBool += 1
 		return contBool - 1
 
-	if typeCode is STRING:
+	if typeCode == STRING:
 		contString += 1
 		return contString - 1
+
+def getTempForType(type):
+	global contTempInt
+	global contTempFloat
+	global contTempBool
+	global contTempString
+	
+	if type == INT:
+		contTempInt += 1
+		return contTempInt - 1
+
+	if type == FLOAT:
+		contTempFloat += 1
+		return contTempFloat - 1
+
+	if type == BOOL:
+		contTempBool += 1
+		return contTempBool - 1
+
+	if type == STRING:
+		contTempString += 1
+		return contTempString - 1
+
+def getTypeForAddress(address):
+	if (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT):
+		return INT
+	
+	if (address >= MIN_FLOAT and address <= MAX_FLOAT) or (address >= MIN_TEMP_FLOAT and address <= MAX_TEMP_FLOAT):
+		return FLOAT
+	
+	if (address >= MIN_BOOL and address <= MAX_BOOL) or (address >= MIN_TEMP_BOOL and address <= MAX_TEMP_BOOL):
+		return BOOL
+	
+	if (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING):
+		return STRING
 
 def typesValidator(left, right, operator):
 	opMap = operator / 10 % 10
@@ -917,5 +1215,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input.txt", "r");
+file = open ("input3.txt", "r");
 yacc.parse(file.read())
