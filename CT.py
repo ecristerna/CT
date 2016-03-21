@@ -5,9 +5,9 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
-literals = ['{','}',',',';','(',')','[', ']', ':', '.']
+literals = ['{','}',',',';','[', ']', ':', '.']
 reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
-tokens = ['ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
+tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
 errorMsg = ""
@@ -62,6 +62,8 @@ BOOL = 30
 STRING = 40
 ERROR = 50
 
+FONDO_FALSO = 99
+
 ADD = 100
 SUBSTRACT = 110
 MULTIPLY = 120
@@ -109,6 +111,22 @@ pTipos = []
 # Tokens
 
 t_ignore = " \t"
+
+def t_PARINI(t):
+    r'\('
+    global currentToken
+    global previousToken
+    previousToken = currentToken
+    currentToken = '('
+    return t
+
+def t_PARFIN(t):
+    r'\)'
+    global currentToken
+    global previousToken
+    previousToken = currentToken
+    currentToken = ')'
+    return t
 
 def t_AND(t):
     r'and'
@@ -424,14 +442,15 @@ def p_initWith(p):
 
 def p_performAssign(p):
 	'''performAssign : '''
-	print("THIS IS PILAO")
-	print(pilaO)
+
 	if not pilaO:
-		print("RETURN")
 		return
 
 	operator = pilaO.pop()
-	print(operator)
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
 
 	if operator != ASSIGN:
 		pilaO.append(operator)
@@ -444,7 +463,7 @@ def p_performAssign(p):
 
 
 def p_initDict(p):
-	'''initDict : ASGN "(" dictType ":" dictType ")" errorInitDict'''
+	'''initDict : ASGN PARINI dictType ":" dictType PARFIN errorInitDict'''
 	# print("initDict")
 
 
@@ -506,7 +525,7 @@ def p_errorCyParam(p):
 
 
 def p_function(p):
-	'''function : errorFunction FUNC saveType ID saveProc flagParameters "(" opParameters ")" flagParameters opReturns  "}" clearVarsTable '''
+	'''function : errorFunction FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns  "}" clearVarsTable '''
 	# print("function")
 
 def p_errorFunction(p):
@@ -641,7 +660,7 @@ def p_cycle(p):
 
 
 def p_whileCycle(p):
-	'''whileCycle : errorWhileCycle WHILE "(" expresion ")" "{" body "}" '''
+	'''whileCycle : errorWhileCycle WHILE PARINI expresion PARFIN "{" body "}" '''
 	# print("while")
 
 
@@ -652,7 +671,7 @@ def p_errorWhileCycle(p):
 
 
 def p_forCycle(p):
-	'''forCycle : errorForCycle FOR "(" assign ";" expresion ";" assign ")" "{" body "}" '''
+	'''forCycle : errorForCycle FOR PARINI assign ";" expresion ";" assign ")" "{" body "}" '''
 	# print("for")
 
 
@@ -693,7 +712,7 @@ def p_errorAssignMatrix(p):
 
 
 def p_funcCall(p):
-	'''funcCall : ID "(" opParamCall ")" '''
+	'''funcCall : ID PARINI opParamCall ")" '''
 	# print("funcCall")
 
 
@@ -727,7 +746,7 @@ def p_optionalMatrix(p):
 
 
 def p_condition(p):
-	'''condition : errorCondition IF "(" expresion ")" "{" body "}" optionalElse '''
+	'''condition : errorCondition IF PARINI expresion ")" "{" body "}" optionalElse '''
 	# print("condition")
 
 
@@ -750,7 +769,7 @@ def p_errorElse(p):
 
 
 def p_dict(p):
-	'''dict : errorDict "(" type ":" type ")" '''
+	'''dict : errorDict PARINI type ":" type PARFIN '''
 	# print("dict")
 
 
@@ -766,14 +785,15 @@ def p_expresion(p):
 
 def p_performAndOr(p):
 	'''performAndOr : '''
-	print("THIS IS PILAO")
-	print(pilaO)
+
 	if not pilaO:
-		print("RETURN")
 		return
 
 	operator = pilaO.pop()
-	print(operator)
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
 
 	if operator != AND and operator != OR:
 		pilaO.append(operator)
@@ -798,7 +818,7 @@ def p_cyExpresion(p):
 
 
 def p_sExp(p):
-	'''sExp : exp performRelational errorOpSExp opSExp '''
+	'''sExp : exp errorOpSExp opSExp '''
 	# print("super expresion")
 
 def p_performRelational(p):
@@ -808,8 +828,10 @@ def p_performRelational(p):
 		return
 
 	operator = pilaO.pop()
-	print("OPERATOR")
-	print(operator)
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
 
 	if operator != LESS_THAN and operator != GREATER_THAN and operator != LESS_EQUAL and operator != GREATER_EQUAL and operator != EQUAL and operator != DIFFERENT :
 		pilaO.append(operator)
@@ -842,14 +864,15 @@ def p_exp(p):
 
 def p_performAddSub(p):
 	'''performAddSub : '''
-	print("THIS IS PILAO")
-	print(pilaO)
+
 	if not pilaO:
-		print("RETURN")
 		return
 
 	operator = pilaO.pop()
-	print(operator)
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
 
 	if operator != ADD and operator != SUBSTRACT:
 		pilaO.append(operator)
@@ -874,6 +897,11 @@ def generateQuadruple(operator):
 
 	if tipoRes == ERROR:
 		global semanticError
+		print(pilaO)
+		print(pOper)
+		print(tipoIzq)
+		print(operator)
+		print(tipoDer)
 		semanticError = "Types mismatch"
 		semanticErrorHalt()
 
@@ -909,17 +937,17 @@ def p_saveOperator(p):
 		pilaO.append(MULTIPLY)
 	elif previousToken == '/':
 		pilaO.append(DIVISION)
-	elif previousToken == '<':
+	elif previousToken == '<' or currentToken == '':
 		pilaO.append(LESS_THAN)
-	elif previousToken == '>':
+	elif previousToken == ">" or currentToken == '>':
 		pilaO.append(GREATER_THAN)
-	elif previousToken == '<=':
+	elif previousToken == '<=' or currentToken == '<=':
 		pilaO.append(LESS_EQUAL)
-	elif previousToken == '>=':
+	elif previousToken == '>=' or currentToken == '>=':
 		pilaO.append(GREATER_EQUAL)
-	elif previousToken == '==':
+	elif previousToken == '==' or currentToken == '==':
 		pilaO.append(EQUAL)
-	elif previousToken == '!=':
+	elif previousToken == "!=":
 		pilaO.append(DIFFERENT)
 	elif previousToken == 'AND':
 		pilaO.append(AND)
@@ -929,8 +957,9 @@ def p_saveOperator(p):
 		pilaO.append(ASSIGN)
 
 	print("SAVED")
-	print(previousToken)
 	print(pilaO)
+	print(currentToken)
+	print(previousToken)
 
 def p_errorCyExp(p):
 	'''errorCyExp : '''
@@ -943,14 +972,15 @@ def p_term(p):
 
 def p_performMulDiv(p):
 	'''performMulDiv : '''
-	print("THIS IS PILAO")
-	print(pilaO)
+
 	if not pilaO:
-		print("RETURN")
 		return
 
 	operator = pilaO.pop()
-	print(operator)
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
 
 	if operator != MULTIPLY and operator != DIVISION:
 		pilaO.append(operator)
@@ -972,9 +1002,21 @@ def p_fact(p):
 	'''fact : CTES
 			| cte
 			| funcCall
-			| "(" expresion ")"
+			| PARINI putFondo expresion PARFIN takeFondo
 			| ID saveVariable opAccess errorOpAccess'''
 	# print("fact")
+
+def p_putFondo(p):
+	'''putFondo : '''
+	pilaO.append(FONDO_FALSO)
+
+def p_takeFondo(p):
+	'''takeFondo : '''
+	print(pilaO)
+	print(pOper)
+	print(pTipos)
+	print(cuadruplos)
+	print(pilaO.pop())
 
 def p_saveVariable(p):
 	'''saveVariable : '''

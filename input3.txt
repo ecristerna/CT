@@ -5,6 +5,6 @@
 		bool e, f, g;
 
 		
-		e = c > b * d and g;
+		e = c != (c + b) * d and g;
 	}
 }
