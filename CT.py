@@ -426,7 +426,7 @@ def p_declare(p):
 
 
 def p_init(p):
-	'''init : ASGN saveOperator initWith errorInit'''
+	'''init : ASGN saveOperator errorInit initWith '''
 	# print("init")
 
 def p_errorInit(p):
@@ -436,30 +436,10 @@ def p_errorInit(p):
 
 
 def p_initWith(p):
-	'''initWith : expresion performAssign
+	'''initWith : expresion
+		| fact
 		| funcCall '''
 	# print("init with")
-
-def p_performAssign(p):
-	'''performAssign : '''
-
-	if not pilaO:
-		return
-
-	operator = pilaO.pop()
-
-	if operator is FONDO_FALSO:
-		pilaO.append(operator)
-		return
-
-	if operator != ASSIGN:
-		pilaO.append(operator)
-		
-		return
-
-	generateQuadruple(operator)
-
-	return
 
 
 def p_initDict(p):
@@ -536,12 +516,6 @@ def p_errorFunction(p):
 def p_clearVarsTable(p):
     '''clearVarsTable : '''
     global vars_local
-    print
-    print("=========================================================")
-    print("This is VARS LOCAL --> ")
-    print(vars_local)
-    print("=========================================================")
-    print
     vars_local = {}
 
 def p_return(p):
@@ -671,7 +645,7 @@ def p_errorWhileCycle(p):
 
 
 def p_forCycle(p):
-	'''forCycle : errorForCycle FOR PARINI assign ";" expresion ";" assign ")" "{" body "}" '''
+	'''forCycle : errorForCycle FOR PARINI assign ";" expresion ";" assign PARFIN "{" body "}" '''
 	# print("for")
 
 
@@ -682,7 +656,7 @@ def p_errorForCycle(p):
 
 
 def p_assign(p):
-	'''assign : ID saveVariable errorAssign assignOptions '''
+	'''assign : ID saveVariable errorAssign assignOptions performAssign'''
 	# print("assign")
 
 
@@ -712,7 +686,7 @@ def p_errorAssignMatrix(p):
 
 
 def p_funcCall(p):
-	'''funcCall : ID PARINI opParamCall ")" '''
+	'''funcCall : ID PARINI opParamCall PARFIN '''
 	# print("funcCall")
 
 
@@ -746,7 +720,7 @@ def p_optionalMatrix(p):
 
 
 def p_condition(p):
-	'''condition : errorCondition IF PARINI expresion ")" "{" body "}" optionalElse '''
+	'''condition : errorCondition IF PARINI expresion PARFIN "{" body "}" optionalElse '''
 	# print("condition")
 
 
@@ -783,26 +757,7 @@ def p_expresion(p):
 	'''expresion : sExp performAndOr cyExpresion errorExpresion '''
 	# print("expresion")
 
-def p_performAndOr(p):
-	'''performAndOr : '''
 
-	if not pilaO:
-		return
-
-	operator = pilaO.pop()
-
-	if operator is FONDO_FALSO:
-		pilaO.append(operator)
-		return
-
-	if operator != AND and operator != OR:
-		pilaO.append(operator)
-		
-		return
-
-	generateQuadruple(operator)
-
-	return
 
 def p_errorExpresion(p):
 	'''errorExpresion : '''
@@ -818,37 +773,17 @@ def p_cyExpresion(p):
 
 
 def p_sExp(p):
-	'''sExp : exp errorOpSExp opSExp '''
+	'''sExp : exp errorOpSExp opSExp performRelational'''
 	# print("super expresion")
 
-def p_performRelational(p):
-	'''performRelational : '''
-
-	if not pilaO:
-		return
-
-	operator = pilaO.pop()
-
-	if operator is FONDO_FALSO:
-		pilaO.append(operator)
-		return
-
-	if operator != LESS_THAN and operator != GREATER_THAN and operator != LESS_EQUAL and operator != GREATER_EQUAL and operator != EQUAL and operator != DIFFERENT :
-		pilaO.append(operator)
-		
-		return
-
-	generateQuadruple(operator)
-
-	return
 
 def p_opSExp(p):
-	'''opSExp : EQ saveOperator exp performRelational
-			| DIF saveOperator exp performRelational
-			| LTOEQ saveOperator exp performRelational
-			| GTOEQ saveOperator exp performRelational
-			| GT saveOperator exp performRelational
-			| LT saveOperator exp performRelational
+	'''opSExp : EQ saveOperator exp
+			| DIF saveOperator exp
+			| LTOEQ saveOperator exp
+			| GTOEQ saveOperator exp
+			| GT saveOperator exp
+			| LT saveOperator exp
 			| empty '''
 	# print("cycle super expresion")
 
@@ -862,64 +797,6 @@ def p_exp(p):
 	'''exp : term performAddSub errorCyExp cyExp '''
 	# print("exp")
 
-def p_performAddSub(p):
-	'''performAddSub : '''
-
-	if not pilaO:
-		return
-
-	operator = pilaO.pop()
-
-	if operator is FONDO_FALSO:
-		pilaO.append(operator)
-		return
-
-	if operator != ADD and operator != SUBSTRACT:
-		pilaO.append(operator)
-		
-		return
-
-	generateQuadruple(operator)
-
-	return
-
-def generateQuadruple(operator):
-	if not pTipos:
-		semanticErrorHalt()
-
-	tipoDer = pTipos.pop()
-
-	if not pTipos:
-		semanticErrorHalt()
-
-	tipoIzq = pTipos.pop()
-	tipoRes = typesValidator(tipoIzq, tipoDer, operator)
-
-	if tipoRes == ERROR:
-		global semanticError
-		print(pilaO)
-		print(pOper)
-		print(tipoIzq)
-		print(operator)
-		print(tipoDer)
-		semanticError = "Types mismatch"
-		semanticErrorHalt()
-
-	opDer = pOper.pop()
-	opIzq = pOper.pop()
-
-	if operator is ASSIGN:
-		cuadruplo = (operator, opDer, "", opIzq)
-		pOper.append(opIzq)
-		pTipos.append(getTypeForAddress(opIzq))
-	else:
-		temp = getTempForType(tipoRes)
-		cuadruplo = (operator, opIzq, opDer, temp)
-		pOper.append(temp)
-		pTipos.append(tipoRes)
-	
-	cuadruplos.append(cuadruplo)
-
 
 def p_cyExp(p):
 	'''cyExp : PLUS saveOperator exp
@@ -927,39 +804,6 @@ def p_cyExp(p):
 			| empty '''
 	# print("cycle exp")
 
-def p_saveOperator(p):
-	'''saveOperator : '''
-	if previousToken == '+':
-		pilaO.append(ADD)
-	elif previousToken == '-':
-		pilaO.append(SUBSTRACT)
-	elif previousToken == '*':
-		pilaO.append(MULTIPLY)
-	elif previousToken == '/':
-		pilaO.append(DIVISION)
-	elif previousToken == '<' or currentToken == '':
-		pilaO.append(LESS_THAN)
-	elif previousToken == ">" or currentToken == '>':
-		pilaO.append(GREATER_THAN)
-	elif previousToken == '<=' or currentToken == '<=':
-		pilaO.append(LESS_EQUAL)
-	elif previousToken == '>=' or currentToken == '>=':
-		pilaO.append(GREATER_EQUAL)
-	elif previousToken == '==' or currentToken == '==':
-		pilaO.append(EQUAL)
-	elif previousToken == "!=":
-		pilaO.append(DIFFERENT)
-	elif previousToken == 'AND':
-		pilaO.append(AND)
-	elif previousToken == 'OR':
-		pilaO.append(OR)
-	elif previousToken == '=':
-		pilaO.append(ASSIGN)
-
-	print("SAVED")
-	print(pilaO)
-	print(currentToken)
-	print(previousToken)
 
 def p_errorCyExp(p):
 	'''errorCyExp : '''
@@ -970,26 +814,6 @@ def p_term(p):
 	'''term : fact performMulDiv cyTerm '''
 	# print("term")
 
-def p_performMulDiv(p):
-	'''performMulDiv : '''
-
-	if not pilaO:
-		return
-
-	operator = pilaO.pop()
-
-	if operator is FONDO_FALSO:
-		pilaO.append(operator)
-		return
-
-	if operator != MULTIPLY and operator != DIVISION:
-		pilaO.append(operator)
-		
-		return
-
-	generateQuadruple(operator)
-
-	return
 
 def p_cyTerm(p):
 	'''cyTerm : MULT saveOperator errorFact term
@@ -1006,39 +830,6 @@ def p_fact(p):
 			| ID saveVariable opAccess errorOpAccess'''
 	# print("fact")
 
-def p_putFondo(p):
-	'''putFondo : '''
-	pilaO.append(FONDO_FALSO)
-
-def p_takeFondo(p):
-	'''takeFondo : '''
-	print(pilaO)
-	print(pOper)
-	print(pTipos)
-	print(cuadruplos)
-	print(pilaO.pop())
-
-def p_saveVariable(p):
-	'''saveVariable : '''
-	variable = ""
-	if (previousToken in vars_local) or (previousToken in vars_global):
-		variable = previousToken
-	elif (currentToken in vars_local) or (currentToken in vars_global):
-		variable = currentToken
-
-	address = 0
-
-	if variable in vars_local:
-		address = vars_local[variable]
-	elif variable in vars_global:
-		address = vars_global[variable]
-	else:
-		global semanticError
-		semanticError = "Undeclared variable " + variable
-		semanticErrorHalt()
-
-	pOper.append(address)
-	pTipos.append(getTypeForAddress(address))
 
 def p_errorFact(p):
 	'''errorFact : '''
@@ -1099,7 +890,6 @@ def p_cte(p):
 		| FALSE '''
 	# print("cte")
 
-
 def p_empty(p):
     '''empty : '''
     # print("EMPTY")
@@ -1107,21 +897,7 @@ def p_empty(p):
 
 def p_printTables(p):
 	'''printTables : '''
-	# global semanticCube
-	print
-	print("=========================================================")
-	print("This is DIR PROCS --> ")
-	print(dir_procs)
-	print("=========================================================")
-	print
-	print
-	print("=========================================================")
-	print("This is VARS GLOBAL --> ")
-	print(vars_global)
-	print("=========================================================")
-	print
 	print(cuadruplos)
-	# print(pilaO)
 
 def p_error(p):
 	global line
@@ -1129,6 +905,217 @@ def p_error(p):
 	print("Error in line %d: Unexpected token '%s'" % (line, p.value))
 	print('%s' % errorMsg)
 	sys.exit()
+
+# Save in Stacks
+
+def p_saveVariable(p):
+	'''saveVariable : '''
+
+	variable = ""
+	if (previousToken in vars_local) or (previousToken in vars_global):
+		variable = previousToken
+	elif (currentToken in vars_local) or (currentToken in vars_global):
+		variable = currentToken
+
+	address = 0
+
+	if variable in vars_local:
+		address = vars_local[variable]
+	elif variable in vars_global:
+		address = vars_global[variable]
+	else:
+		global semanticError
+		semanticError = "Undeclared variable " + variable
+		semanticErrorHalt()
+
+	pOper.append(address)
+	pTipos.append(getTypeForAddress(address))
+
+def p_saveOperator(p):
+	'''saveOperator : '''
+
+	if previousToken == '+':
+		pilaO.append(ADD)
+	elif previousToken == '-':
+		pilaO.append(SUBSTRACT)
+	elif previousToken == '*':
+		pilaO.append(MULTIPLY)
+	elif previousToken == '/':
+		pilaO.append(DIVISION)
+	elif previousToken == '<' or currentToken == '':
+		pilaO.append(LESS_THAN)
+	elif previousToken == ">" or currentToken == '>':
+		pilaO.append(GREATER_THAN)
+	elif previousToken == '<=' or currentToken == '<=':
+		pilaO.append(LESS_EQUAL)
+	elif previousToken == '>=' or currentToken == '>=':
+		pilaO.append(GREATER_EQUAL)
+	elif previousToken == '==' or currentToken == '==':
+		pilaO.append(EQUAL)
+	elif previousToken == "!=":
+		pilaO.append(DIFFERENT)
+	elif previousToken == 'AND':
+		pilaO.append(AND)
+	elif previousToken == 'OR':
+		pilaO.append(OR)
+	elif previousToken == '=':
+		pilaO.append(ASSIGN)
+
+def p_putFondo(p):
+	'''putFondo : '''
+
+	pilaO.append(FONDO_FALSO)
+
+def p_takeFondo(p):
+	'''takeFondo : '''
+
+	pilaO.pop()
+
+# Perform Semantic Actions Rules
+
+def p_performAssign(p):
+	'''performAssign : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != ASSIGN:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def p_performMulDiv(p):
+	'''performMulDiv : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != MULTIPLY and operator != DIVISION:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def p_performAddSub(p):
+	'''performAddSub : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != ADD and operator != SUBSTRACT:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def p_performRelational(p):
+	'''performRelational : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != LESS_THAN and operator != GREATER_THAN and operator != LESS_EQUAL and operator != GREATER_EQUAL and operator != EQUAL and operator != DIFFERENT :
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def p_performAndOr(p):
+	'''performAndOr : '''
+
+	if not pilaO:
+		return
+
+	operator = pilaO.pop()
+
+	if operator is FONDO_FALSO:
+		pilaO.append(operator)
+		return
+
+	if operator != AND and operator != OR:
+		pilaO.append(operator)
+		
+		return
+
+	generateQuadruple(operator)
+
+	return
+
+def generateQuadruple(operator):
+	if not pTipos:
+		semanticErrorHalt()
+
+	tipoDer = pTipos.pop()
+
+	if not pTipos:
+		semanticErrorHalt()
+
+	tipoIzq = pTipos.pop()
+	tipoRes = typesValidator(tipoIzq, tipoDer, operator)
+
+	if tipoRes == ERROR:
+		global semanticError
+		print(pilaO)
+		print(pOper)
+		print(tipoIzq)
+		print(operator)
+		print(tipoDer)
+		semanticError = "Types mismatch " + str(tipoIzq) + " " + str(operator) + " " + str(tipoDer)
+		semanticErrorHalt()
+
+	opDer = pOper.pop()
+	opIzq = pOper.pop()
+
+	if operator is ASSIGN:
+		cuadruplo = (operator, opDer, "", opIzq)
+		pOper.append(opIzq)
+		pTipos.append(getTypeForAddress(opIzq))
+	else:
+		temp = getTempForType(tipoRes)
+		cuadruplo = (operator, opIzq, opDer, temp)
+		pOper.append(temp)
+		pTipos.append(tipoRes)
+	
+	cuadruplos.append(cuadruplo)
+
+# Helper Methods
 
 def typeToCode(type):
     switcher = {
