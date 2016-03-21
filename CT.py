@@ -309,11 +309,11 @@ def p_saveProc(p):
 	global currentType
 	global currentToken
 	for proc in dir_procs:
-		if proc[0] is currentToken:
+		if proc[0] == currentToken:
 			global semanticError
 			semanticError = "Function '" + currentToken + "' already declared"
 			semanticErrorHalt()
-	if currentScope is "global":
+	if currentScope == "global":
 		newProc = [currentToken, currentType, None, None, vars_global]
 	else:
 		newProc = [currentToken, currentType, None, None, vars_local]
@@ -347,7 +347,7 @@ def p_saveID(p):
 	global currentType
 	global currentToken
 	global semanticError
-	if currentScope is "global":
+	if currentScope == "global":
 		global vars_global
 		if currentToken in vars_global:
 			semanticError = "Varibale '" + currentToken + "' already declared"
@@ -981,7 +981,7 @@ def p_performAssign(p):
 
 	operator = pilaO.pop()
 
-	if operator is FONDO_FALSO:
+	if operator == FONDO_FALSO:
 		pilaO.append(operator)
 		return
 
@@ -1002,7 +1002,7 @@ def p_performMulDiv(p):
 
 	operator = pilaO.pop()
 
-	if operator is FONDO_FALSO:
+	if operator == FONDO_FALSO:
 		pilaO.append(operator)
 		return
 
@@ -1023,7 +1023,7 @@ def p_performAddSub(p):
 
 	operator = pilaO.pop()
 
-	if operator is FONDO_FALSO:
+	if operator == FONDO_FALSO:
 		pilaO.append(operator)
 		return
 
@@ -1044,7 +1044,7 @@ def p_performRelational(p):
 
 	operator = pilaO.pop()
 
-	if operator is FONDO_FALSO:
+	if operator == FONDO_FALSO:
 		pilaO.append(operator)
 		return
 
@@ -1065,7 +1065,7 @@ def p_performAndOr(p):
 
 	operator = pilaO.pop()
 
-	if operator is FONDO_FALSO:
+	if operator == FONDO_FALSO:
 		pilaO.append(operator)
 		return
 
@@ -1097,13 +1097,13 @@ def generateQuadruple(operator):
 		print(tipoIzq)
 		print(operator)
 		print(tipoDer)
-		semanticError = "Types mismatch " + str(tipoIzq) + " " + str(operator) + " " + str(tipoDer)
+		semanticError = "Types m==match " + str(tipoIzq) + " " + str(operator) + " " + str(tipoDer)
 		semanticErrorHalt()
 
 	opDer = pOper.pop()
 	opIzq = pOper.pop()
 
-	if operator is ASSIGN:
+	if operator == ASSIGN:
 		cuadruplo = (operator, opDer, "", opIzq)
 		pOper.append(opIzq)
 		pTipos.append(getTypeForAddress(opIzq))
@@ -1152,19 +1152,19 @@ def getAdressForType(type):
 
 	typeCode = typeToCode(type)
 	
-	if typeCode is INT:
+	if typeCode == INT:
 		contInt += 1
 		return contInt - 1
 
-	if typeCode is FLOAT:
+	if typeCode == FLOAT:
 		contFloat += 1
 		return contFloat - 1
 
-	if typeCode is BOOL:
+	if typeCode == BOOL:
 		contBool += 1
 		return contBool - 1
 
-	if typeCode is STRING:
+	if typeCode == STRING:
 		contString += 1
 		return contString - 1
 
@@ -1174,19 +1174,19 @@ def getTempForType(type):
 	global contTempBool
 	global contTempString
 	
-	if type is INT:
+	if type == INT:
 		contTempInt += 1
 		return contTempInt - 1
 
-	if type is FLOAT:
+	if type == FLOAT:
 		contTempFloat += 1
 		return contTempFloat - 1
 
-	if type is BOOL:
+	if type == BOOL:
 		contTempBool += 1
 		return contTempBool - 1
 
-	if type is STRING:
+	if type == STRING:
 		contTempString += 1
 		return contTempString - 1
 

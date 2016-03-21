@@ -4,21 +4,13 @@
 
 	func g() {
 		b = c;
-		e = c > d;
+		e = (c > d);
 		e = e != ((c * c <= d) and g);
 	}
 
 	main {
 	vars int b, c, d;
 		bool e, f, g;
-
-		b = c;
-		e = c > d;
-		e = e != ((c * c <= d) and g);
-
-		b = c;
-		e = c > d;
-		e = e != ((c * c <= d) and g);
 
 		b = c;
 		e = c > d;
