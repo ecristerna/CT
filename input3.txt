@@ -3,17 +3,16 @@
 		bool e, f, g;
 
 	func g() {
-		b = c;
-		e = e != ((c * c <= d) and g);
 	}
 
 	main {
-	vars int b, c, d;
+	vars int z, c, d;
 		bool e, f, g;
 
-		b = c;
-		e = 3 > 3;
-		e = e != ((c * c <= d) and g);
+
+		for (z = 0; z < c; z = z + 1) {
+			print(c);
+		}
 
 		print(b, c);
 		
