@@ -6,7 +6,7 @@ if sys.version_info[0] >= 3:
     raw_input = input
 
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
+reserved = ['PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -77,6 +77,8 @@ DIFFERENT = 190
 AND = 200
 OR = 210
 ASSIGN = 220
+PRINT = 230
+READ = 240
 
 # Semantic Cube
 
@@ -415,8 +417,28 @@ def p_instr(p):
 
 def p_basicStatements(p):
 	'''basicStatements : assign
-					| funcCall '''
+					| funcCall
+					| print
+					| read '''
 
+def p_print(p):
+	'''print : PRINT PARINI exp performPrint cyPrint PARFIN '''
+
+def p_cyPrint(p):
+	'''cyPrint : "," fix exp performPrint cyPrint
+				| empty '''
+
+def p_read(p):
+	'''read : READ PARINI ID performRead cyRead PARFIN '''
+
+def p_cyRead(p):
+	'''cyRead : "," fix ID performRead cyRead
+				| empty '''
+
+def p_fix(p):
+	'''fix : '''
+	global previousToken
+	previousToken = ","
 
 def p_declare(p):
 	'''declare : basicDeclare
@@ -1078,7 +1100,29 @@ def p_performAndOr(p):
 
 	return
 
+def p_performPrint(p):
+	'''performPrint : '''
+	generateQuadruple(PRINT)
+
+def p_performeRead(p):
+	'''performRead : '''
+	generateQuadruple(READ)	
+
 def generateQuadruple(operator):
+	if operator == PRINT:
+		res = pOper.pop()
+		cuadruplo = (PRINT, '', '', res)
+		cuadruplos.append(cuadruplo)
+
+		return
+
+	if operator == READ:
+		res = pOper.pop()
+		cuadruplo = (READ, '', '', res)
+		cuadruplos.append(cuadruplo)
+
+		return	
+
 	if not pTipos:
 		semanticErrorHalt()
 
