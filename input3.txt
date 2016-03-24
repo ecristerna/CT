@@ -1,20 +1,34 @@
-	program  a {
-	vars int b, c, d;
-		bool e, f, g;
+	program  z {
 
 	func g() {
 	}
 
 	main {
-	vars int z, c, d;
+	vars int a, b, d;
 		bool e, f, g;
 
+		while (a < b) {
+			if (a < b) {
+				a = b;
 
-		for (z = 0; z < c; z = z + 1) {
-			print(c);
+				for (a = 0; a < b; a = a + b) {
+					while (a < b) {
+						print(a);
+					}
+				}
+			} else {
+				print(a, b);
+
+				while (a < b) {
+					a = a / b;
+
+					if (a < b) {
+						print(b);
+					}
+
+					b = a;
+				}
+			}
 		}
-
-		print(b, c);
-		
 	}
 }
