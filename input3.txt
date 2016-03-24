@@ -12,7 +12,7 @@
 		bool e, f, g;
 
 		b = c;
-		e = c > d;
+		e = 3 > 3;
 		e = e != ((c * c <= d) and g);
 
 		print(b, c);
