@@ -425,15 +425,20 @@ def p_print(p):
 	'''print : PRINT PARINI exp performPrint cyPrint PARFIN '''
 
 def p_cyPrint(p):
-	'''cyPrint : "," exp performPrint cyPrint
+	'''cyPrint : "," fix exp performPrint cyPrint
 				| empty '''
 
 def p_read(p):
-	'''read : READ PARINI ID cyRead PARFIN '''
+	'''read : READ PARINI ID performRead cyRead PARFIN '''
 
 def p_cyRead(p):
-	'''cyRead : "," ID cyRead
+	'''cyRead : "," fix ID performRead cyRead
 				| empty '''
+
+def p_fix(p):
+	'''fix : '''
+	global previousToken
+	previousToken = ","
 
 def p_declare(p):
 	'''declare : basicDeclare
@@ -1097,11 +1102,27 @@ def p_performAndOr(p):
 
 def p_performPrint(p):
 	'''performPrint : '''
-	res = pOper.pop()
-	cuadruplo = (PRINT, '', '', res)
-	cuadruplos.append(cuadruplo)	
+	generateQuadruple(PRINT)
+
+def p_performeRead(p):
+	'''performRead : '''
+	generateQuadruple(READ)	
 
 def generateQuadruple(operator):
+	if operator == PRINT:
+		res = pOper.pop()
+		cuadruplo = (PRINT, '', '', res)
+		cuadruplos.append(cuadruplo)
+
+		return
+
+	if operator == READ:
+		res = pOper.pop()
+		cuadruplo = (READ, '', '', res)
+		cuadruplos.append(cuadruplo)
+
+		return	
+
 	if not pTipos:
 		semanticErrorHalt()
 
@@ -1238,5 +1259,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input2.txt", "r");
+file = open ("input3.txt", "r");
 yacc.parse(file.read())

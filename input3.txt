@@ -15,7 +15,7 @@
 		e = c > d;
 		e = e != ((c * c <= d) and g);
 
-		print(a, b, c);
+		print(b, c);
 		
 	}
 }

@@ -3,6 +3,7 @@
 	main {
 		vars int i, j;
 
-		print(i, j);
+		print(a, i, j);
+		read(i, j);
 	}
 }
