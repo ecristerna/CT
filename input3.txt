@@ -4,7 +4,6 @@
 
 	func g() {
 		b = c;
-		e = e != ((c * c <= d) and g);
 	}
 
 	main {
@@ -13,7 +12,12 @@
 
 		b = c;
 		e = 3 > 3;
-		e = e != ((c * c <= d) and g);
+
+		if (b > c) {
+			c = b * d;
+		} else {
+			b = 2;
+		}
 
 		print(b, c);
 		
