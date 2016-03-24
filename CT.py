@@ -670,9 +670,19 @@ def p_cycle(p):
 
 
 def p_whileCycle(p):
-	'''whileCycle : errorWhileCycle WHILE PARINI expresion PARFIN "{" body "}" '''
+	'''whileCycle : errorWhileCycle WHILE saveReturn PARINI expresion PARFIN saveFalso "{" body "}" repeatWhile'''
 	# print("while")
 
+def p_repeatWhile(p):
+	'''repeatWhile : '''
+	falso = pSaltos.pop()
+	retorno = pSaltos.pop()
+	generateJump('s', retorno)
+	rellena(falso, contQuadruples)
+
+def p_saveReturn(p):
+	'''saveReturn : '''
+	pSaltos.append(contQuadruples)
 
 def p_errorWhileCycle(p):
 	'''errorWhileCycle : '''
@@ -681,9 +691,39 @@ def p_errorWhileCycle(p):
 
 
 def p_forCycle(p):
-	'''forCycle : errorForCycle FOR PARINI assign ";" expresion ";" assign PARFIN "{" body "}" '''
+	'''forCycle : errorForCycle FOR PARINI assign ";" saveReturn expresion saveFalso ";" saltoBody assign returnFor PARFIN "{" rellenaBody body "}" returnAssign '''
 	# print("for")
 
+def p_saltoBody(p):
+	'''saltoBody : '''
+	generateJump('s', None)
+	pSaltos.append(contQuadruples - 1)
+	pSaltos.append(contQuadruples)
+
+def p_returnFor(p):
+	'''returnFor : '''
+	aux = pSaltos.pop()
+	aux2 = pSaltos.pop()
+	aux3 = pSaltos.pop()
+	
+	generateJump('s', pSaltos.pop())
+
+	pSaltos.append(aux3)
+	pSaltos.append(aux2)
+	pSaltos.append(aux)
+
+def p_rellenaBody(p):
+	'''rellenaBody : '''
+	aux = pSaltos.pop()
+	
+	rellena(pSaltos.pop(), contQuadruples)
+
+	pSaltos.append(aux)
+
+def p_returnAssign(p):
+	'''returnAssign : '''
+	generateJump('s', pSaltos.pop())
+	rellena(pSaltos.pop(), contQuadruples)
 
 def p_errorForCycle(p):
 	'''errorForCycle : '''
@@ -758,53 +798,6 @@ def p_optionalMatrix(p):
 def p_condition(p):
 	'''condition : errorCondition IF PARINI expresion PARFIN saveFalso "{" body "}" optionalElse rellenaFalso '''
 	# print("condition")
-
-def p_rellenaFalso(p):
-	'''rellenaFalso : '''
-	falso = pSaltos.pop()
-	rellena(falso, contQuadruples)
-
-def rellena(salto, add):
-	cuadruplo = cuadruplos[salto]
-	operator = cuadruplo[0]
-	falso = cuadruplo[1]
-	opDer = cuadruplo[2]
-
-	aux = (operator, falso, opDer, add)
-	cuadruplos[salto] = aux
-
-def p_saveFalso(p):
-	'''saveFalso : '''
-	aux = pTipos.pop()
-
-	if aux != BOOL:
-		global semanticError
-		semanticError = "Types Mismatch"
-		semanticErrorHalt()
-
-	res = pOper.pop()
-	generateJump('f', res)
-	pSaltos.append(contQuadruples - 1)
-
-def p_saveVerdadero(p):
-	'''saveVerdadero : '''
-	generateJump('s', None)
-	falso = pSaltos.pop()
-	rellena(falso, contQuadruples)
-	pSaltos.append(contQuadruples - 1)
-
-def generateJump(tipo, cond):
-	global contQuadruples
-
-	if tipo == 'f':
-		cuadruplo = (GOTOF, cond, "", "")
-	elif tipo == 'v':
-		cuadruplo = (GOTOV, cond, "", "")
-	elif tipo == 's':
-		cuadruplo = (GOTO, "", "", "")
-
-	cuadruplos.append(cuadruplo)
-	contQuadruples += 1
 
 
 def p_errorCondition(p):
@@ -991,6 +984,31 @@ def p_error(p):
 	sys.exit()
 
 # Save in Stacks
+
+def p_rellenaFalso(p):
+	'''rellenaFalso : '''
+	falso = pSaltos.pop()
+	rellena(falso, contQuadruples)
+
+def p_saveFalso(p):
+	'''saveFalso : '''
+	aux = pTipos.pop()
+
+	if aux != BOOL:
+		global semanticError
+		semanticError = "Types Mismatch"
+		semanticErrorHalt()
+
+	res = pOper.pop()
+	generateJump('f', res)
+	pSaltos.append(contQuadruples - 1)
+
+def p_saveVerdadero(p):
+	'''saveVerdadero : '''
+	generateJump('s', None)
+	falso = pSaltos.pop()
+	rellena(falso, contQuadruples)
+	pSaltos.append(contQuadruples - 1)
 
 def p_saveConstantInt(p):
         '''saveConstantInt : '''
@@ -1251,6 +1269,28 @@ def generateQuadruple(operator):
 		pOper.append(temp)
 		pTipos.append(tipoRes)
 	
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+def rellena(salto, add):
+	cuadruplo = cuadruplos[salto]
+	operator = cuadruplo[0]
+	falso = cuadruplo[1]
+	opDer = cuadruplo[2]
+
+	aux = (operator, falso, opDer, add)
+	cuadruplos[salto] = aux
+
+def generateJump(tipo, cond):
+	global contQuadruples
+
+	if tipo == 'f':
+		cuadruplo = (GOTOF, cond, "", "")
+	elif tipo == 'v':
+		cuadruplo = (GOTOV, cond, "", "")
+	elif tipo == 's':
+		cuadruplo = (GOTO, "", "", cond)
+
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 

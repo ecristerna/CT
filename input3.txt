@@ -3,20 +3,15 @@
 		bool e, f, g;
 
 	func g() {
-		b = c;
 	}
 
 	main {
-	vars int b, c, d;
+	vars int z, c, d;
 		bool e, f, g;
 
-		b = c;
-		e = 3 > 3;
 
-		if (b > c) {
-			c = b * d;
-		} else {
-			b = 2;
+		for (z = 0; z < c; z = z + 1) {
+			print(c);
 		}
 
 		print(b, c);
