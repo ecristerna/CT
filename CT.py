@@ -41,8 +41,14 @@ MIN_TEMP_BOOL = 7000
 MAX_TEMP_BOOL = 7999
 MIN_TEMP_STRING = 8000
 MAX_TEMP_STRING = 8999
-MIN_CONST = 9000
-MAX_CONST= 9999
+MIN_CONST_INT = 9000
+MAX_CONST_INT= 9199
+MIN_CONST_FLOAT = 9200
+MAX_CONST_FLOAT= 9399
+MIN_CONST_STRING = 9400
+MAX_CONST_STRING= 9599
+MIN_CONST_BOOL = 9600
+MAX_CONST_BOOL= 9799
 
 contInt = MIN_INT
 contFloat = MIN_FLOAT
@@ -52,7 +58,10 @@ contTempInt = MIN_TEMP_INT
 contTempFloat = MIN_TEMP_FLOAT
 contTempBool = MIN_TEMP_BOOL
 contTempString = MIN_TEMP_STRING
-contConst = MIN_CONST
+contConstInt = MIN_CONST_INT
+contConstFloat = MIN_CONST_FLOAT
+contConstString = MIN_CONST_STRING
+contConstBool = MIN_CONST_BOOL
 
 # Types & Operators Codes
 
@@ -355,14 +364,14 @@ def p_saveID(p):
 			semanticError = "Varibale '" + currentToken + "' already declared"
 			semanticErrorHalt()
 		else:
-			vars_global[currentToken] = getAdressForType(currentType)
+			vars_global[currentToken] = getAddressForType(currentType)
 	else:
 		global vars_local
 		if currentToken in vars_local:
 			semanticError = "Variable '" + currentToken + "' already declared on this scope"
 			semanticErrorHalt()
 		else:
-			vars_local[currentToken] = getAdressForType(currentType)
+			vars_local[currentToken] = getAddressForType(currentType)
 
 def semanticErrorHalt():
 	global semanticError
@@ -459,7 +468,6 @@ def p_errorInit(p):
 
 def p_initWith(p):
 	'''initWith : expresion
-		| fact
 		| funcCall '''
 	# print("init with")
 
@@ -845,7 +853,7 @@ def p_cyTerm(p):
 
 
 def p_fact(p):
-	'''fact : CTES
+	'''fact : CTES saveConstantString
 			| cte
 			| funcCall
 			| PARINI putFondo expresion PARFIN takeFondo
@@ -906,10 +914,10 @@ def p_dictIndex(p):
 
 
 def p_cte(p):
-	'''cte : CTED
-		| CTEF
-		| TRUE
-		| FALSE '''
+	'''cte : CTED saveConstantInt
+		| CTEF saveConstantFloat
+		| TRUE saveConstantBool
+		| FALSE saveConstantBool '''
 	# print("cte")
 
 def p_empty(p):
@@ -929,6 +937,34 @@ def p_error(p):
 	sys.exit()
 
 # Save in Stacks
+
+def p_saveConstantInt(p):
+        '''saveConstantInt : '''
+        address = getAddressForConstant(INT)
+
+        pOper.append(address)
+        pTipos.append(INT)
+        
+def p_saveConstantFloat(p):
+        '''saveConstantFloat : '''
+        address = getAddressForConstant(FLOAT)
+
+        pOper.append(address)
+        pTipos.append(FLOAT)
+        
+def p_saveConstantBool(p):
+        '''saveConstantBool : '''
+        address = getAddressForConstant(BOOL)
+
+        pOper.append(address)
+        pTipos.append(BOOL)
+        
+def p_saveConstantString(p):
+        '''saveConstantString : '''
+        address = getAddressForConstant(STRING)
+
+        pOper.append(address)
+        pTipos.append(STRING)
 
 def p_saveVariable(p):
 	'''saveVariable : '''
@@ -1188,7 +1224,7 @@ def operatorToCode(operator):
     }
     return switcher.get(operator, 50)
 
-def getAdressForType(type):
+def getAddressForType(type):
 	global contInt
 	global contFloat
 	global contBool
@@ -1211,6 +1247,28 @@ def getAdressForType(type):
 	if typeCode == STRING:
 		contString += 1
 		return contString - 1
+
+def getAddressForConstant(type):
+	global contConstInt
+	global contConstFloat
+	global contConstBool
+	global contConstString
+	
+	if type == INT:
+		contConstInt += 1
+		return contConstInt - 1
+
+	if type == FLOAT:
+		contConstFloat += 1
+		return contConstFloat - 1
+
+	if type == BOOL:
+		contConstBool += 1
+		return contConstBool - 1
+
+	if type == STRING:
+		contConstString += 1
+		return contConstString - 1
 
 def getTempForType(type):
 	global contTempInt
@@ -1235,16 +1293,16 @@ def getTempForType(type):
 		return contTempString - 1
 
 def getTypeForAddress(address):
-	if (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT):
+	if (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT) or (address >= MIN_CONST_INT and address <= MAX_CONST_INT):
 		return INT
 	
-	if (address >= MIN_FLOAT and address <= MAX_FLOAT) or (address >= MIN_TEMP_FLOAT and address <= MAX_TEMP_FLOAT):
+	if (address >= MIN_FLOAT and address <= MAX_FLOAT) or (address >= MIN_TEMP_FLOAT and address <= MAX_TEMP_FLOAT) or (address >= MIN_CONST_FLOAT and address <= MAX_CONST_FLOAT):
 		return FLOAT
 	
-	if (address >= MIN_BOOL and address <= MAX_BOOL) or (address >= MIN_TEMP_BOOL and address <= MAX_TEMP_BOOL):
+	if (address >= MIN_BOOL and address <= MAX_BOOL) or (address >= MIN_TEMP_BOOL and address <= MAX_TEMP_BOOL) or (address >= MIN_CONST_BOOL and address <= MAX_CONST_BOOL):
 		return BOOL
 	
-	if (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING):
+	if (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING) or (address >= MIN_CONST_STRING and address <= MAX_CONST_STRING):
 		return STRING
 
 def typesValidator(left, right, operator):
