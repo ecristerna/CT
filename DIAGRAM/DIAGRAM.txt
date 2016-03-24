@@ -6,7 +6,11 @@ TYPE ::=  'int' | 'float' | 'string' | 'object' | 'bool'
 
 MAIN ::= 'main' '{' VARS? BODY '}'
 
-INSTR ::= ((ASSIGN | FUNC_CALL) ';' | CONDITION | CYCLE)
+INSTR ::= ((ASSIGN | FUNC_CALL | PRINT | READ) ';' | CONDITION | CYCLE)
+
+PRINT ::= 'print' '(' EXP (',' EXP)* ')'
+
+READ ::= 'read' '(' 'id' (',' 'id')* ')'
 
 DECLARE ::= (TYPE 'id' (',' 'id')* ';' | 'struct' 'id' STRUCT ';' | 'dict' 'id' DICT ';')+
 
