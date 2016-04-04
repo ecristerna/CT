@@ -364,20 +364,26 @@ def p_saveID(p):
 	global currentType
 	global currentToken
 	global semanticError
+
+	tokenToUse = currentToken
+
+	if currentToken == ')':
+		tokenToUse = previousToken
+
 	if currentScope == "global":
 		global vars_global
-		if currentToken in vars_global:
-			semanticError = "Varibale '" + currentToken + "' already declared"
+		if tokenToUse in vars_global:
+			semanticError = "Varibale '" + tokenToUse + "' already declared"
 			semanticErrorHalt()
 		else:
 			vars_global[currentToken] = getAddressForType(currentType)
 	else:
 		global vars_local
-		if currentToken in vars_local:
-			semanticError = "Variable '" + currentToken + "' already declared on this scope"
+		if tokenToUse in vars_local:
+			semanticError = "Variable '" + tokenToUse + "' already declared on this scope"
 			semanticErrorHalt()
 		else:
-			vars_local[currentToken] = getAddressForType(currentType)
+			vars_local[tokenToUse] = getAddressForType(currentType)
 
 def semanticErrorHalt():
 	global semanticError
@@ -552,6 +558,7 @@ def p_errorFunction(p):
 def p_clearVarsTable(p):
     '''clearVarsTable : '''
     global vars_local
+    print(vars_local)
     vars_local = {}
 
 def p_return(p):
@@ -973,6 +980,11 @@ def p_empty(p):
 
 def p_printTables(p):
 	'''printTables : '''
+	print("\nVARS GLOBAL")
+	print(vars_global)
+	print("\nDIR PROCS")
+	print(dir_procs)
+	print("\nCUADRUPLOS")
 	for x in range(0, len(cuadruplos)):
 		print(x, cuadruplos[x])
 
@@ -1416,5 +1428,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input3.txt", "r");
+file = open ("input2.txt", "r");
 yacc.parse(file.read())

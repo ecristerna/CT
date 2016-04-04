@@ -1,9 +1,11 @@
-	program  a {
-
+program  a {
 	main {
-		vars int i, j;
+		vars int i;
 
-		print(a, i, j);
-		read(i, j);
+		for (i = 0; i < 10; i = i + 1) {
+			print(i);
+		}
+
+		read(i);
 	}
 }

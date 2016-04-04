@@ -3,7 +3,7 @@
 			float o, p, q, r;
 			string z;
 			struct k float[4][3];
-			dict p (float : bool);
+			dict p (float : bool); // (float como llave)
 
 	func g(int i, j; float h) {
 		vars int o, p;
@@ -29,30 +29,27 @@
 
 	main {
 		vars int i, j;
-			struct k float[4][3];
+			struct i float[4][3];
 			dict p (float : bool);
 			struct r dict(int : int)[4][3];
 
 		i = 3 * 3;
-		k[i][0] = i;
 		p = (5.89 : "hola");
 
-		if (a > 7 and (8 <= 9 or j != o)) {
+		if (i > 7 and (8 <= 9 or j != o)) {
 			if (8 != i) {
-				j = f(id, "no");
+				j = 5;
 			}
 		} else {
-			j = (4 + 5) * (7 + (3 / 2));
+			j = 4 + 5 * (7 + (3 / 2));
 		}
 
 		while(i >= 0) {
-			i = k[1];
+			i = j;
 		}
 
-		for (i = 0; i < 10; k[i] = k[i] + 1) {
-			g(parameter);
-			i = p.first;
-			i = p.last;
+		for (i = 0; i < 10; i = i + 1) {
+			j = 10;
 		}
 	}
 }
