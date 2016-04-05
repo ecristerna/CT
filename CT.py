@@ -14,6 +14,7 @@ errorMsg = ""
 currentScope = "global"
 vars_global = {}
 vars_local = {}
+constants_table = {}
 dir_procs = []
 param_types = []
 currentType = ""
@@ -556,10 +557,21 @@ def p_errorFunction(p):
 	errorMsg = "Error in rule FUNCTION"
 
 def p_clearVarsTable(p):
-    '''clearVarsTable : '''
-    global vars_local
-    print(vars_local)
-    vars_local = {}
+	'''clearVarsTable : '''
+	global vars_local
+	global contInt
+	global contFloat
+	global contBool
+	global contString
+
+	print(vars_local)
+
+	contInt = MIN_INT
+	contFloat = MIN_FLOAT
+	contBool = MIN_BOOL
+	contString = MIN_STRING
+
+	vars_local = {}
 
 def p_return(p):
 	'''return : errorReturn RETURN expresion ";" '''
@@ -1024,28 +1036,48 @@ def p_saveVerdadero(p):
 
 def p_saveConstantInt(p):
         '''saveConstantInt : '''
-        address = getAddressForConstant(INT)
+        if previousToken in constants_table:
+        	address = constants_table[previousToken]
+        else:
+        	address = getAddressForConstant(INT)
+
+        	constants_table[previousToken] = address 
 
         pOper.append(address)
         pTipos.append(INT)
         
 def p_saveConstantFloat(p):
         '''saveConstantFloat : '''
-        address = getAddressForConstant(FLOAT)
+        if previousToken in constants_table:
+        	address = constants_table[previousToken]
+        else:
+        	address = getAddressForConstant(FLOAT)
+
+        	constants_table[previousToken] = address 
 
         pOper.append(address)
         pTipos.append(FLOAT)
         
 def p_saveConstantBool(p):
         '''saveConstantBool : '''
-        address = getAddressForConstant(BOOL)
+        if previousToken in constants_table:
+        	address = constants_table[previousToken]
+        else:
+        	address = getAddressForConstant(BOOL)
+
+        	constants_table[previousToken] = address 
 
         pOper.append(address)
         pTipos.append(BOOL)
         
 def p_saveConstantString(p):
         '''saveConstantString : '''
-        address = getAddressForConstant(STRING)
+      	if previousToken in constants_table:
+        	address = constants_table[previousToken]
+        else:
+        	address = getAddressForConstant(STRING)
+
+        	constants_table[previousToken] = address 
 
         pOper.append(address)
         pTipos.append(STRING)
