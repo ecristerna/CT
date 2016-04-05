@@ -26,6 +26,15 @@ declaringParameters = False
 
 # Addresses
 
+MIN_INT_GLOBAL = 1000
+MAX_INT = 1999
+MIN_FLOAT = 2000
+MAX_FLOAT = 2999
+MIN_BOOL = 3000
+MAX_BOOL = 3999
+MIN_STRING = 4000
+MAX_STRING = 4999
+
 MIN_INT = 1000
 MAX_INT = 1999
 MIN_FLOAT = 2000
@@ -326,10 +335,14 @@ def p_saveProc(p):
 	global currentScope
 	global currentType
 	global currentToken
+	global semanticError
+
 	for proc in dir_procs:
 		if proc[0] == currentToken:
-			global semanticError
 			semanticError = "Function '" + currentToken + "' already declared"
+			semanticErrorHalt()
+		if currentToken in vars_global:
+			semanticError = "Cannot declare function with same name as variable '" + currentToken + "'"
 			semanticErrorHalt()
 	if currentScope == "global":
 		newProc = [currentToken, currentType, None, None, vars_global]

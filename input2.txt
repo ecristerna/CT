@@ -1,26 +1,20 @@
 program  a {
-	func c() returns int {
-		vars int i;
+	vars int i;
+
+	func i() returns int {
 
 		for (i = 0; i < 10; i = i + 1) {
 			print(i);
 		}
-
-		read(i);
 
 		return 5;
 	}
 
 	main {
 		vars int i;
-		string h;
 
 		for (i = 0; i < 10; i = i + 1) {
-			h = "hola";
-			h = "hola";
 			print(i);
 		}
-
-		read(i);
 	}
 }
