@@ -27,53 +27,67 @@ declaringParameters = False
 # Addresses
 
 MIN_INT_GLOBAL = 1000
-MAX_INT = 1999
-MIN_FLOAT = 2000
-MAX_FLOAT = 2999
-MIN_BOOL = 3000
-MAX_BOOL = 3999
-MIN_STRING = 4000
-MAX_STRING = 4999
+MAX_INT_GLOBAL = 1999
+MIN_FLOAT_GLOBAL = 2000
+MAX_FLOAT_GLOBAL = 2999
+MIN_BOOL_GLOBAL = 3000
+MAX_BOOL_GLOBAL = 3999
+MIN_STRING_GLOBAL = 4000
+MAX_STRING_GLOBAL = 4999
 
-MIN_INT = 1000
-MAX_INT = 1999
-MIN_FLOAT = 2000
-MAX_FLOAT = 2999
-MIN_BOOL = 3000
-MAX_BOOL = 3999
-MIN_STRING = 4000
-MAX_STRING = 4999
-MIN_TEMP_INT = 5000
-MAX_TEMP_INT = 5999
-MIN_TEMP_FLOAT = 6000
-MAX_TEMP_FLOAT = 6999
-MIN_TEMP_BOOL = 7000
-MAX_TEMP_BOOL = 7999
-MIN_TEMP_STRING = 8000
-MAX_TEMP_STRING = 8999
+MIN_INT = 5000
+MAX_INT = 5999
+MIN_FLOAT = 6000
+MAX_FLOAT = 6999
+MIN_BOOL = 7000
+MAX_BOOL = 7999
+MIN_STRING = 8000
+MAX_STRING = 8999
+
 MIN_CONST_INT = 9000
-MAX_CONST_INT= 9199
-MIN_CONST_FLOAT = 9200
-MAX_CONST_FLOAT= 9399
-MIN_CONST_STRING = 9400
-MAX_CONST_STRING= 9599
-MIN_CONST_BOOL = 9600
-MAX_CONST_BOOL= 9799
+MAX_CONST_INT= 9249
+MIN_CONST_FLOAT = 9250
+MAX_CONST_FLOAT= 9499
+MIN_CONST_STRING = 9500
+MAX_CONST_STRING= 9749
+MIN_CONST_BOOL = 9750
+MAX_CONST_BOOL= 9999
+
+MIN_TEMP_INT = 10000
+MAX_TEMP_INT = 10999
+MIN_TEMP_FLOAT = 11000
+MAX_TEMP_FLOAT = 11999
+MIN_TEMP_BOOL = 12000
+MAX_TEMP_BOOL = 12999
+MIN_TEMP_STRING = 13000
+MAX_TEMP_STRING = 13999
+
+contIntGlobal = MIN_INT_GLOBAL
+contFloatGlobal = MIN_FLOAT_GLOBAL
+contBoolGlobal = MIN_BOOL_GLOBAL
+contStringGlobal = MIN_STRING_GLOBAL
 
 contInt = MIN_INT
 contFloat = MIN_FLOAT
 contBool = MIN_BOOL
 contString = MIN_STRING
+
 contTempInt = MIN_TEMP_INT
 contTempFloat = MIN_TEMP_FLOAT
 contTempBool = MIN_TEMP_BOOL
 contTempString = MIN_TEMP_STRING
+
 contConstInt = MIN_CONST_INT
 contConstFloat = MIN_CONST_FLOAT
 contConstString = MIN_CONST_STRING
 contConstBool = MIN_CONST_BOOL
 
-contQuadruples = 0
+currentTempInt = 0
+currentTempFloat = 0
+currentTempBool = 0
+currentTempString = 0
+
+contQuadruples = 1
 
 # Types & Operators Codes
 
@@ -82,6 +96,9 @@ FLOAT = 20
 BOOL = 30
 STRING = 40
 ERROR = 50
+PROGRAM = 60
+FUNC = 70
+MAIN = 80
 
 FONDO_FALSO = 99
 
@@ -103,6 +120,9 @@ READ = 240
 GOTOF = 250
 GOTOV = 260
 GOTO = 270
+ERA = 280
+GOSUB = 290
+RETORNO = 300
 
 # Semantic Cube
 
@@ -122,11 +142,11 @@ semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Int
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Float
                 [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
+                [STRING, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
 
 # Quadruples
 
-cuadruplos = []
+cuadruplos = [()]
 
 # Stacks
 
@@ -344,10 +364,12 @@ def p_saveProc(p):
 		if currentToken in vars_global:
 			semanticError = "Cannot declare function with same name as variable '" + currentToken + "'"
 			semanticErrorHalt()
+
 	if currentScope == "global":
-		newProc = [currentToken, currentType, None, None, vars_global]
+		newProc = [currentToken, PROGRAM, None, None, vars_global]
 	else:
-		newProc = [currentToken, currentType, None, None, vars_local]
+		newProc = [currentToken, FUNC, None, None, vars_local]
+
 	dir_procs += [newProc]
 
 def p_errorProgram(p):
@@ -434,14 +456,19 @@ def p_errorType(p):
 
 
 def p_main(p):
-	'''main : errorMain MAIN saveMain "{" opVars body "}" clearVarsTable'''
+	'''main : errorMain MAIN saveMain "{" opVars saveQuadruple generateInitialQuadruple body "}" clearVarsTable'''
 	# print("main")
+
+def p_generateInitialQuadruple(p):
+	'''generateInitialQuadruple : '''
+	generateJump('m', contQuadruples, )
 
 def p_saveMain(p):
 	'''saveMain : '''
 	global dir_procs
 	global currentToken
-	newProc = [currentToken, "main", None, None, vars_local]
+
+	newProc = [currentToken, MAIN, None, None, vars_local]
 	dir_procs += [newProc]
 
 
@@ -568,8 +595,20 @@ def p_errorCyParam(p):
 
 
 def p_function(p):
-	'''function : errorFunction FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns  "}" clearVarsTable '''
+	'''function : errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns  "}" clearVarsTable '''
 	# print("function")
+
+def p_saveCurrentTemps(p):
+	'''saveCurrentTemps : '''
+	global currentTempInt
+	global currentTempFloat
+	global currentTempBool
+	global currentTempString
+
+	currentTempInt = contTempInt
+	currentTempFloat = contTempFloat
+	currentTempBool = contTempBool
+	currentTempString = contTempString
 
 def p_errorFunction(p):
 	'''errorFunction : '''
@@ -585,6 +624,19 @@ def p_clearVarsTable(p):
 	global contString
 
 	print(vars_local)
+
+	ints = contInt - MIN_INT
+	floats = contFloat - MIN_FLOAT
+	bools = contBool - MIN_BOOL
+	strings = contString - MIN_STRING
+	tempInts = contTempInt - currentTempInt
+	tempFloats = contTempFloat - currentTempFloat
+	tempBools = contTempBool - currentTempBool
+	tempStrings = contTempString - currentTempString
+
+	currentProc = dir_procs[len(dir_procs) - 1]
+	currentProc += [[ints, floats, bools, strings, tempInts, tempFloats, tempBools, tempStrings]]
+	dir_procs[len(dir_procs) - 1] = currentProc
 
 	contInt = MIN_INT
 	contFloat = MIN_FLOAT
@@ -629,10 +681,16 @@ def p_errorOpParameters(p):
 
 
 def p_opReturns(p):
-	'''opReturns : errorOpReturns RETURNS type saveReturnType "{" opVars body return
-		| "{" opVars body '''
+	'''opReturns : errorOpReturns RETURNS type saveReturnType "{" opVars saveQuadruple body return
+		| "{" opVars saveQuadruple body '''
 	# print("returns")
 
+def p_saveQuadruple(p):
+	'''saveQuadruple : '''
+	currentProc = dir_procs[len(dir_procs) - 1]
+	print(currentProc)
+	currentProc += [contQuadruples]
+	dir_procs[len(dir_procs) - 1] = currentProc
 
 def p_saveReturnType(p):
 	'''saveReturnType : '''
@@ -1348,6 +1406,12 @@ def rellena(salto, add):
 def generateJump(tipo, cond):
 	global contQuadruples
 
+	if tipo == 'm':
+		cuadruplo = (GOTO, "", "", cond)
+		cuadruplos[0] = cuadruplo
+
+		return
+
 	if tipo == 'f':
 		cuadruplo = (GOTOF, cond, "", "")
 	elif tipo == 'v':
@@ -1392,24 +1456,45 @@ def getAddressForType(type):
 	global contFloat
 	global contBool
 	global contString
+	global contIntGlobal
+	global contFloatGlobal
+	global contBoolGlobal
+	global contStringGlobal
 
 	typeCode = typeToCode(type)
-	
-	if typeCode == INT:
-		contInt += 1
-		return contInt - 1
 
-	if typeCode == FLOAT:
-		contFloat += 1
-		return contFloat - 1
+	if currentScope == 'global':
+		if typeCode == INT:
+			contIntGlobal += 1
+			return contIntGlobal - 1
 
-	if typeCode == BOOL:
-		contBool += 1
-		return contBool - 1
+		if typeCode == FLOAT:
+			contFloatGlobal += 1
+			return contFloatGlobal - 1
 
-	if typeCode == STRING:
-		contString += 1
-		return contString - 1
+		if typeCode == BOOL:
+			contBoolGlobal += 1
+			return contBoolGlobal - 1
+
+		if typeCode == STRING:
+			contStringGlobal += 1
+			return contStringGlobal - 1
+	else:
+		if typeCode == INT:
+			contInt += 1
+			return contInt - 1
+
+		if typeCode == FLOAT:
+			contFloat += 1
+			return contFloat - 1
+
+		if typeCode == BOOL:
+			contBool += 1
+			return contBool - 1
+
+		if typeCode == STRING:
+			contString += 1
+			return contString - 1
 
 def getAddressForConstant(type):
 	global contConstInt
@@ -1456,16 +1541,16 @@ def getTempForType(type):
 		return contTempString - 1
 
 def getTypeForAddress(address):
-	if (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT) or (address >= MIN_CONST_INT and address <= MAX_CONST_INT):
+	if (address >= MIN_INT_GLOBAL and address <= MAX_INT_GLOBAL) or (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT) or (address >= MIN_CONST_INT and address <= MAX_CONST_INT):
 		return INT
 	
-	if (address >= MIN_FLOAT and address <= MAX_FLOAT) or (address >= MIN_TEMP_FLOAT and address <= MAX_TEMP_FLOAT) or (address >= MIN_CONST_FLOAT and address <= MAX_CONST_FLOAT):
+	if (address >= MIN_FLOAT_GLOBAL and address <= MAX_FLOAT_GLOBAL) or (address >= MIN_FLOAT and address <= MAX_FLOAT) or (address >= MIN_TEMP_FLOAT and address <= MAX_TEMP_FLOAT) or (address >= MIN_CONST_FLOAT and address <= MAX_CONST_FLOAT):
 		return FLOAT
 	
-	if (address >= MIN_BOOL and address <= MAX_BOOL) or (address >= MIN_TEMP_BOOL and address <= MAX_TEMP_BOOL) or (address >= MIN_CONST_BOOL and address <= MAX_CONST_BOOL):
+	if (address >= MIN_BOOL_GLOBAL and address <= MAX_BOOL_GLOBAL) or (address >= MIN_BOOL and address <= MAX_BOOL) or (address >= MIN_TEMP_BOOL and address <= MAX_TEMP_BOOL) or (address >= MIN_CONST_BOOL and address <= MAX_CONST_BOOL):
 		return BOOL
 	
-	if (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING) or (address >= MIN_CONST_STRING and address <= MAX_CONST_STRING):
+	if (address >= MIN_STRING_GLOBAL and address <= MAX_STRING_GLOBAL) or (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING) or (address >= MIN_CONST_STRING and address <= MAX_CONST_STRING):
 		return STRING
 
 def typesValidator(left, right, operator):
@@ -1474,6 +1559,8 @@ def typesValidator(left, right, operator):
 	if operator >= 200:
 		opMap += 10
 	
+	print(left, right, opMap)
+
 	return semanticCube[(left / 10 - 1) * 4 + (right / 10 - 1)][opMap]
 
 
