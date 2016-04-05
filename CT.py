@@ -386,18 +386,25 @@ def p_saveID(p):
 
 	if currentScope == "global":
 		global vars_global
+
 		if tokenToUse in vars_global:
-			semanticError = "Varibale '" + tokenToUse + "' already declared"
+			semanticError = "Variable '" + tokenToUse + "' already declared"
 			semanticErrorHalt()
-		else:
-			vars_global[currentToken] = getAddressForType(currentType)
+
+		vars_global[currentToken] = getAddressForType(currentType)
 	else:
 		global vars_local
+
 		if tokenToUse in vars_local:
 			semanticError = "Variable '" + tokenToUse + "' already declared on this scope"
 			semanticErrorHalt()
-		else:
-			vars_local[tokenToUse] = getAddressForType(currentType)
+
+		for proc in dir_procs:
+			if proc[0] == tokenToUse:
+				semanticError = "Function '" + currentToken + "' already declared"
+				semanticErrorHalt()
+		
+		vars_local[tokenToUse] = getAddressForType(currentType)
 
 def semanticErrorHalt():
 	global semanticError

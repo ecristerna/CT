@@ -1,17 +1,18 @@
 program  a {
-	vars int i;
 
-	func i() returns int {
-
+	func j() returns int {
+		vars int i;
 		for (i = 0; i < 10; i = i + 1) {
 			print(i);
 		}
+
+		i = j();
 
 		return 5;
 	}
 
 	main {
-		vars int i;
+		vars int h;
 
 		for (i = 0; i < 10; i = i + 1) {
 			print(i);
