@@ -638,6 +638,9 @@ def p_clearVarsTable(p):
 	currentProc += [[ints, floats, bools, strings, tempInts, tempFloats, tempBools, tempStrings]]
 	dir_procs[len(dir_procs) - 1] = currentProc
 
+	if currentProc[1] == FUNC:
+		generateQuadruple(RETORNO)
+
 	contInt = MIN_INT
 	contFloat = MIN_FLOAT
 	contBool = MIN_BOOL
@@ -1340,6 +1343,13 @@ def p_performeRead(p):
 
 def generateQuadruple(operator):
 	global contQuadruples
+
+	if operator == RETORNO:
+		cuadruplo = (RETORNO, "", "", "")
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		return
 
 	if operator == PRINT:
 		res = pOper.pop()
