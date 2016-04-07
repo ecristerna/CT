@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 literals = ['{','}',',',';','[', ']', ':', '.']
 reserved = ['PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
-tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
+tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
 errorMsg = ""
@@ -106,43 +106,45 @@ ADD = 100
 SUBSTRACT = 110
 MULTIPLY = 120
 DIVISION = 130
-LESS_THAN = 140
-GREATER_THAN = 150
-LESS_EQUAL = 160
-GREATER_EQUAL = 170
-EQUAL = 180
-DIFFERENT = 190
-AND = 200
-OR = 210
-ASSIGN = 220
-PRINT = 230
-READ = 240
-GOTOF = 250
-GOTOV = 260
-GOTO = 270
-ERA = 280
-GOSUB = 290
-RETORNO = 300
+RESIDUE = 140
+LESS_THAN = 150
+GREATER_THAN = 160
+LESS_EQUAL = 170
+GREATER_EQUAL = 180
+EQUAL = 190
+DIFFERENT = 200
+AND = 210
+OR = 220
+ASSIGN = 230
+PRINT = 240
+READ = 250
+GOTOF = 260
+GOTOV = 270
+GOTO = 280
+ERA = 290
+GOSUB = 300
+RETORNO = 310
+
 
 # Semantic Cube
 
-			# 	 +	   	 -      *      /      <      >     <=     >=     ==     !=     AND    OR     =   
-semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, INT], 	 # Int vs Int
-                [FLOAT, FLOAT, FLOAT, FLOAT, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, ERROR], # Int vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs String
-                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, FLOAT], # Float vs Int
-                [FLOAT, FLOAT, FLOAT, FLOAT, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, FLOAT], # Float vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs String
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Int
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  BOOL,  BOOL,  BOOL ], # Bool vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs String
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Int
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
-                [STRING, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
+			# 	 +	   	 -      *      /  	   %   	<      >     <=     >=     ==     !=     AND    OR     =   
+semanticCube = [[INT,   INT,   INT,   INT, 	 INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, INT], 	 # Int vs Int
+                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, ERROR], # Int vs Float
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs Bool
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs String
+                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, FLOAT], # Float vs Int
+                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, FLOAT], # Float vs Float
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs Bool
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs String
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Int
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Float
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  BOOL,  BOOL,  BOOL ], # Bool vs Bool
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs String
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Int
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Float
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
+                [STRING, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
 
 # Quadruples
 
@@ -256,6 +258,14 @@ def t_DIV(t):
 	global previousToken
 	previousToken = currentToken
 	currentToken = '/'
+	return t
+
+def t_RES(t):
+	r'%'
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = '%'
 	return t
 
 def t_EQ(t):
@@ -994,6 +1004,7 @@ def p_term(p):
 def p_cyTerm(p):
 	'''cyTerm : MULT saveOperator errorFact term
 			| DIV saveOperator term
+			| RES saveOperator term
 			| empty '''
 	# print("cycle term")
 
@@ -1197,6 +1208,8 @@ def p_saveOperator(p):
 		pilaO.append(MULTIPLY)
 	elif previousToken == '/':
 		pilaO.append(DIVISION)
+	elif previousToken == '%':
+		pilaO.append(RESIDUE)
 	elif previousToken == '<' or currentToken == '':
 		pilaO.append(LESS_THAN)
 	elif previousToken == ">" or currentToken == '>':
@@ -1261,7 +1274,7 @@ def p_performMulDiv(p):
 		pilaO.append(operator)
 		return
 
-	if operator != MULTIPLY and operator != DIVISION:
+	if operator != MULTIPLY and operator != DIVISION and operator != RESIDUE:
 		pilaO.append(operator)
 		
 		return
