@@ -672,22 +672,14 @@ def p_saveReturnValue(p):
 	global contQuadruples
 	global semanticError
 
-	print("PILA")
-	print(pOper)
-
 	value = pOper.pop()
 	tipo = pTipos.pop()
-
-	print("TIPO")
-	print(tipo)
-	print("VALUE")
-	print(value)
-
-	if tipo != vars_global[dir_procs[len(dir_procs) - 1][0]]:
+	
+	if tipo != getTypeForAddress(vars_global[dir_procs[len(dir_procs) - 1][0]]):
 		semanticError = "Return expression does not match function type"
 		semanticErrorHalt()
 
-	cuadruplo = (FUNCRETURN, value, "", "")
+	cuadruplo = (FUNCRETURN, value, "", vars_global[dir_procs[len(dir_procs) - 1][0]])
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
@@ -729,7 +721,6 @@ def p_opReturns(p):
 def p_saveQuadruple(p):
 	'''saveQuadruple : '''
 	currentProc = dir_procs[len(dir_procs) - 1]
-	print(currentProc)
 	currentProc += [contQuadruples]
 	dir_procs[len(dir_procs) - 1] = currentProc
 
@@ -740,7 +731,7 @@ def p_saveReturnType(p):
 	global vars_global
 
 	dir_procs[len(dir_procs) - 1][3] = typeToCode(currentToken)
-	vars_global[dir_procs[len(dir_procs) - 1][0]] = typeToCode(currentToken)
+	vars_global[dir_procs[len(dir_procs) - 1][0]] = getGlobalAddressForType(currentToken)
 
 def p_errorOpReturns(p):
 	'''errorOpReturns : '''
@@ -969,11 +960,6 @@ def p_checkParamType(p):
 		semanticErrorHalt()
 
 	if currentProc[2][paramCounter - 1] != tipo:
-		print("_________")
-		print(currentProc[2])
-		print(argumento)
-		print(paramCounter)
-		print(currentProc[2][paramCounter - 1], tipo)
 		semanticError = "Parameter " + `paramCounter` + " type does not match function declaration"
 		semanticErrorHalt()
 
@@ -1229,12 +1215,8 @@ def p_saveConstantInt(p):
         	tokenToUse = previousToken
 
         if tokenToUse in constants_table:
-        	print("EXISTE")
-        	print(tokenToUse)
         	address = constants_table[tokenToUse]
         else:
-        	print("NO EXISTE")
-        	print(tokenToUse)
         	address = getAddressForConstant(INT)
 
         	constants_table[tokenToUse] = address 
@@ -1519,11 +1501,6 @@ def generateQuadruple(operator):
 
 	if tipoRes == ERROR:
 		global semanticError
-		print(pilaO)
-		print(pOper)
-		print(tipoIzq)
-		print(operator)
-		print(tipoDer)
 		semanticError = "Types mismatch " + str(tipoIzq) + " " + str(operator) + " " + str(tipoDer)
 		semanticErrorHalt()
 
@@ -1599,6 +1576,30 @@ def operatorToCode(operator):
         "=": 220,
     }
     return switcher.get(operator, 50)
+
+def getGlobalAddressForType(type):
+	global contIntGlobal
+	global contFloatGlobal
+	global contBoolGlobal
+	global contStringGlobal
+
+	typeCode = typeToCode(type)
+	
+	if typeCode == INT:
+		contIntGlobal += 1
+		return contIntGlobal - 1
+
+	if typeCode == FLOAT:
+		contFloatGlobal += 1
+		return contFloatGlobal - 1
+
+	if typeCode == BOOL:
+		contBoolGlobal += 1
+		return contBoolGlobal - 1
+
+	if typeCode == STRING:
+		contStringGlobal += 1
+		return contStringGlobal - 1
 
 def getAddressForType(type):
 	global contInt
@@ -1707,8 +1708,6 @@ def typesValidator(left, right, operator):
 
 	if operator >= 200:
 		opMap += 10
-	
-	print(left, right, opMap)
 
 	return semanticCube[(left / 10 - 1) * 4 + (right / 10 - 1)][opMap]
 

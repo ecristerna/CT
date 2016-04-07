@@ -2,42 +2,24 @@ program  a {
 	vars int i;
 	
 	func m(int z, y, d; bool l; float p) returns bool {
-		vars int o;
-		string h;
-
-		h = "hola" + "hola";
-		print(i);
-
-		return true;
-	}
-
-
-	func j(int z, y; float p) returns int {
-		vars int o;
-		string h;
-
-		h = "hola" + "hola";
-		o = 10 + 10 * 3;
-		print(i);
-
-		if (true) {
-			j(10, 10, 3.0);
-		}
-
-		return 5;
+		return l;
 	}
 
 	func q() {
-		i = 10;
+		vars int qi, qj;
+		bool qb;
 
-		q();
+		qb = true;
+		qb = false;
+		qb = true;
+
+		m(qi + qj * 2, 4 % 2, 5, qb, 2.0);
+	}
+
+	func up(string s) {
 	}
 
 	main {
-		vars int i;
-
-		for (i = 0; i < 10; i = i % 1) {
-			print(i);
-		}
+		up("hola" + "como" + "estas");
 	}
 }
