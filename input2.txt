@@ -1,18 +1,36 @@
 program  a {
 	vars int i;
-
-	func j(int z, y; float p) returns int {
+	
+	func m(int z, y, d; bool l; float p) returns bool {
 		vars int o;
 		string h;
 
 		h = "hola" + "hola";
 		print(i);
 
+		return true;
+	}
+
+
+	func j(int z, y; float p) returns int {
+		vars int o;
+		string h;
+
+		h = "hola" + "hola";
+		o = 10 + 10 * 3;
+		print(i);
+
+		if (true) {
+			j(10, 10, 3.0);
+		}
+
 		return 5;
 	}
 
 	func q() {
 		i = 10;
+
+		q();
 	}
 
 	main {

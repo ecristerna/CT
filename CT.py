@@ -5,6 +5,7 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
+avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'return', 'and', 'or']
 literals = ['{','}',',',';','[', ']', ':', '.']
 reserved = ['PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
@@ -23,6 +24,8 @@ currentToken = ""
 previousToken = ""
 semanticError = ""
 declaringParameters = False
+paramCounter = 0
+currentProc = []
 
 # Addresses
 
@@ -45,12 +48,12 @@ MIN_STRING = 8000
 MAX_STRING = 8999
 
 MIN_CONST_INT = 9000
-MAX_CONST_INT= 9249
-MIN_CONST_FLOAT = 9250
-MAX_CONST_FLOAT= 9499
-MIN_CONST_STRING = 9500
-MAX_CONST_STRING= 9749
-MIN_CONST_BOOL = 9750
+MAX_CONST_INT= 9332
+MIN_CONST_FLOAT = 9333
+MAX_CONST_FLOAT= 9665
+MIN_CONST_STRING = 9666
+MAX_CONST_STRING= 9997
+MIN_CONST_BOOL = 9998
 MAX_CONST_BOOL= 9999
 
 MIN_TEMP_INT = 10000
@@ -124,6 +127,8 @@ GOTO = 280
 ERA = 290
 GOSUB = 300
 RETORNO = 310
+PARAM = 320
+FUNCRETURN = 330
 
 
 # Semantic Cube
@@ -605,7 +610,7 @@ def p_errorCyParam(p):
 
 
 def p_function(p):
-	'''function : errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns  "}" clearVarsTable '''
+	'''function : errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns "}" clearVarsTable '''
 	# print("function")
 
 def p_saveCurrentTemps(p):
@@ -659,8 +664,32 @@ def p_clearVarsTable(p):
 	vars_local = {}
 
 def p_return(p):
-	'''return : errorReturn RETURN expresion ";" '''
+	'''return : errorReturn RETURN expresion saveReturnValue ";" '''
 	# print("return")
+
+def p_saveReturnValue(p):
+	'''saveReturnValue : '''
+	global contQuadruples
+	global semanticError
+
+	print("PILA")
+	print(pOper)
+
+	value = pOper.pop()
+	tipo = pTipos.pop()
+
+	print("TIPO")
+	print(tipo)
+	print("VALUE")
+	print(value)
+
+	if tipo != vars_global[dir_procs[len(dir_procs) - 1][0]]:
+		semanticError = "Return expression does not match function type"
+		semanticErrorHalt()
+
+	cuadruplo = (FUNCRETURN, value, "", "")
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
 
 
 def p_errorReturn(p):
@@ -686,7 +715,6 @@ def p_saveParamToDirProc(p):
     dir_procs[len(dir_procs) - 1][2] = param_types
     param_types = []
 
-
 def p_errorOpParameters(p):
 	'''errorOpParameters : '''
 	global errorMsg
@@ -709,7 +737,10 @@ def p_saveReturnType(p):
 	'''saveReturnType : '''
 	global dir_procs
 	global currentToken
+	global vars_global
+
 	dir_procs[len(dir_procs) - 1][3] = typeToCode(currentToken)
+	vars_global[dir_procs[len(dir_procs) - 1][0]] = typeToCode(currentToken)
 
 def p_errorOpReturns(p):
 	'''errorOpReturns : '''
@@ -870,23 +901,85 @@ def p_errorAssignMatrix(p):
 	global errorMsg
 	errorMsg = "Error in rule ASSIGNMATRIX"
 
-
 def p_funcCall(p):
-	'''funcCall : ID PARINI opParamCall PARFIN '''
+	'''funcCall : ID checkFunction PARINI opParamCall PARFIN checkNumParams '''
 	# print("funcCall")
 
+def p_checkNumParams(p):
+	'''checkNumParams : '''
+	global contQuadruples
+	global paramCounter
+	global semanticError
+
+	if currentProc[2] == None:
+		if paramCounter != 0:
+			semanticError = "Function " + currentProc[0] + " has no parameters"
+			semanticErrorHalt()
+	elif len(currentProc[2]) > paramCounter:
+		semanticError = "Missing parameters"
+		semanticErrorHalt()
+
+	cuadruplo = (GOSUB, currentProc[0], "", currentProc[5])
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+	paramCounter = 0
+
+def p_checkFunction(p):
+	'''checkFunction : '''
+	global currentProc
+
+	for proc in dir_procs:
+		if proc[0] == previousToken:
+			currentProc = proc
+			generateQuadruple(ERA)
+
+			return
+
+	global semanticError
+	semanticError = "Undeclared function " + previousToken
+	semanticErrorHalt()
 
 def p_opParamCall(p):
-	'''opParamCall : expresion cyParamCall
+	'''opParamCall : expresion checkParamType cyParamCall
 				| empty '''
 	# print("function parameter")
 
 
 def p_cyParamCall(p):
-	'''cyParamCall : "," expresion cyParamCall
+	'''cyParamCall :  "," expresion checkParamType cyParamCall
 				| empty '''
 	# print("cycle parameter call")
 
+def p_checkParamType(p):
+	'''checkParamType : '''
+	global paramCounter
+	global contQuadruples
+	global semanticError
+
+	paramCounter += 1
+	argumento = pOper.pop()
+	tipo = pTipos.pop()
+
+	if currentProc[2] == None:
+		semanticError = "Function " + currentProc[0] + " has no parameters."
+		semanticErrorHalt()
+
+	if paramCounter > len(currentProc[2]):
+		semanticError = "Number of parameters do not match function declaration"
+		semanticErrorHalt()
+
+	if currentProc[2][paramCounter - 1] != tipo:
+		print("_________")
+		print(currentProc[2])
+		print(argumento)
+		print(paramCounter)
+		print(currentProc[2][paramCounter - 1], tipo)
+		semanticError = "Parameter " + `paramCounter` + " type does not match function declaration"
+		semanticErrorHalt()
+
+	cuadruplo = (PARAM, argumento, "", paramCounter)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
 
 def p_struct(p):
 	'''struct : structType "[" CTED "]" optionalMatrix '''
@@ -1084,6 +1177,8 @@ def p_empty(p):
 
 def p_printTables(p):
 	'''printTables : '''
+	print("\nCONSTANTS")
+	print(constants_table)
 	print("\nVARS GLOBAL")
 	print(vars_global)
 	print("\nDIR PROCS")
@@ -1128,48 +1223,72 @@ def p_saveVerdadero(p):
 
 def p_saveConstantInt(p):
         '''saveConstantInt : '''
-        if previousToken in constants_table:
-        	address = constants_table[previousToken]
+        tokenToUse = currentToken
+
+        if tokenToUse in avoidTokens:
+        	tokenToUse = previousToken
+
+        if tokenToUse in constants_table:
+        	print("EXISTE")
+        	print(tokenToUse)
+        	address = constants_table[tokenToUse]
         else:
+        	print("NO EXISTE")
+        	print(tokenToUse)
         	address = getAddressForConstant(INT)
 
-        	constants_table[previousToken] = address 
+        	constants_table[tokenToUse] = address 
 
         pOper.append(address)
         pTipos.append(INT)
         
 def p_saveConstantFloat(p):
         '''saveConstantFloat : '''
-        if previousToken in constants_table:
-        	address = constants_table[previousToken]
+        tokenToUse = currentToken
+
+        if tokenToUse in avoidTokens:
+        	tokenToUse = previousToken
+
+        if `tokenToUse` in constants_table:
+        	address = constants_table[`tokenToUse`]
         else:
         	address = getAddressForConstant(FLOAT)
 
-        	constants_table[previousToken] = address 
+        	constants_table[`tokenToUse`] = address 
 
         pOper.append(address)
         pTipos.append(FLOAT)
         
 def p_saveConstantBool(p):
         '''saveConstantBool : '''
-        if previousToken in constants_table:
-        	address = constants_table[previousToken]
+        tokenToUse = currentToken
+
+        if tokenToUse in avoidTokens:
+        	tokenToUse = previousToken
+
+        if tokenToUse in constants_table:
+        	address = constants_table[tokenToUse]
         else:
         	address = getAddressForConstant(BOOL)
 
-        	constants_table[previousToken] = address 
+        	constants_table[tokenToUse] = address 
 
         pOper.append(address)
         pTipos.append(BOOL)
         
 def p_saveConstantString(p):
         '''saveConstantString : '''
-      	if previousToken in constants_table:
-        	address = constants_table[previousToken]
+        tokenToUse = currentToken
+
+        if tokenToUse in avoidTokens:
+        	tokenToUse = previousToken
+
+      	if tokenToUse in constants_table:
+        	address = constants_table[tokenToUse]
         else:
         	address = getAddressForConstant(STRING)
 
-        	constants_table[previousToken] = address 
+        	constants_table[tokenToUse] = address 
 
         pOper.append(address)
         pTipos.append(STRING)
@@ -1356,6 +1475,13 @@ def p_performeRead(p):
 
 def generateQuadruple(operator):
 	global contQuadruples
+
+	if operator == ERA:
+		cuadruplo = (ERA, previousToken, "", "")
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		return
 
 	if operator == RETORNO:
 		cuadruplo = (RETORNO, "", "", "")
