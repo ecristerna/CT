@@ -5,9 +5,10 @@ sys.path.insert(0,"../..")
 if sys.version_info[0] >= 3:
     raw_input = input
 
+avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'return', 'and', 'or']
 literals = ['{','}',',',';','[', ']', ':', '.']
 reserved = ['PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
-tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
+tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
 errorMsg = ""
@@ -23,57 +24,73 @@ currentToken = ""
 previousToken = ""
 semanticError = ""
 declaringParameters = False
+paramCounter = 0
+currentProc = []
 
 # Addresses
 
 MIN_INT_GLOBAL = 1000
-MAX_INT = 1999
-MIN_FLOAT = 2000
-MAX_FLOAT = 2999
-MIN_BOOL = 3000
-MAX_BOOL = 3999
-MIN_STRING = 4000
-MAX_STRING = 4999
+MAX_INT_GLOBAL = 1999
+MIN_FLOAT_GLOBAL = 2000
+MAX_FLOAT_GLOBAL = 2999
+MIN_BOOL_GLOBAL = 3000
+MAX_BOOL_GLOBAL = 3999
+MIN_STRING_GLOBAL = 4000
+MAX_STRING_GLOBAL = 4999
 
-MIN_INT = 1000
-MAX_INT = 1999
-MIN_FLOAT = 2000
-MAX_FLOAT = 2999
-MIN_BOOL = 3000
-MAX_BOOL = 3999
-MIN_STRING = 4000
-MAX_STRING = 4999
-MIN_TEMP_INT = 5000
-MAX_TEMP_INT = 5999
-MIN_TEMP_FLOAT = 6000
-MAX_TEMP_FLOAT = 6999
-MIN_TEMP_BOOL = 7000
-MAX_TEMP_BOOL = 7999
-MIN_TEMP_STRING = 8000
-MAX_TEMP_STRING = 8999
+MIN_INT = 5000
+MAX_INT = 5999
+MIN_FLOAT = 6000
+MAX_FLOAT = 6999
+MIN_BOOL = 7000
+MAX_BOOL = 7999
+MIN_STRING = 8000
+MAX_STRING = 8999
+
 MIN_CONST_INT = 9000
-MAX_CONST_INT= 9199
-MIN_CONST_FLOAT = 9200
-MAX_CONST_FLOAT= 9399
-MIN_CONST_STRING = 9400
-MAX_CONST_STRING= 9599
-MIN_CONST_BOOL = 9600
-MAX_CONST_BOOL= 9799
+MAX_CONST_INT= 9332
+MIN_CONST_FLOAT = 9333
+MAX_CONST_FLOAT= 9665
+MIN_CONST_STRING = 9666
+MAX_CONST_STRING= 9997
+MIN_CONST_BOOL = 9998
+MAX_CONST_BOOL= 9999
+
+MIN_TEMP_INT = 10000
+MAX_TEMP_INT = 10999
+MIN_TEMP_FLOAT = 11000
+MAX_TEMP_FLOAT = 11999
+MIN_TEMP_BOOL = 12000
+MAX_TEMP_BOOL = 12999
+MIN_TEMP_STRING = 13000
+MAX_TEMP_STRING = 13999
+
+contIntGlobal = MIN_INT_GLOBAL
+contFloatGlobal = MIN_FLOAT_GLOBAL
+contBoolGlobal = MIN_BOOL_GLOBAL
+contStringGlobal = MIN_STRING_GLOBAL
 
 contInt = MIN_INT
 contFloat = MIN_FLOAT
 contBool = MIN_BOOL
 contString = MIN_STRING
+
 contTempInt = MIN_TEMP_INT
 contTempFloat = MIN_TEMP_FLOAT
 contTempBool = MIN_TEMP_BOOL
 contTempString = MIN_TEMP_STRING
+
 contConstInt = MIN_CONST_INT
 contConstFloat = MIN_CONST_FLOAT
 contConstString = MIN_CONST_STRING
 contConstBool = MIN_CONST_BOOL
 
-contQuadruples = 0
+currentTempInt = 0
+currentTempFloat = 0
+currentTempBool = 0
+currentTempString = 0
+
+contQuadruples = 1
 
 # Types & Operators Codes
 
@@ -82,6 +99,9 @@ FLOAT = 20
 BOOL = 30
 STRING = 40
 ERROR = 50
+PROGRAM = 60
+FUNC = 70
+MAIN = 80
 
 FONDO_FALSO = 99
 
@@ -89,44 +109,51 @@ ADD = 100
 SUBSTRACT = 110
 MULTIPLY = 120
 DIVISION = 130
-LESS_THAN = 140
-GREATER_THAN = 150
-LESS_EQUAL = 160
-GREATER_EQUAL = 170
-EQUAL = 180
-DIFFERENT = 190
-AND = 200
-OR = 210
-ASSIGN = 220
-PRINT = 230
-READ = 240
-GOTOF = 250
-GOTOV = 260
-GOTO = 270
+RESIDUE = 140
+LESS_THAN = 150
+GREATER_THAN = 160
+LESS_EQUAL = 170
+GREATER_EQUAL = 180
+EQUAL = 190
+DIFFERENT = 200
+AND = 210
+OR = 220
+ASSIGN = 230
+PRINT = 240
+READ = 250
+GOTOF = 260
+GOTOV = 270
+GOTO = 280
+ERA = 290
+GOSUB = 300
+RETORNO = 310
+PARAM = 320
+FUNCRETURN = 330
+
 
 # Semantic Cube
 
-			# 	 +	   	 -      *      /      <      >     <=     >=     ==     !=     AND    OR     =   
-semanticCube = [[INT,   INT,   INT,   INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, INT], 	 # Int vs Int
-                [FLOAT, FLOAT, FLOAT, FLOAT, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, ERROR], # Int vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs String
-                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, FLOAT], # Float vs Int
-                [FLOAT, FLOAT, FLOAT, FLOAT, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, FLOAT], # Float vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs String
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Int
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  BOOL,  BOOL,  BOOL ], # Bool vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs String
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Int
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
+			# 	 +	   	 -      *      /  	   %   	<      >     <=     >=     ==     !=     AND    OR     =   
+semanticCube = [[INT,   INT,   INT,   INT, 	 INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, INT], 	 # Int vs Int
+                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, ERROR], # Int vs Float
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs Bool
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs String
+                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, FLOAT], # Float vs Int
+                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, FLOAT], # Float vs Float
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs Bool
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs String
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Int
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Float
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  BOOL,  BOOL,  BOOL ], # Bool vs Bool
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs String
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Int
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Float
+                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
+                [STRING, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
 
 # Quadruples
 
-cuadruplos = []
+cuadruplos = [()]
 
 # Stacks
 
@@ -238,6 +265,14 @@ def t_DIV(t):
 	currentToken = '/'
 	return t
 
+def t_RES(t):
+	r'%'
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = '%'
+	return t
+
 def t_EQ(t):
 	r'=='
 	global currentToken
@@ -344,10 +379,12 @@ def p_saveProc(p):
 		if currentToken in vars_global:
 			semanticError = "Cannot declare function with same name as variable '" + currentToken + "'"
 			semanticErrorHalt()
+
 	if currentScope == "global":
-		newProc = [currentToken, currentType, None, None, vars_global]
+		newProc = [currentToken, PROGRAM, None, None, vars_global]
 	else:
-		newProc = [currentToken, currentType, None, None, vars_local]
+		newProc = [currentToken, FUNC, None, None, vars_local]
+
 	dir_procs += [newProc]
 
 def p_errorProgram(p):
@@ -434,14 +471,19 @@ def p_errorType(p):
 
 
 def p_main(p):
-	'''main : errorMain MAIN saveMain "{" opVars body "}" clearVarsTable'''
+	'''main : errorMain MAIN saveMain "{" opVars saveQuadruple generateInitialQuadruple body "}" clearVarsTable'''
 	# print("main")
+
+def p_generateInitialQuadruple(p):
+	'''generateInitialQuadruple : '''
+	generateJump('m', contQuadruples, )
 
 def p_saveMain(p):
 	'''saveMain : '''
 	global dir_procs
 	global currentToken
-	newProc = [currentToken, "main", None, None, vars_local]
+
+	newProc = [currentToken, MAIN, None, None, vars_local]
 	dir_procs += [newProc]
 
 
@@ -568,8 +610,20 @@ def p_errorCyParam(p):
 
 
 def p_function(p):
-	'''function : errorFunction FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns  "}" clearVarsTable '''
+	'''function : errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns "}" clearVarsTable '''
 	# print("function")
+
+def p_saveCurrentTemps(p):
+	'''saveCurrentTemps : '''
+	global currentTempInt
+	global currentTempFloat
+	global currentTempBool
+	global currentTempString
+
+	currentTempInt = contTempInt
+	currentTempFloat = contTempFloat
+	currentTempBool = contTempBool
+	currentTempString = contTempString
 
 def p_errorFunction(p):
 	'''errorFunction : '''
@@ -586,6 +640,22 @@ def p_clearVarsTable(p):
 
 	print(vars_local)
 
+	ints = contInt - MIN_INT
+	floats = contFloat - MIN_FLOAT
+	bools = contBool - MIN_BOOL
+	strings = contString - MIN_STRING
+	tempInts = contTempInt - currentTempInt
+	tempFloats = contTempFloat - currentTempFloat
+	tempBools = contTempBool - currentTempBool
+	tempStrings = contTempString - currentTempString
+
+	currentProc = dir_procs[len(dir_procs) - 1]
+	currentProc += [[ints, floats, bools, strings, tempInts, tempFloats, tempBools, tempStrings]]
+	dir_procs[len(dir_procs) - 1] = currentProc
+
+	if currentProc[1] == FUNC:
+		generateQuadruple(RETORNO)
+
 	contInt = MIN_INT
 	contFloat = MIN_FLOAT
 	contBool = MIN_BOOL
@@ -594,8 +664,24 @@ def p_clearVarsTable(p):
 	vars_local = {}
 
 def p_return(p):
-	'''return : errorReturn RETURN expresion ";" '''
+	'''return : errorReturn RETURN expresion saveReturnValue ";" '''
 	# print("return")
+
+def p_saveReturnValue(p):
+	'''saveReturnValue : '''
+	global contQuadruples
+	global semanticError
+
+	value = pOper.pop()
+	tipo = pTipos.pop()
+	
+	if tipo != getTypeForAddress(vars_global[dir_procs[len(dir_procs) - 1][0]]):
+		semanticError = "Return expression does not match function type"
+		semanticErrorHalt()
+
+	cuadruplo = (FUNCRETURN, value, "", vars_global[dir_procs[len(dir_procs) - 1][0]])
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
 
 
 def p_errorReturn(p):
@@ -621,7 +707,6 @@ def p_saveParamToDirProc(p):
     dir_procs[len(dir_procs) - 1][2] = param_types
     param_types = []
 
-
 def p_errorOpParameters(p):
 	'''errorOpParameters : '''
 	global errorMsg
@@ -629,16 +714,24 @@ def p_errorOpParameters(p):
 
 
 def p_opReturns(p):
-	'''opReturns : errorOpReturns RETURNS type saveReturnType "{" opVars body return
-		| "{" opVars body '''
+	'''opReturns : errorOpReturns RETURNS type saveReturnType "{" opVars saveQuadruple body return
+		| "{" opVars saveQuadruple body '''
 	# print("returns")
 
+def p_saveQuadruple(p):
+	'''saveQuadruple : '''
+	currentProc = dir_procs[len(dir_procs) - 1]
+	currentProc += [contQuadruples]
+	dir_procs[len(dir_procs) - 1] = currentProc
 
 def p_saveReturnType(p):
 	'''saveReturnType : '''
 	global dir_procs
 	global currentToken
+	global vars_global
+
 	dir_procs[len(dir_procs) - 1][3] = typeToCode(currentToken)
+	vars_global[dir_procs[len(dir_procs) - 1][0]] = getGlobalAddressForType(currentToken)
 
 def p_errorOpReturns(p):
 	'''errorOpReturns : '''
@@ -799,23 +892,80 @@ def p_errorAssignMatrix(p):
 	global errorMsg
 	errorMsg = "Error in rule ASSIGNMATRIX"
 
-
 def p_funcCall(p):
-	'''funcCall : ID PARINI opParamCall PARFIN '''
+	'''funcCall : ID checkFunction PARINI opParamCall PARFIN checkNumParams '''
 	# print("funcCall")
 
+def p_checkNumParams(p):
+	'''checkNumParams : '''
+	global contQuadruples
+	global paramCounter
+	global semanticError
+
+	if currentProc[2] == None:
+		if paramCounter != 0:
+			semanticError = "Function " + currentProc[0] + " has no parameters"
+			semanticErrorHalt()
+	elif len(currentProc[2]) > paramCounter:
+		semanticError = "Missing parameters"
+		semanticErrorHalt()
+
+	cuadruplo = (GOSUB, currentProc[0], "", currentProc[5])
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+	paramCounter = 0
+
+def p_checkFunction(p):
+	'''checkFunction : '''
+	global currentProc
+
+	for proc in dir_procs:
+		if proc[0] == previousToken:
+			currentProc = proc
+			generateQuadruple(ERA)
+
+			return
+
+	global semanticError
+	semanticError = "Undeclared function " + previousToken
+	semanticErrorHalt()
 
 def p_opParamCall(p):
-	'''opParamCall : expresion cyParamCall
+	'''opParamCall : expresion checkParamType cyParamCall
 				| empty '''
 	# print("function parameter")
 
 
 def p_cyParamCall(p):
-	'''cyParamCall : "," expresion cyParamCall
+	'''cyParamCall :  "," expresion checkParamType cyParamCall
 				| empty '''
 	# print("cycle parameter call")
 
+def p_checkParamType(p):
+	'''checkParamType : '''
+	global paramCounter
+	global contQuadruples
+	global semanticError
+
+	paramCounter += 1
+	argumento = pOper.pop()
+	tipo = pTipos.pop()
+
+	if currentProc[2] == None:
+		semanticError = "Function " + currentProc[0] + " has no parameters."
+		semanticErrorHalt()
+
+	if paramCounter > len(currentProc[2]):
+		semanticError = "Number of parameters do not match function declaration"
+		semanticErrorHalt()
+
+	if currentProc[2][paramCounter - 1] != tipo:
+		semanticError = "Parameter " + `paramCounter` + " type does not match function declaration"
+		semanticErrorHalt()
+
+	cuadruplo = (PARAM, argumento, "", paramCounter)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
 
 def p_struct(p):
 	'''struct : structType "[" CTED "]" optionalMatrix '''
@@ -933,6 +1083,7 @@ def p_term(p):
 def p_cyTerm(p):
 	'''cyTerm : MULT saveOperator errorFact term
 			| DIV saveOperator term
+			| RES saveOperator term
 			| empty '''
 	# print("cycle term")
 
@@ -1012,6 +1163,8 @@ def p_empty(p):
 
 def p_printTables(p):
 	'''printTables : '''
+	print("\nCONSTANTS")
+	print(constants_table)
 	print("\nVARS GLOBAL")
 	print(vars_global)
 	print("\nDIR PROCS")
@@ -1056,48 +1209,68 @@ def p_saveVerdadero(p):
 
 def p_saveConstantInt(p):
         '''saveConstantInt : '''
-        if previousToken in constants_table:
-        	address = constants_table[previousToken]
+        tokenToUse = currentToken
+
+        if tokenToUse in avoidTokens:
+        	tokenToUse = previousToken
+
+        if tokenToUse in constants_table:
+        	address = constants_table[tokenToUse]
         else:
         	address = getAddressForConstant(INT)
 
-        	constants_table[previousToken] = address 
+        	constants_table[tokenToUse] = address 
 
         pOper.append(address)
         pTipos.append(INT)
         
 def p_saveConstantFloat(p):
         '''saveConstantFloat : '''
-        if previousToken in constants_table:
-        	address = constants_table[previousToken]
+        tokenToUse = currentToken
+
+        if tokenToUse in avoidTokens:
+        	tokenToUse = previousToken
+
+        if `tokenToUse` in constants_table:
+        	address = constants_table[`tokenToUse`]
         else:
         	address = getAddressForConstant(FLOAT)
 
-        	constants_table[previousToken] = address 
+        	constants_table[`tokenToUse`] = address 
 
         pOper.append(address)
         pTipos.append(FLOAT)
         
 def p_saveConstantBool(p):
         '''saveConstantBool : '''
-        if previousToken in constants_table:
-        	address = constants_table[previousToken]
+        tokenToUse = currentToken
+
+        if tokenToUse in avoidTokens:
+        	tokenToUse = previousToken
+
+        if tokenToUse in constants_table:
+        	address = constants_table[tokenToUse]
         else:
         	address = getAddressForConstant(BOOL)
 
-        	constants_table[previousToken] = address 
+        	constants_table[tokenToUse] = address 
 
         pOper.append(address)
         pTipos.append(BOOL)
         
 def p_saveConstantString(p):
         '''saveConstantString : '''
-      	if previousToken in constants_table:
-        	address = constants_table[previousToken]
+        tokenToUse = currentToken
+
+        if tokenToUse in avoidTokens:
+        	tokenToUse = previousToken
+
+      	if tokenToUse in constants_table:
+        	address = constants_table[tokenToUse]
         else:
         	address = getAddressForConstant(STRING)
 
-        	constants_table[previousToken] = address 
+        	constants_table[tokenToUse] = address 
 
         pOper.append(address)
         pTipos.append(STRING)
@@ -1136,6 +1309,8 @@ def p_saveOperator(p):
 		pilaO.append(MULTIPLY)
 	elif previousToken == '/':
 		pilaO.append(DIVISION)
+	elif previousToken == '%':
+		pilaO.append(RESIDUE)
 	elif previousToken == '<' or currentToken == '':
 		pilaO.append(LESS_THAN)
 	elif previousToken == ">" or currentToken == '>':
@@ -1200,7 +1375,7 @@ def p_performMulDiv(p):
 		pilaO.append(operator)
 		return
 
-	if operator != MULTIPLY and operator != DIVISION:
+	if operator != MULTIPLY and operator != DIVISION and operator != RESIDUE:
 		pilaO.append(operator)
 		
 		return
@@ -1283,6 +1458,20 @@ def p_performeRead(p):
 def generateQuadruple(operator):
 	global contQuadruples
 
+	if operator == ERA:
+		cuadruplo = (ERA, previousToken, "", "")
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		return
+
+	if operator == RETORNO:
+		cuadruplo = (RETORNO, "", "", "")
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		return
+
 	if operator == PRINT:
 		res = pOper.pop()
 		cuadruplo = (PRINT, '', '', res)
@@ -1312,11 +1501,6 @@ def generateQuadruple(operator):
 
 	if tipoRes == ERROR:
 		global semanticError
-		print(pilaO)
-		print(pOper)
-		print(tipoIzq)
-		print(operator)
-		print(tipoDer)
 		semanticError = "Types mismatch " + str(tipoIzq) + " " + str(operator) + " " + str(tipoDer)
 		semanticErrorHalt()
 
@@ -1347,6 +1531,12 @@ def rellena(salto, add):
 
 def generateJump(tipo, cond):
 	global contQuadruples
+
+	if tipo == 'm':
+		cuadruplo = (GOTO, "", "", cond)
+		cuadruplos[0] = cuadruplo
+
+		return
 
 	if tipo == 'f':
 		cuadruplo = (GOTOF, cond, "", "")
@@ -1387,29 +1577,74 @@ def operatorToCode(operator):
     }
     return switcher.get(operator, 50)
 
+def getGlobalAddressForType(type):
+	global contIntGlobal
+	global contFloatGlobal
+	global contBoolGlobal
+	global contStringGlobal
+
+	typeCode = typeToCode(type)
+	
+	if typeCode == INT:
+		contIntGlobal += 1
+		return contIntGlobal - 1
+
+	if typeCode == FLOAT:
+		contFloatGlobal += 1
+		return contFloatGlobal - 1
+
+	if typeCode == BOOL:
+		contBoolGlobal += 1
+		return contBoolGlobal - 1
+
+	if typeCode == STRING:
+		contStringGlobal += 1
+		return contStringGlobal - 1
+
 def getAddressForType(type):
 	global contInt
 	global contFloat
 	global contBool
 	global contString
+	global contIntGlobal
+	global contFloatGlobal
+	global contBoolGlobal
+	global contStringGlobal
 
 	typeCode = typeToCode(type)
-	
-	if typeCode == INT:
-		contInt += 1
-		return contInt - 1
 
-	if typeCode == FLOAT:
-		contFloat += 1
-		return contFloat - 1
+	if currentScope == 'global':
+		if typeCode == INT:
+			contIntGlobal += 1
+			return contIntGlobal - 1
 
-	if typeCode == BOOL:
-		contBool += 1
-		return contBool - 1
+		if typeCode == FLOAT:
+			contFloatGlobal += 1
+			return contFloatGlobal - 1
 
-	if typeCode == STRING:
-		contString += 1
-		return contString - 1
+		if typeCode == BOOL:
+			contBoolGlobal += 1
+			return contBoolGlobal - 1
+
+		if typeCode == STRING:
+			contStringGlobal += 1
+			return contStringGlobal - 1
+	else:
+		if typeCode == INT:
+			contInt += 1
+			return contInt - 1
+
+		if typeCode == FLOAT:
+			contFloat += 1
+			return contFloat - 1
+
+		if typeCode == BOOL:
+			contBool += 1
+			return contBool - 1
+
+		if typeCode == STRING:
+			contString += 1
+			return contString - 1
 
 def getAddressForConstant(type):
 	global contConstInt
@@ -1456,16 +1691,16 @@ def getTempForType(type):
 		return contTempString - 1
 
 def getTypeForAddress(address):
-	if (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT) or (address >= MIN_CONST_INT and address <= MAX_CONST_INT):
+	if (address >= MIN_INT_GLOBAL and address <= MAX_INT_GLOBAL) or (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT) or (address >= MIN_CONST_INT and address <= MAX_CONST_INT):
 		return INT
 	
-	if (address >= MIN_FLOAT and address <= MAX_FLOAT) or (address >= MIN_TEMP_FLOAT and address <= MAX_TEMP_FLOAT) or (address >= MIN_CONST_FLOAT and address <= MAX_CONST_FLOAT):
+	if (address >= MIN_FLOAT_GLOBAL and address <= MAX_FLOAT_GLOBAL) or (address >= MIN_FLOAT and address <= MAX_FLOAT) or (address >= MIN_TEMP_FLOAT and address <= MAX_TEMP_FLOAT) or (address >= MIN_CONST_FLOAT and address <= MAX_CONST_FLOAT):
 		return FLOAT
 	
-	if (address >= MIN_BOOL and address <= MAX_BOOL) or (address >= MIN_TEMP_BOOL and address <= MAX_TEMP_BOOL) or (address >= MIN_CONST_BOOL and address <= MAX_CONST_BOOL):
+	if (address >= MIN_BOOL_GLOBAL and address <= MAX_BOOL_GLOBAL) or (address >= MIN_BOOL and address <= MAX_BOOL) or (address >= MIN_TEMP_BOOL and address <= MAX_TEMP_BOOL) or (address >= MIN_CONST_BOOL and address <= MAX_CONST_BOOL):
 		return BOOL
 	
-	if (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING) or (address >= MIN_CONST_STRING and address <= MAX_CONST_STRING):
+	if (address >= MIN_STRING_GLOBAL and address <= MAX_STRING_GLOBAL) or (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING) or (address >= MIN_CONST_STRING and address <= MAX_CONST_STRING):
 		return STRING
 
 def typesValidator(left, right, operator):
@@ -1473,7 +1708,7 @@ def typesValidator(left, right, operator):
 
 	if operator >= 200:
 		opMap += 10
-	
+
 	return semanticCube[(left / 10 - 1) * 4 + (right / 10 - 1)][opMap]
 
 
