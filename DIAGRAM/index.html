@@ -3,7 +3,7 @@
 <html>
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-      <meta name="generator" content="Railroad Diagram Generator 1.42.1156"><style type="text/css" xml:space="preserve">
+      <meta name="generator" content="Railroad Diagram Generator 1.43.1194"><style type="text/css" xml:space="preserve">
     ::-moz-selection
     {
       color: #FFFCF0;
@@ -198,14 +198,13 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="TYPE">TYPE:</a></p>
-      <img border="0" src="diagram/TYPE.png" height="212" width="158">
+      <img border="0" src="diagram/TYPE.png" height="168" width="156">
       
       <p>
          
          <div class="ebnf"><pre><a href="#TYPE" title="TYPE" shape="rect">TYPE</a>     ::= 'int'
            | 'float'
            | 'string'
-           | 'object'
            | 'bool'</pre></div>
          
       </p>
@@ -246,15 +245,17 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="INSTR">INSTR:</a></p>
-      <img border="0" src="diagram/INSTR.png" height="168" width="274" usemap="#INSTR.map"><map name="INSTR.map">
+      <img border="0" src="diagram/INSTR.png" height="256" width="274" usemap="#INSTR.map"><map name="INSTR.map">
          <area shape="rect" coords="69,1,135,33" href="#ASSIGN" title="ASSIGN">
          <area shape="rect" coords="69,45,161,77" href="#FUNC_CALL" title="FUNC_CALL">
-         <area shape="rect" coords="49,89,141,121" href="#CONDITION" title="CONDITION">
-         <area shape="rect" coords="49,133,109,165" href="#CYCLE" title="CYCLE"></map>
+         <area shape="rect" coords="69,89,125,121" href="#PRINT" title="PRINT">
+         <area shape="rect" coords="69,133,121,165" href="#READ" title="READ">
+         <area shape="rect" coords="49,177,141,209" href="#CONDITION" title="CONDITION">
+         <area shape="rect" coords="49,221,109,253" href="#CYCLE" title="CYCLE"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#INSTR" title="INSTR" shape="rect">INSTR</a>    ::= ( <a href="#ASSIGN" title="ASSIGN" shape="rect">ASSIGN</a> | <a href="#FUNC_CALL" title="FUNC_CALL" shape="rect">FUNC_CALL</a> ) ';'
+         <div class="ebnf"><pre><a href="#INSTR" title="INSTR" shape="rect">INSTR</a>    ::= ( <a href="#ASSIGN" title="ASSIGN" shape="rect">ASSIGN</a> | <a href="#FUNC_CALL" title="FUNC_CALL" shape="rect">FUNC_CALL</a> | <a href="#PRINT" title="PRINT" shape="rect">PRINT</a> | <a href="#READ" title="READ" shape="rect">READ</a> ) ';'
            | <a href="#CONDITION" title="CONDITION" shape="rect">CONDITION</a>
            | <a href="#CYCLE" title="CYCLE" shape="rect">CYCLE</a></pre></div>
          
@@ -265,6 +266,41 @@
          <ul>
             
             <li><a href="#BODY" title="BODY">BODY</a></li>
+            
+         </ul>
+         
+      </p><br><p style="font-size: 14px; font-weight:bold"><a name="PRINT">PRINT:</a></p>
+      <img border="0" src="diagram/PRINT.png" height="80" width="304" usemap="#PRINT.map"><map name="PRINT.map">
+         <area shape="rect" coords="165,45,209,77" href="#EXP" title="EXP"></map>
+      
+      <p>
+         
+         <div class="ebnf"><pre><a href="#PRINT" title="PRINT" shape="rect">PRINT</a>    ::= 'print' '(' <a href="#EXP" title="EXP" shape="rect">EXP</a> ( ',' <a href="#EXP" title="EXP" shape="rect">EXP</a> )* ')'</pre></div>
+         
+      </p>
+      
+      <p>referenced by:
+         
+         <ul>
+            
+            <li><a href="#INSTR" title="INSTR">INSTR</a></li>
+            
+         </ul>
+         
+      </p><br><p style="font-size: 14px; font-weight:bold"><a name="READ">READ:</a></p>
+      <img border="0" src="diagram/READ.png" height="80" width="292">
+      
+      <p>
+         
+         <div class="ebnf"><pre><a href="#READ" title="READ" shape="rect">READ</a>     ::= 'read' '(' 'id' ( ',' 'id' )* ')'</pre></div>
+         
+      </p>
+      
+      <p>referenced by:
+         
+         <ul>
+            
+            <li><a href="#INSTR" title="INSTR">INSTR</a></li>
             
          </ul>
          
@@ -639,6 +675,8 @@
          
          <ul>
             
+            <li><a href="#PRINT" title="PRINT">PRINT</a></li>
+            
             <li><a href="#S_EXP" title="S_EXP">S_EXP</a></li>
             
          </ul>
@@ -727,7 +765,7 @@
                </td>
                
                <td><a name="Railroad-Diagram-Generator" title="http://www.bottlecaps.de/rr/ui" href="http://www.bottlecaps.de/rr/ui" target="_blank">
-                     <img border="0" src="diagram/rr-1.42.1156.png" height="16" width="16"></a></td>
+                     <img border="0" src="diagram/rr-1.43.1194.png" height="16" width="16"></a></td>
                
             </tr>
             
