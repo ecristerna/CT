@@ -90,7 +90,7 @@ currentTempFloat = 0
 currentTempBool = 0
 currentTempString = 0
 
-contQuadruples = 1
+contQuadruples = 2
 
 # Types & Operators Codes
 
@@ -476,6 +476,10 @@ def p_main(p):
 
 def p_generateInitialQuadruple(p):
 	'''generateInitialQuadruple : '''
+	global contQuadruples
+
+	cuadruplo = (ERA, "main", "", "")
+	cuadruplos[0] = cuadruplo
 	generateJump('m', contQuadruples, )
 
 def p_saveMain(p):
@@ -1534,7 +1538,7 @@ def generateJump(tipo, cond):
 
 	if tipo == 'm':
 		cuadruplo = (GOTO, "", "", cond)
-		cuadruplos[0] = cuadruplo
+		cuadruplos[1] = cuadruplo
 
 		return
 
