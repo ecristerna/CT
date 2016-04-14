@@ -161,6 +161,11 @@ def residue(leftOp, rightOp, result):
 	
 	saveValueToAddress(leftValue % rightValue, result)
 
+def assign(rightOp, result):
+	value = getValueForAddress(rightOp)
+
+	saveValueToAddress(value, result)
+
 def era(size):
 	global local_actual_memory
 
@@ -291,6 +296,8 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == ASSIGN:
+			assign(currentQuadruple[1], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1

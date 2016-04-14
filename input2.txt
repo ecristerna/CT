@@ -20,12 +20,12 @@ program  a {
 	}
 
 	main {
-		vars int i;
+		vars int i, j, k, l, p;
 
 		i = 5 + 3;
-		i = 5 * 3;
-		i = 5 / 3;
-		i = 5 - 3;
-		i = 5 % 3;
+		j = 5 * 3;
+		k = 5 / 3;
+		l = 5 - 3;
+		p = 5 % 3;
 	}
 }
