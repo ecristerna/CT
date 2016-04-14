@@ -20,6 +20,12 @@ program  a {
 	}
 
 	main {
-		up("hola" + "como" + "estas");
+		vars int i;
+
+		i = 5 + 3;
+		i = 5 * 3;
+		i = 5 / 3;
+		i = 5 - 3;
+		i = 5 % 3;
 	}
 }
