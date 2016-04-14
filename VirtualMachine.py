@@ -166,6 +166,78 @@ def assign(rightOp, result):
 
 	saveValueToAddress(value, result)
 
+def lessThan(leftOp, rightOp, result):
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
+
+	if leftValue < rightValue:
+		saveValueToAddress(True, result)
+	else:
+		saveValueToAddress(False, result)
+
+def lessThanEqual(leftOp, rightOp, result):
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
+
+	if leftValue <= rightValue:
+		saveValueToAddress(True, result)
+	else:
+		saveValueToAddress(False, result)
+
+def greaterThan(leftOp, rightOp, result):
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
+
+	if leftValue > rightValue:
+		saveValueToAddress(True, result)
+	else:
+		saveValueToAddress(False, result)
+
+def greaterThanEqual(leftOp, rightOp, result):
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
+
+	if leftValue < rightValue:
+		saveValueToAddress(True, result)
+	else:
+		saveValueToAddress(False, result)
+
+def equal(leftOp, rightOp, result):
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
+
+	if leftValue == rightValue:
+		saveValueToAddress(True, result)
+	else:
+		saveValueToAddress(False, result)
+
+def different(leftOp, rightOp, result):
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
+
+	if leftValue != rightValue:
+		saveValueToAddress(True, result)
+	else:
+		saveValueToAddress(False, result)
+
+def andOp(leftOp, rightOp, result):
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
+
+	if leftValue and rightValue:
+		saveValueToAddress(True, result)
+	else:
+		saveValueToAddress(False, result)
+
+def orOp(leftOp, rightOp, result):
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
+
+	if leftValue or rightValue:
+		saveValueToAddress(True, result)
+	else:
+		saveValueToAddress(False, result)
+
 def era(size):
 	global local_actual_memory
 
@@ -264,34 +336,50 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == LESS_THAN:
+			lessThan(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GREATER_THAN:
+			greaterThan(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == LESS_EQUAL:
+			lessThanEqual(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GREATER_EQUAL:
+			greaterThanEqual(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == EQUAL:
+			equal(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == DIFFERENT:
+			different(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == AND:
+			andOp(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == OR:
+			orOp(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
@@ -310,10 +398,16 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GOTOF:
+			if not getValueForAddress(currentQuadruple[1]):
+				instructionPointer = currentQuadruple[3]
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GOTOV:
+			if getValueForAddress(currentQuadruple[1]):
+				instructionPointer = currentQuadruple[3]
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
