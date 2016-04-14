@@ -23,10 +23,10 @@ program  a {
 		vars int i, j, k, l, p;
 
 		i = 0;
+		j = 11;
 
-		while (i < 10) {
+		while (i < 10 and j > 10) {
 			i = i + 5 + 3;
-			j = 5 * 3;
 			k = 5 / 3;
 			l = 5 - 3;
 			p = 5 % 3;

@@ -171,8 +171,12 @@ def lessThan(leftOp, rightOp, result):
 	rightValue = getValueForAddress(rightOp)
 
 	if leftValue < rightValue:
+		# print("LESS THAN")
+		# print(leftValue, rightValue, True)
 		saveValueToAddress(True, result)
 	else:
+		# print("LESS THAN")
+		# print(leftValue, rightValue, False)
 		saveValueToAddress(False, result)
 
 def lessThanEqual(leftOp, rightOp, result):
@@ -189,15 +193,19 @@ def greaterThan(leftOp, rightOp, result):
 	rightValue = getValueForAddress(rightOp)
 
 	if leftValue > rightValue:
+		# print("GREATER THAN")
+		# print(leftValue, rightValue, True)
 		saveValueToAddress(True, result)
 	else:
+		# print("GREATER THAN")
+		# print(leftValue, rightValue, False)
 		saveValueToAddress(False, result)
 
 def greaterThanEqual(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
 
-	if leftValue < rightValue:
+	if leftValue >= rightValue:
 		saveValueToAddress(True, result)
 	else:
 		saveValueToAddress(False, result)
@@ -225,8 +233,12 @@ def andOp(leftOp, rightOp, result):
 	rightValue = getValueForAddress(rightOp)
 
 	if leftValue and rightValue:
+		# print("AND")
+		# print(leftValue, rightValue, True)
 		saveValueToAddress(True, result)
 	else:
+		# print("AND")
+		# print(leftValue, rightValue, False)
 		saveValueToAddress(False, result)
 
 def orOp(leftOp, rightOp, result):
@@ -305,6 +317,8 @@ def main():
 	print(global_memory)
 
 	while actualCode != END:
+		# print(local_actual_memory)
+
 		if actualCode == ADD:
 			add(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 

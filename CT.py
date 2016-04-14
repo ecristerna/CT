@@ -1229,6 +1229,8 @@ def p_saveConstantInt(p):
 		if tokenToUse in avoidTokens:
 			tokenToUse = previousToken
 
+		print("token", tokenToUse)
+
 		if tokenToUse in constants_table:
 			address = constants_table[tokenToUse]
 		else:
