@@ -9,6 +9,8 @@ local_actual_memory = [[], [], [], [], [], [], [], []]
 local_next_memory = [[], [], [], [], [], [], [], []]
 
 instructionPointer = 0
+memoriesStack = []
+pointersStack = []
 
 # ---------------------------------------
 # CODIGOS DE OPERACION
@@ -251,35 +253,35 @@ def orOp(leftOp, rightOp, result):
 		saveValueToAddress(False, result)
 
 def era(size):
-	global local_actual_memory
+	global local_next_memory
 
-	local_actual_memory = [[], [], [], [], [], [], [], []]
+	local_next_memory = [[], [], [], [], [], [], [], []]
 
 	for x in range(0, size[0]):
-		local_actual_memory[0].append(0)
+		local_next_memory[0].append(0)
 
 	for x in range(0, size[1]):
-		local_actual_memory[1].append(0)
+		local_next_memory[1].append(0)
 
 	for x in range(0, size[2]):
-		local_actual_memory[2].append(False)
+		local_next_memory[2].append(False)
 
 	for x in range(0, size[3]):
-		local_actual_memory[3].append("")
+		local_next_memory[3].append("")
 
 	for x in range(0, size[4]):
-		local_actual_memory[4].append(0)
+		local_next_memory[4].append(0)
 
 	for x in range(0, size[5]):
-		local_actual_memory[5].append(0)
+		local_next_memory[5].append(0)
 
 	for x in range(0, size[6]):
-		local_actual_memory[6].append(False)
+		local_next_memory[6].append(False)
 
 	for x in range(0, size[7]):
-		local_actual_memory[7].append("")
+		local_next_memory[7].append("")
 
-	print(local_actual_memory)
+	print(local_next_memory)
 
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
@@ -300,6 +302,10 @@ def initMemoriaGlobal():
 
 def main():
 	global instructionPointer
+	global pointersStack
+	global memoriesStack
+	global local_actual_memory
+	global local_next_memory
 
 	cuadruplo = (400, "", "", "")
 	compiler.cuadruplos.append(cuadruplo)
@@ -457,10 +463,19 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GOSUB:
+			memoriesStack.append(local_actual_memory)
+			local_actual_memory = local_next_memory
+			pointersStack.append(instructionPointer)
+
+			instructionPointer = currentQuadruple[3]
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == RETORNO:
+			instructionPointer = pointersStack.pop()
+			local_actual_memory = memoriesStack.pop()
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
@@ -469,10 +484,14 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == FUNCRETURN:
+			value = getValueForAddress(currentQuadruple[1])
+			saveValueToAddress(value, currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
+	print(global_memory)
 	print(local_actual_memory)
 
 

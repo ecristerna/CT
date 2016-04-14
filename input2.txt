@@ -1,14 +1,12 @@
 program  a {
-	vars int i;
+	vars int i, qi, qj;
+		bool qb;
 	
 	func m(int z, y, d; bool l; float p) returns bool {
 		return l;
 	}
 
 	func q() {
-		vars int qi, qj;
-		bool qb;
-
 		qb = true;
 		qb = false;
 		qb = true;
@@ -16,26 +14,19 @@ program  a {
 		m(qi + qj * 2, 4 % 2, 5, qb, 2.0);
 	}
 
-	func up(string s) {
+	func up(bool s) returns float {
+		return 2.0 * 5.6;
 	}
 
 	main {
-		vars int i, j, k, l, p;
-		string y;
+		vars float op;
+		qb = true;
+		qb = m(qi + qj * 2, 4 % 2, 5, qb, 2.0);
 
-		y = "hola" + "como";
+		print(qb);
 
-		i = 0;
-		j = 11;
+		op = up(true) + up(false);
 
-		while (i < 10 and j > 10) {
-			i = i + 5 + 3;
-			j = j + 5 * 3;
-			k = 5 / 3;
-			l = 5 - 3;
-			p = 5 % 3;
-		}
-
-		print(i, j, k, l, p, y);
+		print();
 	}
 }

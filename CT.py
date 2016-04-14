@@ -90,7 +90,7 @@ currentTempFloat = 0
 currentTempBool = 0
 currentTempString = 0
 
-contQuadruples = 1
+contQuadruples = 2
 
 # Types & Operators Codes
 
@@ -153,7 +153,7 @@ semanticCube = [[INT,   INT,   INT,   INT, 	 INT,   BOOL,  BOOL,  BOOL,  BOOL,  
 
 # Quadruples
 
-cuadruplos = [()]
+cuadruplos = [(), ()]
 
 # Stacks
 
@@ -480,7 +480,8 @@ def p_generateInitialQuadruple(p):
 
 	cuadruplo = (ERA, "main", "", "")
 	cuadruplos[0] = cuadruplo
-	generateJump('m', contQuadruples, )
+	cuadruplo = (GOSUB, "main", "", contQuadruples)
+	cuadruplos[1] = cuadruplo
 
 def p_saveMain(p):
 	'''saveMain : '''
@@ -937,6 +938,10 @@ def p_checkFunction(p):
 			currentProc = proc
 			generateQuadruple(ERA)
 
+			address = vars_global[previousToken]
+			pOper.append(address)
+			pTipos.append(getTypeForAddress(address))
+
 			return
 
 	global semanticError
@@ -1229,8 +1234,6 @@ def p_saveConstantInt(p):
 		if tokenToUse in avoidTokens:
 			tokenToUse = previousToken
 
-		print("token", tokenToUse)
-
 		if tokenToUse in constants_table:
 			address = constants_table[tokenToUse]
 		else:
@@ -1503,7 +1506,7 @@ def generateQuadruple(operator):
 		cuadruplos.append(cuadruplo)
 		contQuadruples += 1
 
-		return	
+		return
 
 	if not pTipos:
 		semanticErrorHalt()
@@ -1548,12 +1551,6 @@ def rellena(salto, add):
 
 def generateJump(tipo, cond):
 	global contQuadruples
-
-	if tipo == 'm':
-		cuadruplo = (GOTO, "", "", cond)
-		cuadruplos[1] = cuadruplo
-
-		return
 
 	if tipo == 'f':
 		cuadruplo = (GOTOF, cond, "", "")
@@ -1732,5 +1729,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input2.txt", "r");
+file = open ("input4.txt", "r");
 yacc.parse(file.read())

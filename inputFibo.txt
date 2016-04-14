@@ -1,0 +1,27 @@
+program a {
+	vars int i;
+
+	func fibo(int i) returns int {
+		vars int val;
+
+		val = fibo(i - 1);
+
+		return val;
+	}
+
+	main() {
+		vars int i;
+
+		i = 5;
+
+		print(fibo(i));
+	}
+}
+
+
+
+if (i == 1) {
+			val = 1;
+		} else {
+			val = fibo(i - 1) + fibo(i - 2);
+		}
