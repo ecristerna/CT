@@ -404,9 +404,18 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == PRINT:
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
-			actualCode = currentQuadruple[0]
-			instructionPointer += 1
+			toPrint = ''
+
+			while actualCode == PRINT:
+				toPrint += str(getValueForAddress(currentQuadruple[3]))
+				toPrint += ' '
+				
+				currentQuadruple = compiler.cuadruplos[instructionPointer]
+				actualCode = currentQuadruple[0]
+				instructionPointer += 1
+
+			print(toPrint)
+
 		elif actualCode == READ:
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]

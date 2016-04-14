@@ -21,6 +21,9 @@ program  a {
 
 	main {
 		vars int i, j, k, l, p;
+		string y;
+
+		y = "hola" + "como";
 
 		i = 0;
 		j = 11;
@@ -32,5 +35,7 @@ program  a {
 			l = 5 - 3;
 			p = 5 % 3;
 		}
+
+		print(i, j, k, l, p, y);
 	}
 }

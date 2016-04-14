@@ -1287,7 +1287,7 @@ def p_saveConstantString(p):
 		else:
 			address = getAddressForConstant(STRING)
 
-			constants_table[tokenToUse] = address 
+			constants_table[tokenToUse.replace("\"", "")] = address 
 
 		pOper.append(address)
 		pTipos.append(STRING)
