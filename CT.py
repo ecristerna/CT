@@ -3,9 +3,9 @@ import sys
 sys.path.insert(0,"../..")
 
 if sys.version_info[0] >= 3:
-    raw_input = input
+	raw_input = input
 
-avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'return', 'and', 'or']
+avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
 reserved = ['PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
@@ -135,25 +135,25 @@ FUNCRETURN = 330
 
 			# 	 +	   	 -      *      /  	   %   	<      >     <=     >=     ==     !=     AND    OR     =   
 semanticCube = [[INT,   INT,   INT,   INT, 	 INT,   BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, INT], 	 # Int vs Int
-                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, ERROR], # Int vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs String
-                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, FLOAT], # Float vs Int
-                [FLOAT, FLOAT, FLOAT, FLOAT, ERROR, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, FLOAT], # Float vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs String
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Int
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  BOOL,  BOOL,  BOOL ], # Bool vs Bool
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs String
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Int
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Float
-                [ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
-                [STRING, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
+				[FLOAT, FLOAT, FLOAT, FLOAT, ERROR, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, ERROR], # Int vs Float
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs Bool
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Int vs String
+				[FLOAT, FLOAT, FLOAT, FLOAT, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, FLOAT], # Float vs Int
+				[FLOAT, FLOAT, FLOAT, FLOAT, ERROR, BOOL, 	BOOL,  BOOL,  BOOL,  BOOL,  BOOL,  ERROR, ERROR, FLOAT], # Float vs Float
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs Bool
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Float vs String
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Int
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs Float
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  BOOL,  BOOL,  BOOL ], # Bool vs Bool
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # Bool vs String
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Int
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Float
+				[ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR], # String vs Bool
+				[STRING, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, ERROR, BOOL,  BOOL,  ERROR, ERROR, STRING]]# String vs String 
 
 # Quadruples
 
-cuadruplos = [()]
+cuadruplos = [(), ()]
 
 # Stacks
 
@@ -167,45 +167,45 @@ pSaltos = []
 t_ignore = " \t"
 
 def t_PARINI(t):
-    r'\('
-    global currentToken
-    global previousToken
-    previousToken = currentToken
-    currentToken = '('
-    return t
+	r'\('
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = '('
+	return t
 
 def t_PARFIN(t):
-    r'\)'
-    global currentToken
-    global previousToken
-    previousToken = currentToken
-    currentToken = ')'
-    return t
+	r'\)'
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = ')'
+	return t
 
 def t_AND(t):
-    r'and'
-    global currentToken
-    global previousToken
-    previousToken = currentToken
-    currentToken = 'AND'
-    return t
+	r'and'
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = 'AND'
+	return t
 
 def t_OR(t):
-    r'or'
-    global currentToken
-    global previousToken
-    previousToken = currentToken
-    currentToken = 'OR'
-    return t
+	r'or'
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = 'OR'
+	return t
 
 def t_CTEF(t):
-    r'(\d+)(\.\d+)'
-    t.value = float(t.value)
-    global currentToken
-    global previousToken
-    previousToken = currentToken
-    currentToken = t.value
-    return t
+	r'(\d+)(\.\d+)'
+	t.value = float(t.value)
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = t.value
+	return t
 
 def t_CTED(t):
 	r'\d+'
@@ -217,21 +217,21 @@ def t_CTED(t):
 	return t
 
 def t_ID(t):
-    r'[A-Za-z_][\w_]*'
-    t.type = reserved_map.get(t.value,"ID")
-    global currentToken
-    global previousToken
-    previousToken = currentToken
-    currentToken = t.value
-    return t
+	r'[A-Za-z_][\w_]*'
+	t.type = reserved_map.get(t.value,"ID")
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = t.value
+	return t
 
 def t_CTES(t):
-    r'\"([^\\\n]|(\\.))*?\"'
-    global currentToken
-    global previousToken
-    previousToken = currentToken
-    currentToken = t.value
-    return t
+	r'\"([^\\\n]|(\\.))*?\"'
+	global currentToken
+	global previousToken
+	previousToken = currentToken
+	currentToken = t.value
+	return t
 
 def t_PLUS(t):
 	r'\+'
@@ -331,16 +331,16 @@ def t_GT(t):
 
 reserved_map = { }
 for r in reserved:
-    reserved_map[r.lower()] = r
+	reserved_map[r.lower()] = r
 
 def t_newline(t):
-    r'\n'
-    global line
-    line += 1
+	r'\n'
+	global line
+	line += 1
 
 def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
-    t.lexer.skip(1)
+	print("Illegal character '%s'" % t.value[0])
+	t.lexer.skip(1)
 
 # Build the lexer
 import ply.lex as lex
@@ -349,13 +349,13 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-    '''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}" printTables'''
-    # print("program")
+	'''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}" printTables'''
+	# print("program")
 
 def p_changeCurrentScope(p):
-    '''changeCurrentScope : '''
-    global currentScope
-    currentScope = "local"
+	'''changeCurrentScope : '''
+	global currentScope
+	currentScope = "local"
 
 def p_saveType(p):
 	'''saveType : '''
@@ -389,6 +389,11 @@ def p_saveProc(p):
 
 def p_errorProgram(p):
 	'''errorProgram : '''
+
+	print("---------------")
+	print("   Compiler")
+	print("---------------")
+
 	global errorMsg
 	errorMsg = "Error in rule PROGRAM"
 
@@ -471,7 +476,7 @@ def p_errorType(p):
 
 
 def p_main(p):
-	'''main : errorMain MAIN saveMain "{" opVars saveQuadruple generateInitialQuadruple body "}" clearVarsTable'''
+	'''main : errorMain MAIN saveMain "{" opVars generateInitialQuadruple body "}" clearVarsTable'''
 	# print("main")
 
 def p_generateInitialQuadruple(p):
@@ -480,14 +485,15 @@ def p_generateInitialQuadruple(p):
 
 	cuadruplo = (ERA, "main", "", "")
 	cuadruplos[0] = cuadruplo
-	generateJump('m', contQuadruples, )
+	cuadruplo = (GOSUB, "main", "", contQuadruples)
+	cuadruplos[1] = cuadruplo
 
 def p_saveMain(p):
 	'''saveMain : '''
 	global dir_procs
 	global currentToken
 
-	newProc = [currentToken, MAIN, None, None, vars_local]
+	newProc = [currentToken, MAIN, None, None, vars_local, contQuadruples]
 	dir_procs += [newProc]
 
 
@@ -517,10 +523,10 @@ def p_cyPrint(p):
 				| empty '''
 
 def p_read(p):
-	'''read : READ PARINI ID performRead cyRead PARFIN '''
+	'''read : READ PARINI ID saveVariable performRead cyRead PARFIN '''
 
 def p_cyRead(p):
-	'''cyRead : "," fix ID performRead cyRead
+	'''cyRead : "," fix ID saveVariable performRead cyRead
 				| empty '''
 
 def p_fix(p):
@@ -598,13 +604,13 @@ def p_cyTypeParam(p):
 	# print("cycle type param")
 
 def p_saveTypeParam(p):
-        '''saveTypeParam : '''
-        global declaringParameters
-        
-        if declaringParameters:
-            global currenType
-            global param_types
-            param_types.append(typeToCode(currentType))
+		'''saveTypeParam : '''
+		global declaringParameters
+		
+		if declaringParameters:
+			global currenType
+			global param_types
+			param_types.append(typeToCode(currentType))
 
 
 def p_errorCyParam(p):
@@ -641,8 +647,10 @@ def p_clearVarsTable(p):
 	global contFloat
 	global contBool
 	global contString
-
-	print(vars_local)
+	global contTempInt
+	global contTempFloat
+	global contTempBool
+	global contTempString
 
 	ints = contInt - MIN_INT
 	floats = contFloat - MIN_FLOAT
@@ -665,7 +673,15 @@ def p_clearVarsTable(p):
 	contBool = MIN_BOOL
 	contString = MIN_STRING
 
+	print("\nVARS " + currentProc[0])
+	print(vars_local)
+
 	vars_local = {}
+
+	contTempInt = MIN_TEMP_INT
+	contTempFloat = MIN_TEMP_FLOAT
+	contTempBool = MIN_TEMP_BOOL
+	contTempString = MIN_TEMP_STRING
 
 def p_return(p):
 	'''return : errorReturn RETURN expresion saveReturnValue ";" '''
@@ -700,16 +716,16 @@ def p_opParameters(p):
 	# print("optional parameters")
 
 def p_flagParameters(p):
-    '''flagParameters : '''
-    global declaringParameters
-    declaringParameters = not declaringParameters
+	'''flagParameters : '''
+	global declaringParameters
+	declaringParameters = not declaringParameters
 
 def p_saveParamToDirProc(p):
-    '''saveParamToDirProc : '''
-    global param_types
-    global dir_procs
-    dir_procs[len(dir_procs) - 1][2] = param_types
-    param_types = []
+	'''saveParamToDirProc : '''
+	global param_types
+	global dir_procs
+	dir_procs[len(dir_procs) - 1][2] = param_types
+	param_types = []
 
 def p_errorOpParameters(p):
 	'''errorOpParameters : '''
@@ -928,11 +944,16 @@ def p_checkFunction(p):
 			currentProc = proc
 			generateQuadruple(ERA)
 
+			address = vars_global[previousToken]
+			pOper.append(address)
+			pTipos.append(getTypeForAddress(address))
+
 			return
 
 	global semanticError
 	semanticError = "Undeclared function " + previousToken
 	semanticErrorHalt()
+
 
 def p_opParamCall(p):
 	'''opParamCall : expresion checkParamType cyParamCall
@@ -944,6 +965,7 @@ def p_cyParamCall(p):
 	'''cyParamCall :  "," expresion checkParamType cyParamCall
 				| empty '''
 	# print("cycle parameter call")
+
 
 def p_checkParamType(p):
 	'''checkParamType : '''
@@ -970,6 +992,7 @@ def p_checkParamType(p):
 	cuadruplo = (PARAM, argumento, "", paramCounter)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
+
 
 def p_struct(p):
 	'''struct : structType "[" CTED "]" optionalMatrix '''
@@ -1161,8 +1184,8 @@ def p_cte(p):
 	# print("cte")
 
 def p_empty(p):
-    '''empty : '''
-    # print("EMPTY")
+	'''empty : '''
+	# print("EMPTY")
 
 
 def p_printTables(p):
@@ -1172,10 +1195,13 @@ def p_printTables(p):
 	print("\nVARS GLOBAL")
 	print(vars_global)
 	print("\nDIR PROCS")
-	print(dir_procs)
+	for x in range(0, len(dir_procs)):
+		print(dir_procs[x])
 	print("\nCUADRUPLOS")
 	for x in range(0, len(cuadruplos)):
 		print(x, cuadruplos[x])
+
+	print("\n")
 
 def p_error(p):
 	global line
@@ -1212,72 +1238,74 @@ def p_saveVerdadero(p):
 	pSaltos.append(contQuadruples - 1)
 
 def p_saveConstantInt(p):
-        '''saveConstantInt : '''
-        tokenToUse = currentToken
+		'''saveConstantInt : '''
+		tokenToUse = currentToken
 
-        if tokenToUse in avoidTokens:
-        	tokenToUse = previousToken
+		if tokenToUse in avoidTokens:
+			tokenToUse = previousToken
 
-        if tokenToUse in constants_table:
-        	address = constants_table[tokenToUse]
-        else:
-        	address = getAddressForConstant(INT)
+		if tokenToUse in constants_table:
+			address = constants_table[tokenToUse]
+		else:
+			address = getAddressForConstant(INT)
 
-        	constants_table[tokenToUse] = address 
+			constants_table[tokenToUse] = address 
 
-        pOper.append(address)
-        pTipos.append(INT)
-        
+		pOper.append(address)
+		pTipos.append(INT)
+		
 def p_saveConstantFloat(p):
-        '''saveConstantFloat : '''
-        tokenToUse = currentToken
+		'''saveConstantFloat : '''
+		tokenToUse = currentToken
 
-        if tokenToUse in avoidTokens:
-        	tokenToUse = previousToken
+		if tokenToUse in avoidTokens:
+			tokenToUse = previousToken
 
-        if `tokenToUse` in constants_table:
-        	address = constants_table[`tokenToUse`]
-        else:
-        	address = getAddressForConstant(FLOAT)
+		if `tokenToUse` in constants_table:
+			address = constants_table[`tokenToUse`]
+		else:
+			address = getAddressForConstant(FLOAT)
 
-        	constants_table[`tokenToUse`] = address 
+			constants_table[`tokenToUse`] = address 
 
-        pOper.append(address)
-        pTipos.append(FLOAT)
-        
+		pOper.append(address)
+		pTipos.append(FLOAT)
+		
 def p_saveConstantBool(p):
-        '''saveConstantBool : '''
-        tokenToUse = currentToken
+		'''saveConstantBool : '''
+		tokenToUse = currentToken
 
-        if tokenToUse in avoidTokens:
-        	tokenToUse = previousToken
+		if tokenToUse in avoidTokens:
+			tokenToUse = previousToken
 
-        if tokenToUse in constants_table:
-        	address = constants_table[tokenToUse]
-        else:
-        	address = getAddressForConstant(BOOL)
+		if tokenToUse in constants_table:
+			address = constants_table[tokenToUse]
+		else:
+			address = getAddressForConstant(BOOL)
 
-        	constants_table[tokenToUse] = address 
+			constants_table[tokenToUse] = address 
 
-        pOper.append(address)
-        pTipos.append(BOOL)
-        
+		pOper.append(address)
+		pTipos.append(BOOL)
+		
 def p_saveConstantString(p):
-        '''saveConstantString : '''
-        tokenToUse = currentToken
+		'''saveConstantString : '''
+		tokenToUse = currentToken
 
-        if tokenToUse in avoidTokens:
-        	tokenToUse = previousToken
+		if tokenToUse in avoidTokens:
+			tokenToUse = previousToken
 
-      	if tokenToUse in constants_table:
-        	address = constants_table[tokenToUse]
-        else:
-        	address = getAddressForConstant(STRING)
+		tokenToUse = tokenToUse.replace("\"", "")
 
-        	constants_table[tokenToUse] = address 
+		if tokenToUse in constants_table:
+			address = constants_table[tokenToUse]
+		else:
+			address = getAddressForConstant(STRING)
 
-        pOper.append(address)
-        pTipos.append(STRING)
+			constants_table[tokenToUse] = address
+
+		pOper.append(address)
+		pTipos.append(STRING)
 
 def p_saveVariable(p):
 	'''saveVariable : '''
@@ -1455,7 +1483,7 @@ def p_performPrint(p):
 	'''performPrint : '''
 	generateQuadruple(PRINT)
 
-def p_performeRead(p):
+def p_performRead(p):
 	'''performRead : '''
 	generateQuadruple(READ)	
 
@@ -1490,7 +1518,7 @@ def generateQuadruple(operator):
 		cuadruplos.append(cuadruplo)
 		contQuadruples += 1
 
-		return	
+		return
 
 	if not pTipos:
 		semanticErrorHalt()
@@ -1536,12 +1564,6 @@ def rellena(salto, add):
 def generateJump(tipo, cond):
 	global contQuadruples
 
-	if tipo == 'm':
-		cuadruplo = (GOTO, "", "", cond)
-		cuadruplos[1] = cuadruplo
-
-		return
-
 	if tipo == 'f':
 		cuadruplo = (GOTOF, cond, "", "")
 	elif tipo == 'v':
@@ -1555,31 +1577,31 @@ def generateJump(tipo, cond):
 # Helper Methods
 
 def typeToCode(type):
-    switcher = {
-        "int": 10,
-        "float": 20,
-        "bool": 30,
-        "string": 40,
-    }
-    return switcher.get(type, 50)
+	switcher = {
+		"int": 10,
+		"float": 20,
+		"bool": 30,
+		"string": 40,
+	}
+	return switcher.get(type, 50)
 
 def operatorToCode(operator):
-    switcher = {
-        "+": 100,
-        "-": 110,
-        "*": 120,
-        "/": 130,
-        "<": 140,
-        ">": 150,
-        "<=": 160,
-        ">=": 170,
-        "==": 180,
-        "!=": 190,
-        "AND": 200,
-        "OR": 210,
-        "=": 220,
-    }
-    return switcher.get(operator, 50)
+	switcher = {
+		"+": 100,
+		"-": 110,
+		"*": 120,
+		"/": 130,
+		"<": 140,
+		">": 150,
+		"<=": 160,
+		">=": 170,
+		"==": 180,
+		"!=": 190,
+		"AND": 200,
+		"OR": 210,
+		"=": 220,
+	}
+	return switcher.get(operator, 50)
 
 def getGlobalAddressForType(type):
 	global contIntGlobal
