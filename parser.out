@@ -34,8 +34,8 @@ Rule 28    basicStatements -> read
 Rule 29    print -> PRINT PARINI exp performPrint cyPrint PARFIN
 Rule 30    cyPrint -> , fix exp performPrint cyPrint
 Rule 31    cyPrint -> empty
-Rule 32    read -> READ PARINI ID performRead cyRead PARFIN
-Rule 33    cyRead -> , fix ID performRead cyRead
+Rule 32    read -> READ PARINI ID saveVariable performRead cyRead PARFIN
+Rule 33    cyRead -> , fix ID saveVariable performRead cyRead
 Rule 34    cyRead -> empty
 Rule 35    fix -> <empty>
 Rule 36    declare -> basicDeclare
@@ -376,7 +376,7 @@ saveReturnType       : 69
 saveReturnValue      : 61
 saveType             : 1 49 57 74
 saveTypeParam        : 51 52 53
-saveVariable         : 98 154
+saveVariable         : 32 33 98 154
 saveVerdadero        : 121
 struct               : 76
 structDeclare        : 37
@@ -728,8 +728,8 @@ state 29
 
     (14) type -> FLOAT .
 
-    ID              reduce using rule 14 (type -> FLOAT .)
     {               reduce using rule 14 (type -> FLOAT .)
+    ID              reduce using rule 14 (type -> FLOAT .)
     PARFIN          reduce using rule 14 (type -> FLOAT .)
     [               reduce using rule 14 (type -> FLOAT .)
     :               reduce using rule 14 (type -> FLOAT .)
@@ -739,8 +739,8 @@ state 30
 
     (15) type -> STRING .
 
-    ID              reduce using rule 15 (type -> STRING .)
     {               reduce using rule 15 (type -> STRING .)
+    ID              reduce using rule 15 (type -> STRING .)
     PARFIN          reduce using rule 15 (type -> STRING .)
     [               reduce using rule 15 (type -> STRING .)
     :               reduce using rule 15 (type -> STRING .)
@@ -757,8 +757,8 @@ state 32
 
     (16) type -> BOOL .
 
-    ID              reduce using rule 16 (type -> BOOL .)
     {               reduce using rule 16 (type -> BOOL .)
+    ID              reduce using rule 16 (type -> BOOL .)
     PARFIN          reduce using rule 16 (type -> BOOL .)
     [               reduce using rule 16 (type -> BOOL .)
     :               reduce using rule 16 (type -> BOOL .)
@@ -818,8 +818,8 @@ state 39
 
     (13) type -> errorType INT .
 
-    ID              reduce using rule 13 (type -> errorType INT .)
     {               reduce using rule 13 (type -> errorType INT .)
+    ID              reduce using rule 13 (type -> errorType INT .)
     PARFIN          reduce using rule 13 (type -> errorType INT .)
     [               reduce using rule 13 (type -> errorType INT .)
     :               reduce using rule 13 (type -> errorType INT .)
@@ -1370,7 +1370,7 @@ state 80
     (98) assign -> . ID saveVariable errorAssign assignOptions performAssign
     (106) funcCall -> . ID checkFunction PARINI opParamCall PARFIN checkNumParams
     (29) print -> . PRINT PARINI exp performPrint cyPrint PARFIN
-    (32) read -> . READ PARINI ID performRead cyRead PARFIN
+    (32) read -> . READ PARINI ID saveVariable performRead cyRead PARFIN
     (120) errorCondition -> .
     (92) forCycle -> . errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN { rellenaBody body } returnAssign
     (88) whileCycle -> . errorWhileCycle WHILE saveReturn PARINI expresion PARFIN saveFalso { body } repeatWhile
@@ -1517,7 +1517,7 @@ state 90
 
 state 91
 
-    (32) read -> READ . PARINI ID performRead cyRead PARFIN
+    (32) read -> READ . PARINI ID saveVariable performRead cyRead PARFIN
 
     PARINI          shift and go to state 116
 
@@ -1743,7 +1743,7 @@ state 115
 
 state 116
 
-    (32) read -> READ PARINI . ID performRead cyRead PARFIN
+    (32) read -> READ PARINI . ID saveVariable performRead cyRead PARFIN
 
     ID              shift and go to state 128
 
@@ -1869,13 +1869,13 @@ state 127
 
 state 128
 
-    (32) read -> READ PARINI ID . performRead cyRead PARFIN
-    (191) performRead -> .
+    (32) read -> READ PARINI ID . saveVariable performRead cyRead PARFIN
+    (181) saveVariable -> .
 
-    ,               reduce using rule 191 (performRead -> .)
-    PARFIN          reduce using rule 191 (performRead -> .)
+    ,               reduce using rule 181 (saveVariable -> .)
+    PARFIN          reduce using rule 181 (saveVariable -> .)
 
-    performRead                    shift and go to state 149
+    saveVariable                   shift and go to state 149
 
 state 129
 
@@ -2057,6 +2057,8 @@ state 136
     RES             reduce using rule 152 (fact -> funcCall .)
     PLUS            reduce using rule 152 (fact -> funcCall .)
     MINUS           reduce using rule 152 (fact -> funcCall .)
+    ,               reduce using rule 152 (fact -> funcCall .)
+    PARFIN          reduce using rule 152 (fact -> funcCall .)
     EQ              reduce using rule 152 (fact -> funcCall .)
     DIF             reduce using rule 152 (fact -> funcCall .)
     LTOEQ           reduce using rule 152 (fact -> funcCall .)
@@ -2066,8 +2068,6 @@ state 136
     AND             reduce using rule 152 (fact -> funcCall .)
     OR              reduce using rule 152 (fact -> funcCall .)
     ]               reduce using rule 152 (fact -> funcCall .)
-    ,               reduce using rule 152 (fact -> funcCall .)
-    PARFIN          reduce using rule 152 (fact -> funcCall .)
     ;               reduce using rule 152 (fact -> funcCall .)
 
 
@@ -2080,6 +2080,8 @@ state 137
     RES             reduce using rule 151 (fact -> cte .)
     PLUS            reduce using rule 151 (fact -> cte .)
     MINUS           reduce using rule 151 (fact -> cte .)
+    ,               reduce using rule 151 (fact -> cte .)
+    PARFIN          reduce using rule 151 (fact -> cte .)
     EQ              reduce using rule 151 (fact -> cte .)
     DIF             reduce using rule 151 (fact -> cte .)
     LTOEQ           reduce using rule 151 (fact -> cte .)
@@ -2089,8 +2091,6 @@ state 137
     AND             reduce using rule 151 (fact -> cte .)
     OR              reduce using rule 151 (fact -> cte .)
     ]               reduce using rule 151 (fact -> cte .)
-    ,               reduce using rule 151 (fact -> cte .)
-    PARFIN          reduce using rule 151 (fact -> cte .)
     ;               reduce using rule 151 (fact -> cte .)
 
 
@@ -2290,16 +2290,13 @@ state 148
 
 state 149
 
-    (32) read -> READ PARINI ID performRead . cyRead PARFIN
-    (33) cyRead -> . , fix ID performRead cyRead
-    (34) cyRead -> . empty
-    (172) empty -> .
+    (32) read -> READ PARINI ID saveVariable . performRead cyRead PARFIN
+    (191) performRead -> .
 
-    ,               shift and go to state 178
-    PARFIN          reduce using rule 172 (empty -> .)
+    ,               reduce using rule 191 (performRead -> .)
+    PARFIN          reduce using rule 191 (performRead -> .)
 
-    cyRead                         shift and go to state 179
-    empty                          shift and go to state 180
+    performRead                    shift and go to state 178
 
 state 150
 
@@ -2352,7 +2349,7 @@ state 151
     FALSE           shift and go to state 135
 
     sExp                           shift and go to state 167
-    expresion                      shift and go to state 181
+    expresion                      shift and go to state 179
     term                           shift and go to state 134
     funcCall                       shift and go to state 136
     cte                            shift and go to state 137
@@ -2394,7 +2391,7 @@ state 153
     (172) empty -> .
     (161) errorOpStruct -> .
 
-    .               shift and go to state 186
+    .               shift and go to state 184
     MULT            reduce using rule 172 (empty -> .)
     DIV             reduce using rule 172 (empty -> .)
     RES             reduce using rule 172 (empty -> .)
@@ -2414,11 +2411,11 @@ state 153
     ;               reduce using rule 172 (empty -> .)
     [               reduce using rule 161 (errorOpStruct -> .)
 
-    errorOpStruct                  shift and go to state 182
-    opDictionary                   shift and go to state 183
-    opStruct                       shift and go to state 184
-    opAccess                       shift and go to state 185
-    empty                          shift and go to state 187
+    errorOpStruct                  shift and go to state 180
+    opDictionary                   shift and go to state 181
+    opStruct                       shift and go to state 182
+    opAccess                       shift and go to state 183
+    empty                          shift and go to state 185
 
 state 154
 
@@ -2429,6 +2426,8 @@ state 154
     RES             reduce using rule 150 (fact -> CTES saveConstantString .)
     PLUS            reduce using rule 150 (fact -> CTES saveConstantString .)
     MINUS           reduce using rule 150 (fact -> CTES saveConstantString .)
+    ,               reduce using rule 150 (fact -> CTES saveConstantString .)
+    PARFIN          reduce using rule 150 (fact -> CTES saveConstantString .)
     EQ              reduce using rule 150 (fact -> CTES saveConstantString .)
     DIF             reduce using rule 150 (fact -> CTES saveConstantString .)
     LTOEQ           reduce using rule 150 (fact -> CTES saveConstantString .)
@@ -2438,8 +2437,6 @@ state 154
     AND             reduce using rule 150 (fact -> CTES saveConstantString .)
     OR              reduce using rule 150 (fact -> CTES saveConstantString .)
     ]               reduce using rule 150 (fact -> CTES saveConstantString .)
-    ,               reduce using rule 150 (fact -> CTES saveConstantString .)
-    PARFIN          reduce using rule 150 (fact -> CTES saveConstantString .)
     ;               reduce using rule 150 (fact -> CTES saveConstantString .)
 
 
@@ -2463,7 +2460,7 @@ state 155
     ]               reduce using rule 144 (errorCyExp -> .)
     ;               reduce using rule 144 (errorCyExp -> .)
 
-    errorCyExp                     shift and go to state 188
+    errorCyExp                     shift and go to state 186
 
 state 156
 
@@ -2520,11 +2517,11 @@ state 158
     (31) cyPrint -> . empty
     (172) empty -> .
 
-    ,               shift and go to state 190
+    ,               shift and go to state 188
     PARFIN          reduce using rule 172 (empty -> .)
 
-    cyPrint                        shift and go to state 189
-    empty                          shift and go to state 191
+    cyPrint                        shift and go to state 187
+    empty                          shift and go to state 189
 
 state 159
 
@@ -2535,9 +2532,9 @@ state 159
     (149) cyTerm -> . empty
     (172) empty -> .
 
-    MULT            shift and go to state 196
-    DIV             shift and go to state 195
-    RES             shift and go to state 192
+    MULT            shift and go to state 194
+    DIV             shift and go to state 193
+    RES             shift and go to state 190
     PLUS            reduce using rule 172 (empty -> .)
     MINUS           reduce using rule 172 (empty -> .)
     ,               reduce using rule 172 (empty -> .)
@@ -2553,8 +2550,8 @@ state 159
     ]               reduce using rule 172 (empty -> .)
     ;               reduce using rule 172 (empty -> .)
 
-    cyTerm                         shift and go to state 193
-    empty                          shift and go to state 194
+    cyTerm                         shift and go to state 191
+    empty                          shift and go to state 192
 
 state 160
 
@@ -2583,7 +2580,7 @@ state 160
     FALSE           shift and go to state 135
 
     sExp                           shift and go to state 167
-    expresion                      shift and go to state 197
+    expresion                      shift and go to state 195
     term                           shift and go to state 134
     funcCall                       shift and go to state 136
     cte                            shift and go to state 137
@@ -2606,7 +2603,7 @@ state 162
     ;               reduce using rule 185 (performAssign -> .)
     PARFIN          reduce using rule 185 (performAssign -> .)
 
-    performAssign                  shift and go to state 198
+    performAssign                  shift and go to state 196
 
 state 163
 
@@ -2615,7 +2612,7 @@ state 163
     (182) saveOperator -> .
 
   ! shift/reduce conflict for PARINI resolved as shift
-    PARINI          shift and go to state 200
+    PARINI          shift and go to state 198
     ID              reduce using rule 182 (saveOperator -> .)
     CTES            reduce using rule 182 (saveOperator -> .)
     CTED            reduce using rule 182 (saveOperator -> .)
@@ -2625,7 +2622,7 @@ state 163
 
   ! PARINI          [ reduce using rule 182 (saveOperator -> .) ]
 
-    saveOperator                   shift and go to state 199
+    saveOperator                   shift and go to state 197
 
 state 164
 
@@ -2662,7 +2659,7 @@ state 165
     FALSE           shift and go to state 135
 
     sExp                           shift and go to state 167
-    expresion                      shift and go to state 201
+    expresion                      shift and go to state 199
     term                           shift and go to state 134
     funcCall                       shift and go to state 136
     cte                            shift and go to state 137
@@ -2673,7 +2670,7 @@ state 166
 
     (106) funcCall -> ID checkFunction PARINI opParamCall . PARFIN checkNumParams
 
-    PARFIN          shift and go to state 202
+    PARFIN          shift and go to state 200
 
 
 state 167
@@ -2688,7 +2685,7 @@ state 167
     ]               reduce using rule 189 (performAndOr -> .)
     ;               reduce using rule 189 (performAndOr -> .)
 
-    performAndOr                   shift and go to state 203
+    performAndOr                   shift and go to state 201
 
 state 168
 
@@ -2705,7 +2702,7 @@ state 169
     ,               reduce using rule 113 (checkParamType -> .)
     PARFIN          reduce using rule 113 (checkParamType -> .)
 
-    checkParamType                 shift and go to state 204
+    checkParamType                 shift and go to state 202
 
 state 170
 
@@ -2725,7 +2722,7 @@ state 170
     ]               reduce using rule 139 (errorOpSExp -> .)
     ;               reduce using rule 139 (errorOpSExp -> .)
 
-    errorOpSExp                    shift and go to state 205
+    errorOpSExp                    shift and go to state 203
 
 state 171
 
@@ -2741,28 +2738,28 @@ state 172
 
     (92) forCycle -> errorForCycle FOR PARINI assign . ; saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN { rellenaBody body } returnAssign
 
-    ;               shift and go to state 206
+    ;               shift and go to state 204
 
 
 state 173
 
     (119) condition -> errorCondition IF PARINI expresion . PARFIN saveFalso { body } optionalElse rellenaFalso
 
-    PARFIN          shift and go to state 207
+    PARFIN          shift and go to state 205
 
 
 state 174
 
     (57) function -> errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns . } clearVarsTable
 
-    }               shift and go to state 208
+    }               shift and go to state 206
 
 
 state 175
 
     (69) opReturns -> errorOpReturns . RETURNS type saveReturnType { opVars saveQuadruple body return
 
-    RETURNS         shift and go to state 209
+    RETURNS         shift and go to state 207
 
 
 state 176
@@ -2784,7 +2781,7 @@ state 176
     VARS            reduce using rule 12 (errorVars -> .)
 
     vars                           shift and go to state 8
-    opVars                         shift and go to state 210
+    opVars                         shift and go to state 208
     errorVars                      shift and go to state 10
     empty                          shift and go to state 11
 
@@ -2800,46 +2797,36 @@ state 177
     PARFIN          reduce using rule 172 (empty -> .)
 
     empty                          shift and go to state 56
-    cyTypeParam                    shift and go to state 211
+    cyTypeParam                    shift and go to state 209
 
 state 178
 
-    (33) cyRead -> , . fix ID performRead cyRead
-    (35) fix -> .
+    (32) read -> READ PARINI ID saveVariable performRead . cyRead PARFIN
+    (33) cyRead -> . , fix ID saveVariable performRead cyRead
+    (34) cyRead -> . empty
+    (172) empty -> .
 
-    ID              reduce using rule 35 (fix -> .)
+    ,               shift and go to state 210
+    PARFIN          reduce using rule 172 (empty -> .)
 
-    fix                            shift and go to state 212
+    cyRead                         shift and go to state 211
+    empty                          shift and go to state 212
 
 state 179
 
-    (32) read -> READ PARINI ID performRead cyRead . PARFIN
+    (153) fact -> PARINI putFondo expresion . PARFIN takeFondo
 
     PARFIN          shift and go to state 213
 
 
 state 180
 
-    (34) cyRead -> empty .
+    (160) opStruct -> errorOpStruct . [ expresion ] opMatrix
 
-    PARFIN          reduce using rule 34 (cyRead -> empty .)
+    [               shift and go to state 214
 
 
 state 181
-
-    (153) fact -> PARINI putFondo expresion . PARFIN takeFondo
-
-    PARFIN          shift and go to state 214
-
-
-state 182
-
-    (160) opStruct -> errorOpStruct . [ expresion ] opMatrix
-
-    [               shift and go to state 215
-
-
-state 183
 
     (157) opAccess -> opDictionary .
 
@@ -2862,7 +2849,7 @@ state 183
     ;               reduce using rule 157 (opAccess -> opDictionary .)
 
 
-state 184
+state 182
 
     (156) opAccess -> opStruct .
 
@@ -2885,7 +2872,7 @@ state 184
     ;               reduce using rule 156 (opAccess -> opStruct .)
 
 
-state 185
+state 183
 
     (154) fact -> ID saveVariable opAccess . errorOpAccess
     (159) errorOpAccess -> .
@@ -2908,20 +2895,20 @@ state 185
     ]               reduce using rule 159 (errorOpAccess -> .)
     ;               reduce using rule 159 (errorOpAccess -> .)
 
-    errorOpAccess                  shift and go to state 216
+    errorOpAccess                  shift and go to state 215
 
-state 186
+state 184
 
     (165) opDictionary -> . . dictIndex
     (166) dictIndex -> . FIRST
     (167) dictIndex -> . LAST
 
-    FIRST           shift and go to state 217
-    LAST            shift and go to state 218
+    FIRST           shift and go to state 216
+    LAST            shift and go to state 217
 
-    dictIndex                      shift and go to state 219
+    dictIndex                      shift and go to state 218
 
-state 187
+state 185
 
     (158) opAccess -> empty .
 
@@ -2944,7 +2931,7 @@ state 187
     ;               reduce using rule 158 (opAccess -> empty .)
 
 
-state 188
+state 186
 
     (140) exp -> term performAddSub errorCyExp . cyExp
     (141) cyExp -> . PLUS saveOperator exp
@@ -2952,8 +2939,8 @@ state 188
     (143) cyExp -> . empty
     (172) empty -> .
 
-    PLUS            shift and go to state 221
-    MINUS           shift and go to state 222
+    PLUS            shift and go to state 220
+    MINUS           shift and go to state 221
     ,               reduce using rule 172 (empty -> .)
     PARFIN          reduce using rule 172 (empty -> .)
     EQ              reduce using rule 172 (empty -> .)
@@ -2967,17 +2954,17 @@ state 188
     ]               reduce using rule 172 (empty -> .)
     ;               reduce using rule 172 (empty -> .)
 
-    cyExp                          shift and go to state 220
-    empty                          shift and go to state 223
+    cyExp                          shift and go to state 219
+    empty                          shift and go to state 222
 
-state 189
+state 187
 
     (29) print -> PRINT PARINI exp performPrint cyPrint . PARFIN
 
-    PARFIN          shift and go to state 224
+    PARFIN          shift and go to state 223
 
 
-state 190
+state 188
 
     (30) cyPrint -> , . fix exp performPrint cyPrint
     (35) fix -> .
@@ -2990,16 +2977,16 @@ state 190
     TRUE            reduce using rule 35 (fix -> .)
     FALSE           reduce using rule 35 (fix -> .)
 
-    fix                            shift and go to state 225
+    fix                            shift and go to state 224
 
-state 191
+state 189
 
     (31) cyPrint -> empty .
 
     PARFIN          reduce using rule 31 (cyPrint -> empty .)
 
 
-state 192
+state 190
 
     (148) cyTerm -> RES . saveOperator term
     (182) saveOperator -> .
@@ -3012,9 +2999,9 @@ state 192
     TRUE            reduce using rule 182 (saveOperator -> .)
     FALSE           reduce using rule 182 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 226
+    saveOperator                   shift and go to state 225
 
-state 193
+state 191
 
     (145) term -> fact performMulDiv cyTerm .
 
@@ -3034,7 +3021,7 @@ state 193
     ;               reduce using rule 145 (term -> fact performMulDiv cyTerm .)
 
 
-state 194
+state 192
 
     (149) cyTerm -> empty .
 
@@ -3054,7 +3041,7 @@ state 194
     ;               reduce using rule 149 (cyTerm -> empty .)
 
 
-state 195
+state 193
 
     (147) cyTerm -> DIV . saveOperator term
     (182) saveOperator -> .
@@ -3067,9 +3054,9 @@ state 195
     TRUE            reduce using rule 182 (saveOperator -> .)
     FALSE           reduce using rule 182 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 227
+    saveOperator                   shift and go to state 226
 
-state 196
+state 194
 
     (146) cyTerm -> MULT . saveOperator errorFact term
     (182) saveOperator -> .
@@ -3082,16 +3069,16 @@ state 196
     TRUE            reduce using rule 182 (saveOperator -> .)
     FALSE           reduce using rule 182 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 228
+    saveOperator                   shift and go to state 227
 
-state 197
+state 195
 
     (88) whileCycle -> errorWhileCycle WHILE saveReturn PARINI expresion . PARFIN saveFalso { body } repeatWhile
 
-    PARFIN          shift and go to state 229
+    PARFIN          shift and go to state 228
 
 
-state 198
+state 196
 
     (98) assign -> ID saveVariable errorAssign assignOptions performAssign .
 
@@ -3099,7 +3086,7 @@ state 198
     PARFIN          reduce using rule 98 (assign -> ID saveVariable errorAssign assignOptions performAssign .)
 
 
-state 199
+state 197
 
     (39) init -> ASGN saveOperator . errorInit initWith
     (40) errorInit -> .
@@ -3112,9 +3099,9 @@ state 199
     TRUE            reduce using rule 40 (errorInit -> .)
     FALSE           reduce using rule 40 (errorInit -> .)
 
-    errorInit                      shift and go to state 230
+    errorInit                      shift and go to state 229
 
-state 200
+state 198
 
     (43) initDict -> ASGN PARINI . dictType : dictType PARFIN errorInitDict
     (45) dictType -> . errorDictType CTES
@@ -3126,25 +3113,25 @@ state 200
     (170) cte -> . TRUE saveConstantBool
     (171) cte -> . FALSE saveConstantBool
 
-    ID              shift and go to state 234
+    ID              shift and go to state 233
     CTES            reduce using rule 48 (errorDictType -> .)
     CTED            shift and go to state 131
     CTEF            shift and go to state 138
     TRUE            shift and go to state 129
     FALSE           shift and go to state 135
 
-    dictType                       shift and go to state 231
-    errorDictType                  shift and go to state 232
-    cte                            shift and go to state 233
+    dictType                       shift and go to state 230
+    errorDictType                  shift and go to state 231
+    cte                            shift and go to state 232
 
-state 201
+state 199
 
     (102) assignOptions -> [ expresion . ] assignMatrix init
 
-    ]               shift and go to state 235
+    ]               shift and go to state 234
 
 
-state 202
+state 200
 
     (106) funcCall -> ID checkFunction PARINI opParamCall PARFIN . checkNumParams
     (107) checkNumParams -> .
@@ -3167,9 +3154,9 @@ state 202
     OR              reduce using rule 107 (checkNumParams -> .)
     ]               reduce using rule 107 (checkNumParams -> .)
 
-    checkNumParams                 shift and go to state 236
+    checkNumParams                 shift and go to state 235
 
-state 203
+state 201
 
     (126) expresion -> sExp performAndOr . cyExpresion errorExpresion
     (128) cyExpresion -> . AND saveOperator expresion
@@ -3177,30 +3164,30 @@ state 203
     (130) cyExpresion -> . empty
     (172) empty -> .
 
-    AND             shift and go to state 237
-    OR              shift and go to state 238
+    AND             shift and go to state 236
+    OR              shift and go to state 237
     ,               reduce using rule 172 (empty -> .)
     PARFIN          reduce using rule 172 (empty -> .)
     ]               reduce using rule 172 (empty -> .)
     ;               reduce using rule 172 (empty -> .)
 
-    cyExpresion                    shift and go to state 239
-    empty                          shift and go to state 240
+    cyExpresion                    shift and go to state 238
+    empty                          shift and go to state 239
 
-state 204
+state 202
 
     (109) opParamCall -> expresion checkParamType . cyParamCall
     (111) cyParamCall -> . , expresion checkParamType cyParamCall
     (112) cyParamCall -> . empty
     (172) empty -> .
 
-    ,               shift and go to state 243
+    ,               shift and go to state 242
     PARFIN          reduce using rule 172 (empty -> .)
 
-    cyParamCall                    shift and go to state 241
-    empty                          shift and go to state 242
+    cyParamCall                    shift and go to state 240
+    empty                          shift and go to state 241
 
-state 205
+state 203
 
     (131) sExp -> exp errorOpSExp . opSExp performRelational
     (132) opSExp -> . EQ saveOperator exp
@@ -3212,12 +3199,12 @@ state 205
     (138) opSExp -> . empty
     (172) empty -> .
 
-    EQ              shift and go to state 249
-    DIF             shift and go to state 246
-    LTOEQ           shift and go to state 245
-    GTOEQ           shift and go to state 248
-    GT              shift and go to state 244
-    LT              shift and go to state 247
+    EQ              shift and go to state 248
+    DIF             shift and go to state 245
+    LTOEQ           shift and go to state 244
+    GTOEQ           shift and go to state 247
+    GT              shift and go to state 243
+    LT              shift and go to state 246
     AND             reduce using rule 172 (empty -> .)
     OR              reduce using rule 172 (empty -> .)
     ,               reduce using rule 172 (empty -> .)
@@ -3225,10 +3212,10 @@ state 205
     ]               reduce using rule 172 (empty -> .)
     ;               reduce using rule 172 (empty -> .)
 
-    empty                          shift and go to state 250
-    opSExp                         shift and go to state 251
+    empty                          shift and go to state 249
+    opSExp                         shift and go to state 250
 
-state 206
+state 204
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; . saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN { rellenaBody body } returnAssign
     (90) saveReturn -> .
@@ -3241,18 +3228,18 @@ state 206
     TRUE            reduce using rule 90 (saveReturn -> .)
     FALSE           reduce using rule 90 (saveReturn -> .)
 
-    saveReturn                     shift and go to state 252
+    saveReturn                     shift and go to state 251
 
-state 207
+state 205
 
     (119) condition -> errorCondition IF PARINI expresion PARFIN . saveFalso { body } optionalElse rellenaFalso
     (175) saveFalso -> .
 
     {               reduce using rule 175 (saveFalso -> .)
 
-    saveFalso                      shift and go to state 253
+    saveFalso                      shift and go to state 252
 
-state 208
+state 206
 
     (57) function -> errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns } . clearVarsTable
     (60) clearVarsTable -> .
@@ -3260,9 +3247,9 @@ state 208
     FUNC            reduce using rule 60 (clearVarsTable -> .)
     MAIN            reduce using rule 60 (clearVarsTable -> .)
 
-    clearVarsTable                 shift and go to state 254
+    clearVarsTable                 shift and go to state 253
 
-state 209
+state 207
 
     (69) opReturns -> errorOpReturns RETURNS . type saveReturnType { opVars saveQuadruple body return
     (13) type -> . errorType INT
@@ -3277,9 +3264,9 @@ state 209
     INT             reduce using rule 17 (errorType -> .)
 
     errorType                      shift and go to state 31
-    type                           shift and go to state 255
+    type                           shift and go to state 254
 
-state 210
+state 208
 
     (70) opReturns -> { opVars . saveQuadruple body
     (71) saveQuadruple -> .
@@ -3292,9 +3279,9 @@ state 210
     WHILE           reduce using rule 71 (saveQuadruple -> .)
     }               reduce using rule 71 (saveQuadruple -> .)
 
-    saveQuadruple                  shift and go to state 256
+    saveQuadruple                  shift and go to state 255
 
-state 211
+state 209
 
     (49) param -> saveType type errorParam ID cyTypeParam . cyParam
     (51) cyParam -> . errorCyParam saveID saveTypeParam ; param
@@ -3305,25 +3292,34 @@ state 211
     ;               reduce using rule 56 (errorCyParam -> .)
     PARFIN          reduce using rule 172 (empty -> .)
 
-    empty                          shift and go to state 257
-    cyParam                        shift and go to state 259
-    errorCyParam                   shift and go to state 258
+    empty                          shift and go to state 256
+    cyParam                        shift and go to state 258
+    errorCyParam                   shift and go to state 257
+
+state 210
+
+    (33) cyRead -> , . fix ID saveVariable performRead cyRead
+    (35) fix -> .
+
+    ID              reduce using rule 35 (fix -> .)
+
+    fix                            shift and go to state 259
+
+state 211
+
+    (32) read -> READ PARINI ID saveVariable performRead cyRead . PARFIN
+
+    PARFIN          shift and go to state 260
+
 
 state 212
 
-    (33) cyRead -> , fix . ID performRead cyRead
+    (34) cyRead -> empty .
 
-    ID              shift and go to state 260
+    PARFIN          reduce using rule 34 (cyRead -> empty .)
 
 
 state 213
-
-    (32) read -> READ PARINI ID performRead cyRead PARFIN .
-
-    ;               reduce using rule 32 (read -> READ PARINI ID performRead cyRead PARFIN .)
-
-
-state 214
 
     (153) fact -> PARINI putFondo expresion PARFIN . takeFondo
     (184) takeFondo -> .
@@ -3348,7 +3344,7 @@ state 214
 
     takeFondo                      shift and go to state 261
 
-state 215
+state 214
 
     (160) opStruct -> errorOpStruct [ . expresion ] opMatrix
     (126) expresion -> . sExp performAndOr cyExpresion errorExpresion
@@ -3382,7 +3378,7 @@ state 215
     exp                            shift and go to state 170
     fact                           shift and go to state 140
 
-state 216
+state 215
 
     (154) fact -> ID saveVariable opAccess errorOpAccess .
 
@@ -3391,6 +3387,8 @@ state 216
     RES             reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
     PLUS            reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
     MINUS           reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
+    ,               reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
+    PARFIN          reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
     EQ              reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
     DIF             reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
     LTOEQ           reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
@@ -3400,12 +3398,10 @@ state 216
     AND             reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
     OR              reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
     ]               reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
-    ,               reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
-    PARFIN          reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
     ;               reduce using rule 154 (fact -> ID saveVariable opAccess errorOpAccess .)
 
 
-state 217
+state 216
 
     (166) dictIndex -> FIRST .
 
@@ -3428,7 +3424,7 @@ state 217
     ;               reduce using rule 166 (dictIndex -> FIRST .)
 
 
-state 218
+state 217
 
     (167) dictIndex -> LAST .
 
@@ -3451,7 +3447,7 @@ state 218
     ;               reduce using rule 167 (dictIndex -> LAST .)
 
 
-state 219
+state 218
 
     (165) opDictionary -> . dictIndex .
 
@@ -3474,12 +3470,10 @@ state 219
     ;               reduce using rule 165 (opDictionary -> . dictIndex .)
 
 
-state 220
+state 219
 
     (140) exp -> term performAddSub errorCyExp cyExp .
 
-    ,               reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
-    PARFIN          reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
     EQ              reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
     DIF             reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
     LTOEQ           reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
@@ -3488,11 +3482,13 @@ state 220
     LT              reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
     AND             reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
     OR              reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
+    ,               reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
+    PARFIN          reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
     ]               reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
     ;               reduce using rule 140 (exp -> term performAddSub errorCyExp cyExp .)
 
 
-state 221
+state 220
 
     (141) cyExp -> PLUS . saveOperator exp
     (182) saveOperator -> .
@@ -3507,7 +3503,7 @@ state 221
 
     saveOperator                   shift and go to state 263
 
-state 222
+state 221
 
     (142) cyExp -> MINUS . saveOperator exp
     (182) saveOperator -> .
@@ -3522,7 +3518,7 @@ state 222
 
     saveOperator                   shift and go to state 264
 
-state 223
+state 222
 
     (143) cyExp -> empty .
 
@@ -3540,14 +3536,14 @@ state 223
     ;               reduce using rule 143 (cyExp -> empty .)
 
 
-state 224
+state 223
 
     (29) print -> PRINT PARINI exp performPrint cyPrint PARFIN .
 
     ;               reduce using rule 29 (print -> PRINT PARINI exp performPrint cyPrint PARFIN .)
 
 
-state 225
+state 224
 
     (30) cyPrint -> , fix . exp performPrint cyPrint
     (140) exp -> . term performAddSub errorCyExp cyExp
@@ -3577,7 +3573,7 @@ state 225
     exp                            shift and go to state 265
     fact                           shift and go to state 140
 
-state 226
+state 225
 
     (148) cyTerm -> RES saveOperator . term
     (145) term -> . fact performMulDiv cyTerm
@@ -3605,7 +3601,7 @@ state 226
     cte                            shift and go to state 137
     fact                           shift and go to state 140
 
-state 227
+state 226
 
     (147) cyTerm -> DIV saveOperator . term
     (145) term -> . fact performMulDiv cyTerm
@@ -3633,7 +3629,7 @@ state 227
     cte                            shift and go to state 137
     fact                           shift and go to state 140
 
-state 228
+state 227
 
     (146) cyTerm -> MULT saveOperator . errorFact term
     (155) errorFact -> .
@@ -3648,7 +3644,7 @@ state 228
 
     errorFact                      shift and go to state 268
 
-state 229
+state 228
 
     (88) whileCycle -> errorWhileCycle WHILE saveReturn PARINI expresion PARFIN . saveFalso { body } repeatWhile
     (175) saveFalso -> .
@@ -3657,7 +3653,7 @@ state 229
 
     saveFalso                      shift and go to state 269
 
-state 230
+state 229
 
     (39) init -> ASGN saveOperator errorInit . initWith
     (41) initWith -> . expresion
@@ -3694,37 +3690,37 @@ state 230
     exp                            shift and go to state 170
     fact                           shift and go to state 140
 
-state 231
+state 230
 
     (43) initDict -> ASGN PARINI dictType . : dictType PARFIN errorInitDict
 
     :               shift and go to state 274
 
 
-state 232
+state 231
 
     (45) dictType -> errorDictType . CTES
 
     CTES            shift and go to state 275
 
 
-state 233
+state 232
 
     (46) dictType -> cte .
 
-    PARFIN          reduce using rule 46 (dictType -> cte .)
     :               reduce using rule 46 (dictType -> cte .)
+    PARFIN          reduce using rule 46 (dictType -> cte .)
 
 
-state 234
+state 233
 
     (47) dictType -> ID .
 
-    PARFIN          reduce using rule 47 (dictType -> ID .)
     :               reduce using rule 47 (dictType -> ID .)
+    PARFIN          reduce using rule 47 (dictType -> ID .)
 
 
-state 235
+state 234
 
     (102) assignOptions -> [ expresion ] . assignMatrix init
     (103) assignMatrix -> . [ expresion ] errorAssignMatrix
@@ -3737,7 +3733,7 @@ state 235
     assignMatrix                   shift and go to state 276
     empty                          shift and go to state 278
 
-state 236
+state 235
 
     (106) funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .
 
@@ -3746,6 +3742,8 @@ state 236
     RES             reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
     PLUS            reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
     MINUS           reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
+    ,               reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
+    PARFIN          reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
     EQ              reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
     DIF             reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
     LTOEQ           reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
@@ -3756,11 +3754,9 @@ state 236
     OR              reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
     ]               reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
     ;               reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
-    ,               reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
-    PARFIN          reduce using rule 106 (funcCall -> ID checkFunction PARINI opParamCall PARFIN checkNumParams .)
 
 
-state 237
+state 236
 
     (128) cyExpresion -> AND . saveOperator expresion
     (182) saveOperator -> .
@@ -3775,7 +3771,7 @@ state 237
 
     saveOperator                   shift and go to state 279
 
-state 238
+state 237
 
     (129) cyExpresion -> OR . saveOperator expresion
     (182) saveOperator -> .
@@ -3790,7 +3786,7 @@ state 238
 
     saveOperator                   shift and go to state 280
 
-state 239
+state 238
 
     (126) expresion -> sExp performAndOr cyExpresion . errorExpresion
     (127) errorExpresion -> .
@@ -3802,7 +3798,7 @@ state 239
 
     errorExpresion                 shift and go to state 281
 
-state 240
+state 239
 
     (130) cyExpresion -> empty .
 
@@ -3812,21 +3808,21 @@ state 240
     ;               reduce using rule 130 (cyExpresion -> empty .)
 
 
-state 241
+state 240
 
     (109) opParamCall -> expresion checkParamType cyParamCall .
 
     PARFIN          reduce using rule 109 (opParamCall -> expresion checkParamType cyParamCall .)
 
 
-state 242
+state 241
 
     (112) cyParamCall -> empty .
 
     PARFIN          reduce using rule 112 (cyParamCall -> empty .)
 
 
-state 243
+state 242
 
     (111) cyParamCall -> , . expresion checkParamType cyParamCall
     (126) expresion -> . sExp performAndOr cyExpresion errorExpresion
@@ -3860,7 +3856,7 @@ state 243
     exp                            shift and go to state 170
     fact                           shift and go to state 140
 
-state 244
+state 243
 
     (136) opSExp -> GT . saveOperator exp
     (182) saveOperator -> .
@@ -3875,7 +3871,7 @@ state 244
 
     saveOperator                   shift and go to state 283
 
-state 245
+state 244
 
     (134) opSExp -> LTOEQ . saveOperator exp
     (182) saveOperator -> .
@@ -3890,7 +3886,7 @@ state 245
 
     saveOperator                   shift and go to state 284
 
-state 246
+state 245
 
     (133) opSExp -> DIF . saveOperator exp
     (182) saveOperator -> .
@@ -3905,7 +3901,7 @@ state 246
 
     saveOperator                   shift and go to state 285
 
-state 247
+state 246
 
     (137) opSExp -> LT . saveOperator exp
     (182) saveOperator -> .
@@ -3920,7 +3916,7 @@ state 247
 
     saveOperator                   shift and go to state 286
 
-state 248
+state 247
 
     (135) opSExp -> GTOEQ . saveOperator exp
     (182) saveOperator -> .
@@ -3935,7 +3931,7 @@ state 248
 
     saveOperator                   shift and go to state 287
 
-state 249
+state 248
 
     (132) opSExp -> EQ . saveOperator exp
     (182) saveOperator -> .
@@ -3950,7 +3946,7 @@ state 249
 
     saveOperator                   shift and go to state 288
 
-state 250
+state 249
 
     (138) opSExp -> empty .
 
@@ -3962,7 +3958,7 @@ state 250
     ;               reduce using rule 138 (opSExp -> empty .)
 
 
-state 251
+state 250
 
     (131) sExp -> exp errorOpSExp opSExp . performRelational
     (188) performRelational -> .
@@ -3976,7 +3972,7 @@ state 251
 
     performRelational              shift and go to state 289
 
-state 252
+state 251
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn . expresion saveFalso ; saltoBody assign returnFor PARFIN { rellenaBody body } returnAssign
     (126) expresion -> . sExp performAndOr cyExpresion errorExpresion
@@ -4010,14 +4006,14 @@ state 252
     fact                           shift and go to state 140
     exp                            shift and go to state 170
 
-state 253
+state 252
 
     (119) condition -> errorCondition IF PARINI expresion PARFIN saveFalso . { body } optionalElse rellenaFalso
 
     {               shift and go to state 291
 
 
-state 254
+state 253
 
     (57) function -> errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns } clearVarsTable .
 
@@ -4025,7 +4021,7 @@ state 254
     MAIN            reduce using rule 57 (function -> errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns } clearVarsTable .)
 
 
-state 255
+state 254
 
     (69) opReturns -> errorOpReturns RETURNS type . saveReturnType { opVars saveQuadruple body return
     (72) saveReturnType -> .
@@ -4034,7 +4030,7 @@ state 255
 
     saveReturnType                 shift and go to state 292
 
-state 256
+state 255
 
     (70) opReturns -> { opVars saveQuadruple . body
     (82) body -> . errorBody cyInstruction
@@ -4054,7 +4050,7 @@ state 256
     errorBody                      shift and go to state 80
     empty                          shift and go to state 81
 
-state 257
+state 256
 
     (52) cyParam -> empty . saveID saveTypeParam
     (11) saveID -> .
@@ -4063,7 +4059,7 @@ state 257
 
     saveID                         shift and go to state 294
 
-state 258
+state 257
 
     (51) cyParam -> errorCyParam . saveID saveTypeParam ; param
     (11) saveID -> .
@@ -4072,22 +4068,26 @@ state 258
 
     saveID                         shift and go to state 295
 
-state 259
+state 258
 
     (49) param -> saveType type errorParam ID cyTypeParam cyParam .
 
     PARFIN          reduce using rule 49 (param -> saveType type errorParam ID cyTypeParam cyParam .)
 
 
+state 259
+
+    (33) cyRead -> , fix . ID saveVariable performRead cyRead
+
+    ID              shift and go to state 296
+
+
 state 260
 
-    (33) cyRead -> , fix ID . performRead cyRead
-    (191) performRead -> .
+    (32) read -> READ PARINI ID saveVariable performRead cyRead PARFIN .
 
-    ,               reduce using rule 191 (performRead -> .)
-    PARFIN          reduce using rule 191 (performRead -> .)
+    ;               reduce using rule 32 (read -> READ PARINI ID saveVariable performRead cyRead PARFIN .)
 
-    performRead                    shift and go to state 296
 
 state 261
 
@@ -4098,6 +4098,8 @@ state 261
     RES             reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
     PLUS            reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
     MINUS           reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
+    ,               reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
+    PARFIN          reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
     EQ              reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
     DIF             reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
     LTOEQ           reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
@@ -4107,8 +4109,6 @@ state 261
     AND             reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
     OR              reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
     ]               reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
-    ,               reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
-    PARFIN          reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
     ;               reduce using rule 153 (fact -> PARINI putFondo expresion PARFIN takeFondo .)
 
 
@@ -4348,7 +4348,7 @@ state 274
     (170) cte -> . TRUE saveConstantBool
     (171) cte -> . FALSE saveConstantBool
 
-    ID              shift and go to state 234
+    ID              shift and go to state 233
     CTES            reduce using rule 48 (errorDictType -> .)
     CTED            shift and go to state 131
     CTEF            shift and go to state 138
@@ -4356,15 +4356,15 @@ state 274
     FALSE           shift and go to state 135
 
     dictType                       shift and go to state 303
-    errorDictType                  shift and go to state 232
-    cte                            shift and go to state 233
+    errorDictType                  shift and go to state 231
+    cte                            shift and go to state 232
 
 state 275
 
     (45) dictType -> errorDictType CTES .
 
-    PARFIN          reduce using rule 45 (dictType -> errorDictType CTES .)
     :               reduce using rule 45 (dictType -> errorDictType CTES .)
+    PARFIN          reduce using rule 45 (dictType -> errorDictType CTES .)
 
 
 state 276
@@ -4760,16 +4760,13 @@ state 295
 
 state 296
 
-    (33) cyRead -> , fix ID performRead . cyRead
-    (33) cyRead -> . , fix ID performRead cyRead
-    (34) cyRead -> . empty
-    (172) empty -> .
+    (33) cyRead -> , fix ID . saveVariable performRead cyRead
+    (181) saveVariable -> .
 
-    ,               shift and go to state 178
-    PARFIN          reduce using rule 172 (empty -> .)
+    ,               reduce using rule 181 (saveVariable -> .)
+    PARFIN          reduce using rule 181 (saveVariable -> .)
 
-    cyRead                         shift and go to state 321
-    empty                          shift and go to state 180
+    saveVariable                   shift and go to state 321
 
 state 297
 
@@ -4845,10 +4842,10 @@ state 300
     (31) cyPrint -> . empty
     (172) empty -> .
 
-    ,               shift and go to state 190
+    ,               shift and go to state 188
     PARFIN          reduce using rule 172 (empty -> .)
 
-    empty                          shift and go to state 191
+    empty                          shift and go to state 189
     cyPrint                        shift and go to state 325
 
 state 301
@@ -4911,7 +4908,7 @@ state 304
     TRUE            reduce using rule 182 (saveOperator -> .)
     FALSE           reduce using rule 182 (saveOperator -> .)
 
-    saveOperator                   shift and go to state 199
+    saveOperator                   shift and go to state 197
 
 state 305
 
@@ -4955,11 +4952,11 @@ state 309
     (112) cyParamCall -> . empty
     (172) empty -> .
 
-    ,               shift and go to state 243
+    ,               shift and go to state 242
     PARFIN          reduce using rule 172 (empty -> .)
 
     cyParamCall                    shift and go to state 329
-    empty                          shift and go to state 242
+    empty                          shift and go to state 241
 
 state 310
 
@@ -5086,16 +5083,19 @@ state 320
 
 state 321
 
-    (33) cyRead -> , fix ID performRead cyRead .
+    (33) cyRead -> , fix ID saveVariable . performRead cyRead
+    (191) performRead -> .
 
-    PARFIN          reduce using rule 33 (cyRead -> , fix ID performRead cyRead .)
+    ,               reduce using rule 191 (performRead -> .)
+    PARFIN          reduce using rule 191 (performRead -> .)
 
+    performRead                    shift and go to state 334
 
 state 322
 
     (162) opMatrix -> errorOpMatrix . [ expresion ]
 
-    [               shift and go to state 334
+    [               shift and go to state 335
 
 
 state 323
@@ -5155,7 +5155,7 @@ state 326
 
     (88) whileCycle -> errorWhileCycle WHILE saveReturn PARINI expresion PARFIN saveFalso { body . } repeatWhile
 
-    }               shift and go to state 335
+    }               shift and go to state 336
 
 
 state 327
@@ -5166,7 +5166,7 @@ state 327
     ;               reduce using rule 44 (errorInitDict -> .)
     PARFIN          reduce using rule 44 (errorInitDict -> .)
 
-    errorInitDict                  shift and go to state 336
+    errorInitDict                  shift and go to state 337
 
 state 328
 
@@ -5175,7 +5175,7 @@ state 328
 
     ASGN            reduce using rule 105 (errorAssignMatrix -> .)
 
-    errorAssignMatrix              shift and go to state 337
+    errorAssignMatrix              shift and go to state 338
 
 state 329
 
@@ -5191,7 +5191,7 @@ state 330
 
     ID              reduce using rule 93 (saltoBody -> .)
 
-    saltoBody                      shift and go to state 338
+    saltoBody                      shift and go to state 339
 
 state 331
 
@@ -5211,9 +5211,9 @@ state 331
     }               reduce using rule 172 (empty -> .)
     RETURN          reduce using rule 172 (empty -> .)
 
-    errorElse                      shift and go to state 340
-    optionalElse                   shift and go to state 339
-    empty                          shift and go to state 341
+    errorElse                      shift and go to state 341
+    optionalElse                   shift and go to state 340
+    empty                          shift and go to state 342
 
 state 332
 
@@ -5228,7 +5228,7 @@ state 332
     FOR             reduce using rule 71 (saveQuadruple -> .)
     WHILE           reduce using rule 71 (saveQuadruple -> .)
 
-    saveQuadruple                  shift and go to state 342
+    saveQuadruple                  shift and go to state 343
 
 state 333
 
@@ -5241,10 +5241,23 @@ state 333
     BOOL            reduce using rule 3 (saveType -> .)
     INT             reduce using rule 3 (saveType -> .)
 
-    param                          shift and go to state 343
+    param                          shift and go to state 344
     saveType                       shift and go to state 109
 
 state 334
+
+    (33) cyRead -> , fix ID saveVariable performRead . cyRead
+    (33) cyRead -> . , fix ID saveVariable performRead cyRead
+    (34) cyRead -> . empty
+    (172) empty -> .
+
+    ,               shift and go to state 210
+    PARFIN          reduce using rule 172 (empty -> .)
+
+    cyRead                         shift and go to state 345
+    empty                          shift and go to state 212
+
+state 335
 
     (162) opMatrix -> errorOpMatrix [ . expresion ]
     (126) expresion -> . sExp performAndOr cyExpresion errorExpresion
@@ -5271,14 +5284,14 @@ state 334
     FALSE           shift and go to state 135
 
     sExp                           shift and go to state 167
-    expresion                      shift and go to state 344
+    expresion                      shift and go to state 346
     term                           shift and go to state 134
     funcCall                       shift and go to state 136
     cte                            shift and go to state 137
     exp                            shift and go to state 170
     fact                           shift and go to state 140
 
-state 335
+state 336
 
     (88) whileCycle -> errorWhileCycle WHILE saveReturn PARINI expresion PARFIN saveFalso { body } . repeatWhile
     (89) repeatWhile -> .
@@ -5292,9 +5305,9 @@ state 335
     }               reduce using rule 89 (repeatWhile -> .)
     RETURN          reduce using rule 89 (repeatWhile -> .)
 
-    repeatWhile                    shift and go to state 345
+    repeatWhile                    shift and go to state 347
 
-state 336
+state 337
 
     (43) initDict -> ASGN PARINI dictType : dictType PARFIN errorInitDict .
 
@@ -5302,23 +5315,23 @@ state 336
     PARFIN          reduce using rule 43 (initDict -> ASGN PARINI dictType : dictType PARFIN errorInitDict .)
 
 
-state 337
+state 338
 
     (103) assignMatrix -> [ expresion ] errorAssignMatrix .
 
     ASGN            reduce using rule 103 (assignMatrix -> [ expresion ] errorAssignMatrix .)
 
 
-state 338
+state 339
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody . assign returnFor PARFIN { rellenaBody body } returnAssign
     (98) assign -> . ID saveVariable errorAssign assignOptions performAssign
 
     ID              shift and go to state 171
 
-    assign                         shift and go to state 346
+    assign                         shift and go to state 348
 
-state 339
+state 340
 
     (119) condition -> errorCondition IF PARINI expresion PARFIN saveFalso { body } optionalElse . rellenaFalso
     (174) rellenaFalso -> .
@@ -5332,16 +5345,16 @@ state 339
     }               reduce using rule 174 (rellenaFalso -> .)
     RETURN          reduce using rule 174 (rellenaFalso -> .)
 
-    rellenaFalso                   shift and go to state 347
+    rellenaFalso                   shift and go to state 349
 
-state 340
+state 341
 
     (121) optionalElse -> errorElse . ELSE saveVerdadero { body }
 
-    ELSE            shift and go to state 348
+    ELSE            shift and go to state 350
 
 
-state 341
+state 342
 
     (122) optionalElse -> empty .
 
@@ -5355,7 +5368,7 @@ state 341
     RETURN          reduce using rule 122 (optionalElse -> empty .)
 
 
-state 342
+state 343
 
     (69) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars saveQuadruple . body return
     (82) body -> . errorBody cyInstruction
@@ -5371,25 +5384,32 @@ state 342
     WHILE           reduce using rule 84 (errorBody -> .)
     RETURN          reduce using rule 172 (empty -> .)
 
-    body                           shift and go to state 349
+    body                           shift and go to state 351
     errorBody                      shift and go to state 80
     empty                          shift and go to state 81
 
-state 343
+state 344
 
     (51) cyParam -> errorCyParam saveID saveTypeParam ; param .
 
     PARFIN          reduce using rule 51 (cyParam -> errorCyParam saveID saveTypeParam ; param .)
 
 
-state 344
+state 345
+
+    (33) cyRead -> , fix ID saveVariable performRead cyRead .
+
+    PARFIN          reduce using rule 33 (cyRead -> , fix ID saveVariable performRead cyRead .)
+
+
+state 346
 
     (162) opMatrix -> errorOpMatrix [ expresion . ]
 
-    ]               shift and go to state 350
+    ]               shift and go to state 352
 
 
-state 345
+state 347
 
     (88) whileCycle -> errorWhileCycle WHILE saveReturn PARINI expresion PARFIN saveFalso { body } repeatWhile .
 
@@ -5403,16 +5423,16 @@ state 345
     RETURN          reduce using rule 88 (whileCycle -> errorWhileCycle WHILE saveReturn PARINI expresion PARFIN saveFalso { body } repeatWhile .)
 
 
-state 346
+state 348
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign . returnFor PARFIN { rellenaBody body } returnAssign
     (94) returnFor -> .
 
     PARFIN          reduce using rule 94 (returnFor -> .)
 
-    returnFor                      shift and go to state 351
+    returnFor                      shift and go to state 353
 
-state 347
+state 349
 
     (119) condition -> errorCondition IF PARINI expresion PARFIN saveFalso { body } optionalElse rellenaFalso .
 
@@ -5426,16 +5446,16 @@ state 347
     RETURN          reduce using rule 119 (condition -> errorCondition IF PARINI expresion PARFIN saveFalso { body } optionalElse rellenaFalso .)
 
 
-state 348
+state 350
 
     (121) optionalElse -> errorElse ELSE . saveVerdadero { body }
     (176) saveVerdadero -> .
 
     {               reduce using rule 176 (saveVerdadero -> .)
 
-    saveVerdadero                  shift and go to state 352
+    saveVerdadero                  shift and go to state 354
 
-state 349
+state 351
 
     (69) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars saveQuadruple body . return
     (61) return -> . errorReturn RETURN expresion saveReturnValue ;
@@ -5443,10 +5463,10 @@ state 349
 
     RETURN          reduce using rule 63 (errorReturn -> .)
 
-    return                         shift and go to state 353
-    errorReturn                    shift and go to state 354
+    return                         shift and go to state 355
+    errorReturn                    shift and go to state 356
 
-state 350
+state 352
 
     (162) opMatrix -> errorOpMatrix [ expresion ] .
 
@@ -5469,42 +5489,42 @@ state 350
     ;               reduce using rule 162 (opMatrix -> errorOpMatrix [ expresion ] .)
 
 
-state 351
+state 353
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign returnFor . PARFIN { rellenaBody body } returnAssign
 
-    PARFIN          shift and go to state 355
+    PARFIN          shift and go to state 357
 
 
-state 352
+state 354
 
     (121) optionalElse -> errorElse ELSE saveVerdadero . { body }
 
-    {               shift and go to state 356
+    {               shift and go to state 358
 
 
-state 353
+state 355
 
     (69) opReturns -> errorOpReturns RETURNS type saveReturnType { opVars saveQuadruple body return .
 
     }               reduce using rule 69 (opReturns -> errorOpReturns RETURNS type saveReturnType { opVars saveQuadruple body return .)
 
 
-state 354
+state 356
 
     (61) return -> errorReturn . RETURN expresion saveReturnValue ;
 
-    RETURN          shift and go to state 357
+    RETURN          shift and go to state 359
 
 
-state 355
+state 357
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN . { rellenaBody body } returnAssign
 
-    {               shift and go to state 358
+    {               shift and go to state 360
 
 
-state 356
+state 358
 
     (121) optionalElse -> errorElse ELSE saveVerdadero { . body }
     (82) body -> . errorBody cyInstruction
@@ -5520,11 +5540,11 @@ state 356
     WHILE           reduce using rule 84 (errorBody -> .)
     }               reduce using rule 172 (empty -> .)
 
-    body                           shift and go to state 359
+    body                           shift and go to state 361
     errorBody                      shift and go to state 80
     empty                          shift and go to state 81
 
-state 357
+state 359
 
     (61) return -> errorReturn RETURN . expresion saveReturnValue ;
     (126) expresion -> . sExp performAndOr cyExpresion errorExpresion
@@ -5551,14 +5571,14 @@ state 357
     FALSE           shift and go to state 135
 
     sExp                           shift and go to state 167
-    expresion                      shift and go to state 360
+    expresion                      shift and go to state 362
     term                           shift and go to state 134
     funcCall                       shift and go to state 136
     cte                            shift and go to state 137
     exp                            shift and go to state 170
     fact                           shift and go to state 140
 
-state 358
+state 360
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN { . rellenaBody body } returnAssign
     (95) rellenaBody -> .
@@ -5571,25 +5591,25 @@ state 358
     FOR             reduce using rule 95 (rellenaBody -> .)
     WHILE           reduce using rule 95 (rellenaBody -> .)
 
-    rellenaBody                    shift and go to state 361
+    rellenaBody                    shift and go to state 363
 
-state 359
+state 361
 
     (121) optionalElse -> errorElse ELSE saveVerdadero { body . }
 
-    }               shift and go to state 362
+    }               shift and go to state 364
 
 
-state 360
+state 362
 
     (61) return -> errorReturn RETURN expresion . saveReturnValue ;
     (62) saveReturnValue -> .
 
     ;               reduce using rule 62 (saveReturnValue -> .)
 
-    saveReturnValue                shift and go to state 363
+    saveReturnValue                shift and go to state 365
 
-state 361
+state 363
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN { rellenaBody . body } returnAssign
     (82) body -> . errorBody cyInstruction
@@ -5605,11 +5625,11 @@ state 361
     WHILE           reduce using rule 84 (errorBody -> .)
     }               reduce using rule 172 (empty -> .)
 
-    body                           shift and go to state 364
+    body                           shift and go to state 366
     errorBody                      shift and go to state 80
     empty                          shift and go to state 81
 
-state 362
+state 364
 
     (121) optionalElse -> errorElse ELSE saveVerdadero { body } .
 
@@ -5623,28 +5643,28 @@ state 362
     RETURN          reduce using rule 121 (optionalElse -> errorElse ELSE saveVerdadero { body } .)
 
 
-state 363
+state 365
 
     (61) return -> errorReturn RETURN expresion saveReturnValue . ;
 
-    ;               shift and go to state 365
+    ;               shift and go to state 367
 
 
-state 364
+state 366
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN { rellenaBody body . } returnAssign
 
-    }               shift and go to state 366
+    }               shift and go to state 368
 
 
-state 365
+state 367
 
     (61) return -> errorReturn RETURN expresion saveReturnValue ; .
 
     }               reduce using rule 61 (return -> errorReturn RETURN expresion saveReturnValue ; .)
 
 
-state 366
+state 368
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN { rellenaBody body } . returnAssign
     (96) returnAssign -> .
@@ -5658,9 +5678,9 @@ state 366
     }               reduce using rule 96 (returnAssign -> .)
     RETURN          reduce using rule 96 (returnAssign -> .)
 
-    returnAssign                   shift and go to state 367
+    returnAssign                   shift and go to state 369
 
-state 367
+state 369
 
     (92) forCycle -> errorForCycle FOR PARINI assign ; saveReturn expresion saveFalso ; saltoBody assign returnFor PARFIN { rellenaBody body } returnAssign .
 

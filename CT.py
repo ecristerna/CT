@@ -389,6 +389,11 @@ def p_saveProc(p):
 
 def p_errorProgram(p):
 	'''errorProgram : '''
+
+	print("---------------")
+	print("   Compiler")
+	print("---------------")
+
 	global errorMsg
 	errorMsg = "Error in rule PROGRAM"
 
@@ -518,10 +523,10 @@ def p_cyPrint(p):
 				| empty '''
 
 def p_read(p):
-	'''read : READ PARINI ID performRead cyRead PARFIN '''
+	'''read : READ PARINI ID saveVariable performRead cyRead PARFIN '''
 
 def p_cyRead(p):
-	'''cyRead : "," fix ID performRead cyRead
+	'''cyRead : "," fix ID saveVariable performRead cyRead
 				| empty '''
 
 def p_fix(p):
@@ -647,8 +652,6 @@ def p_clearVarsTable(p):
 	global contTempBool
 	global contTempString
 
-	print(vars_local)
-
 	ints = contInt - MIN_INT
 	floats = contFloat - MIN_FLOAT
 	bools = contBool - MIN_BOOL
@@ -669,6 +672,9 @@ def p_clearVarsTable(p):
 	contFloat = MIN_FLOAT
 	contBool = MIN_BOOL
 	contString = MIN_STRING
+
+	print("\nVARS " + currentProc[0])
+	print(vars_local)
 
 	vars_local = {}
 
@@ -948,6 +954,7 @@ def p_checkFunction(p):
 	semanticError = "Undeclared function " + previousToken
 	semanticErrorHalt()
 
+
 def p_opParamCall(p):
 	'''opParamCall : expresion checkParamType cyParamCall
 				| empty '''
@@ -958,6 +965,7 @@ def p_cyParamCall(p):
 	'''cyParamCall :  "," expresion checkParamType cyParamCall
 				| empty '''
 	# print("cycle parameter call")
+
 
 def p_checkParamType(p):
 	'''checkParamType : '''
@@ -984,6 +992,7 @@ def p_checkParamType(p):
 	cuadruplo = (PARAM, argumento, "", paramCounter)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
+
 
 def p_struct(p):
 	'''struct : structType "[" CTED "]" optionalMatrix '''
@@ -1186,12 +1195,13 @@ def p_printTables(p):
 	print("\nVARS GLOBAL")
 	print(vars_global)
 	print("\nDIR PROCS")
-	print(dir_procs)
+	for x in range(0, len(dir_procs)):
+		print(dir_procs[x])
 	print("\nCUADRUPLOS")
 	for x in range(0, len(cuadruplos)):
 		print(x, cuadruplos[x])
 
-	print(contQuadruples)
+	print("\n")
 
 def p_error(p):
 	global line
@@ -1285,12 +1295,14 @@ def p_saveConstantString(p):
 		if tokenToUse in avoidTokens:
 			tokenToUse = previousToken
 
+		tokenToUse = tokenToUse.replace("\"", "")
+
 		if tokenToUse in constants_table:
 			address = constants_table[tokenToUse]
 		else:
 			address = getAddressForConstant(STRING)
 
-			constants_table[tokenToUse.replace("\"", "")] = address 
+			constants_table[tokenToUse] = address
 
 		pOper.append(address)
 		pTipos.append(STRING)
@@ -1471,7 +1483,7 @@ def p_performPrint(p):
 	'''performPrint : '''
 	generateQuadruple(PRINT)
 
-def p_performeRead(p):
+def p_performRead(p):
 	'''performRead : '''
 	generateQuadruple(READ)	
 
@@ -1729,5 +1741,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input4.txt", "r");
+file = open ("input2.txt", "r");
 yacc.parse(file.read())

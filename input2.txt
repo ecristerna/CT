@@ -14,19 +14,25 @@ program  a {
 		m(qi + qj * 2, 4 % 2, 5, qb, 2.0);
 	}
 
-	func up(bool s) returns float {
+	func up() returns float {
 		return 2.0 * 5.6;
 	}
 
 	main {
-		vars float op;
+		vars float op, aLeer;
 		qb = true;
 		qb = m(qi + qj * 2, 4 % 2, 5, qb, 2.0);
 
 		print(qb);
 
-		op = up(true) + up(false);
+		op = up() + up();
 
-		print();
+		print(op);
+
+		qb = true and false or 5 < 3;
+
+		print("A -> ");
+		read(aLeer, aLeer);
+		print("A -> ", aLeer);
 	}
 }

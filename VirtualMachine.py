@@ -173,12 +173,8 @@ def lessThan(leftOp, rightOp, result):
 	rightValue = getValueForAddress(rightOp)
 
 	if leftValue < rightValue:
-		# print("LESS THAN")
-		# print(leftValue, rightValue, True)
 		saveValueToAddress(True, result)
 	else:
-		# print("LESS THAN")
-		# print(leftValue, rightValue, False)
 		saveValueToAddress(False, result)
 
 def lessThanEqual(leftOp, rightOp, result):
@@ -195,12 +191,8 @@ def greaterThan(leftOp, rightOp, result):
 	rightValue = getValueForAddress(rightOp)
 
 	if leftValue > rightValue:
-		# print("GREATER THAN")
-		# print(leftValue, rightValue, True)
 		saveValueToAddress(True, result)
 	else:
-		# print("GREATER THAN")
-		# print(leftValue, rightValue, False)
 		saveValueToAddress(False, result)
 
 def greaterThanEqual(leftOp, rightOp, result):
@@ -235,12 +227,8 @@ def andOp(leftOp, rightOp, result):
 	rightValue = getValueForAddress(rightOp)
 
 	if leftValue and rightValue:
-		# print("AND")
-		# print(leftValue, rightValue, True)
 		saveValueToAddress(True, result)
 	else:
-		# print("AND")
-		# print(leftValue, rightValue, False)
 		saveValueToAddress(False, result)
 
 def orOp(leftOp, rightOp, result):
@@ -281,7 +269,7 @@ def era(size):
 	for x in range(0, size[7]):
 		local_next_memory[7].append("")
 
-	print(local_next_memory)
+	# print(local_next_memory)
 
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
@@ -320,7 +308,7 @@ def main():
 
 	initMemoriaGlobal()
 
-	print(global_memory)
+	# print(global_memory)
 
 	while actualCode != END:
 		# print(local_actual_memory)
@@ -423,6 +411,9 @@ def main():
 			print(toPrint)
 
 		elif actualCode == READ:
+			toRead = raw_input()
+			saveValueToAddress(toRead, currentQuadruple[3])
+
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
@@ -480,6 +471,8 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == PARAM:
+			
+			
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
@@ -491,9 +484,10 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
-	print(global_memory)
-	print(local_actual_memory)
+	# print(global_memory)
+	# print(local_actual_memory)
 
+	print("END OF PROGRAM\n\n")
 
 main()
 
