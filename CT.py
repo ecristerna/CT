@@ -448,6 +448,9 @@ def p_saveID(p):
 		
 		vars_local[tokenToUse] = getAddressForType(currentType)
 
+		if declaringParameters:
+			param_types[-1] = vars_local[tokenToUse]
+
 def semanticErrorHalt():
 	global semanticError
 	global line
@@ -593,13 +596,13 @@ def p_errorParam(p):
 
 
 def p_cyParam(p):
-	'''cyParam : errorCyParam saveID saveTypeParam ";"  param
-		| empty saveID saveTypeParam'''
+	'''cyParam : errorCyParam saveTypeParam saveID ";"  param
+		| empty saveTypeParam saveID '''
 	# print("cycle param")
 
 
 def p_cyTypeParam(p):
-	'''cyTypeParam : "," saveID saveTypeParam ID cyTypeParam
+	'''cyTypeParam : "," saveTypeParam saveID ID cyTypeParam
 		| empty '''
 	# print("cycle type param")
 
@@ -985,11 +988,11 @@ def p_checkParamType(p):
 		semanticError = "Number of parameters do not match function declaration"
 		semanticErrorHalt()
 
-	if currentProc[2][paramCounter - 1] != tipo:
+	if getTypeForAddress(currentProc[2][paramCounter - 1]) != tipo:
 		semanticError = "Parameter " + `paramCounter` + " type does not match function declaration"
 		semanticErrorHalt()
 
-	cuadruplo = (PARAM, argumento, "", paramCounter)
+	cuadruplo = (PARAM, argumento, "", currentProc[2][paramCounter - 1])
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
