@@ -53,9 +53,9 @@ Rule 47    dictType -> ID
 Rule 48    errorDictType -> <empty>
 Rule 49    param -> saveType type errorParam ID cyTypeParam cyParam
 Rule 50    errorParam -> <empty>
-Rule 51    cyParam -> errorCyParam saveID saveTypeParam ; param
-Rule 52    cyParam -> empty saveID saveTypeParam
-Rule 53    cyTypeParam -> , saveID saveTypeParam ID cyTypeParam
+Rule 51    cyParam -> errorCyParam saveTypeParam saveID ; param
+Rule 52    cyParam -> empty saveTypeParam saveID
+Rule 53    cyTypeParam -> , saveTypeParam saveID ID cyTypeParam
 Rule 54    cyTypeParam -> empty
 Rule 55    saveTypeParam -> <empty>
 Rule 56    errorCyParam -> <empty>
@@ -890,7 +890,7 @@ state 45
 state 46
 
     (74) basicDeclare -> saveType type errorBasicDeclare ID . cyTypeParam saveID ; cyDeclare
-    (53) cyTypeParam -> . , saveID saveTypeParam ID cyTypeParam
+    (53) cyTypeParam -> . , saveTypeParam saveID ID cyTypeParam
     (54) cyTypeParam -> . empty
     (172) empty -> .
 
@@ -980,12 +980,12 @@ state 54
 
 state 55
 
-    (53) cyTypeParam -> , . saveID saveTypeParam ID cyTypeParam
-    (11) saveID -> .
+    (53) cyTypeParam -> , . saveTypeParam saveID ID cyTypeParam
+    (55) saveTypeParam -> .
 
-    ID              reduce using rule 11 (saveID -> .)
+    ID              reduce using rule 55 (saveTypeParam -> .)
 
-    saveID                         shift and go to state 65
+    saveTypeParam                  shift and go to state 65
 
 state 56
 
@@ -1147,12 +1147,12 @@ state 64
 
 state 65
 
-    (53) cyTypeParam -> , saveID . saveTypeParam ID cyTypeParam
-    (55) saveTypeParam -> .
+    (53) cyTypeParam -> , saveTypeParam . saveID ID cyTypeParam
+    (11) saveID -> .
 
-    ID              reduce using rule 55 (saveTypeParam -> .)
+    ID              reduce using rule 11 (saveID -> .)
 
-    saveTypeParam                  shift and go to state 75
+    saveID                         shift and go to state 75
 
 state 66
 
@@ -1268,7 +1268,7 @@ state 74
 
 state 75
 
-    (53) cyTypeParam -> , saveID saveTypeParam . ID cyTypeParam
+    (53) cyTypeParam -> , saveTypeParam saveID . ID cyTypeParam
 
     ID              shift and go to state 83
 
@@ -1429,8 +1429,8 @@ state 82
 
 state 83
 
-    (53) cyTypeParam -> , saveID saveTypeParam ID . cyTypeParam
-    (53) cyTypeParam -> . , saveID saveTypeParam ID cyTypeParam
+    (53) cyTypeParam -> , saveTypeParam saveID ID . cyTypeParam
+    (53) cyTypeParam -> . , saveTypeParam saveID ID cyTypeParam
     (54) cyTypeParam -> . empty
     (172) empty -> .
 
@@ -1705,10 +1705,10 @@ state 110
 
 state 111
 
-    (53) cyTypeParam -> , saveID saveTypeParam ID cyTypeParam .
+    (53) cyTypeParam -> , saveTypeParam saveID ID cyTypeParam .
 
-    ;               reduce using rule 53 (cyTypeParam -> , saveID saveTypeParam ID cyTypeParam .)
-    PARFIN          reduce using rule 53 (cyTypeParam -> , saveID saveTypeParam ID cyTypeParam .)
+    ;               reduce using rule 53 (cyTypeParam -> , saveTypeParam saveID ID cyTypeParam .)
+    PARFIN          reduce using rule 53 (cyTypeParam -> , saveTypeParam saveID ID cyTypeParam .)
 
 
 state 112
@@ -2788,7 +2788,7 @@ state 176
 state 177
 
     (49) param -> saveType type errorParam ID . cyTypeParam cyParam
-    (53) cyTypeParam -> . , saveID saveTypeParam ID cyTypeParam
+    (53) cyTypeParam -> . , saveTypeParam saveID ID cyTypeParam
     (54) cyTypeParam -> . empty
     (172) empty -> .
 
@@ -3284,8 +3284,8 @@ state 208
 state 209
 
     (49) param -> saveType type errorParam ID cyTypeParam . cyParam
-    (51) cyParam -> . errorCyParam saveID saveTypeParam ; param
-    (52) cyParam -> . empty saveID saveTypeParam
+    (51) cyParam -> . errorCyParam saveTypeParam saveID ; param
+    (52) cyParam -> . empty saveTypeParam saveID
     (56) errorCyParam -> .
     (172) empty -> .
 
@@ -4052,21 +4052,21 @@ state 255
 
 state 256
 
-    (52) cyParam -> empty . saveID saveTypeParam
-    (11) saveID -> .
+    (52) cyParam -> empty . saveTypeParam saveID
+    (55) saveTypeParam -> .
 
-    PARFIN          reduce using rule 11 (saveID -> .)
+    PARFIN          reduce using rule 55 (saveTypeParam -> .)
 
-    saveID                         shift and go to state 294
+    saveTypeParam                  shift and go to state 294
 
 state 257
 
-    (51) cyParam -> errorCyParam . saveID saveTypeParam ; param
-    (11) saveID -> .
+    (51) cyParam -> errorCyParam . saveTypeParam saveID ; param
+    (55) saveTypeParam -> .
 
-    ;               reduce using rule 11 (saveID -> .)
+    ;               reduce using rule 55 (saveTypeParam -> .)
 
-    saveID                         shift and go to state 295
+    saveTypeParam                  shift and go to state 295
 
 state 258
 
@@ -4742,21 +4742,21 @@ state 293
 
 state 294
 
-    (52) cyParam -> empty saveID . saveTypeParam
-    (55) saveTypeParam -> .
+    (52) cyParam -> empty saveTypeParam . saveID
+    (11) saveID -> .
 
-    PARFIN          reduce using rule 55 (saveTypeParam -> .)
+    PARFIN          reduce using rule 11 (saveID -> .)
 
-    saveTypeParam                  shift and go to state 319
+    saveID                         shift and go to state 319
 
 state 295
 
-    (51) cyParam -> errorCyParam saveID . saveTypeParam ; param
-    (55) saveTypeParam -> .
+    (51) cyParam -> errorCyParam saveTypeParam . saveID ; param
+    (11) saveID -> .
 
-    ;               reduce using rule 55 (saveTypeParam -> .)
+    ;               reduce using rule 11 (saveID -> .)
 
-    saveTypeParam                  shift and go to state 320
+    saveID                         shift and go to state 320
 
 state 296
 
@@ -5069,14 +5069,14 @@ state 318
 
 state 319
 
-    (52) cyParam -> empty saveID saveTypeParam .
+    (52) cyParam -> empty saveTypeParam saveID .
 
-    PARFIN          reduce using rule 52 (cyParam -> empty saveID saveTypeParam .)
+    PARFIN          reduce using rule 52 (cyParam -> empty saveTypeParam saveID .)
 
 
 state 320
 
-    (51) cyParam -> errorCyParam saveID saveTypeParam . ; param
+    (51) cyParam -> errorCyParam saveTypeParam saveID . ; param
 
     ;               shift and go to state 333
 
@@ -5232,7 +5232,7 @@ state 332
 
 state 333
 
-    (51) cyParam -> errorCyParam saveID saveTypeParam ; . param
+    (51) cyParam -> errorCyParam saveTypeParam saveID ; . param
     (49) param -> . saveType type errorParam ID cyTypeParam cyParam
     (3) saveType -> .
 
@@ -5390,9 +5390,9 @@ state 343
 
 state 344
 
-    (51) cyParam -> errorCyParam saveID saveTypeParam ; param .
+    (51) cyParam -> errorCyParam saveTypeParam saveID ; param .
 
-    PARFIN          reduce using rule 51 (cyParam -> errorCyParam saveID saveTypeParam ; param .)
+    PARFIN          reduce using rule 51 (cyParam -> errorCyParam saveTypeParam saveID ; param .)
 
 
 state 345

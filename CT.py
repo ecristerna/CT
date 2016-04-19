@@ -448,6 +448,9 @@ def p_saveID(p):
 		
 		vars_local[tokenToUse] = getAddressForType(currentType)
 
+		if declaringParameters:
+			param_types[-1] = vars_local[tokenToUse]
+
 def semanticErrorHalt():
 	global semanticError
 	global line
@@ -593,13 +596,13 @@ def p_errorParam(p):
 
 
 def p_cyParam(p):
-	'''cyParam : errorCyParam saveID saveTypeParam ";"  param
-		| empty saveID saveTypeParam'''
+	'''cyParam : errorCyParam saveTypeParam saveID ";"  param
+		| empty saveTypeParam saveID '''
 	# print("cycle param")
 
 
 def p_cyTypeParam(p):
-	'''cyTypeParam : "," saveID saveTypeParam ID cyTypeParam
+	'''cyTypeParam : "," saveTypeParam saveID ID cyTypeParam
 		| empty '''
 	# print("cycle type param")
 
@@ -699,7 +702,11 @@ def p_saveReturnValue(p):
 		semanticError = "Return expression does not match function type"
 		semanticErrorHalt()
 
-	cuadruplo = (FUNCRETURN, value, "", vars_global[dir_procs[len(dir_procs) - 1][0]])
+
+	address = vars_global[dir_procs[len(dir_procs) - 1][0]]
+	typeAddress = getTypeForAddress(address)
+
+	cuadruplo = (FUNCRETURN, value, "", address)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
@@ -933,7 +940,19 @@ def p_checkNumParams(p):
 	cuadruplo = (GOSUB, currentProc[0], "", currentProc[5])
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
-	paramCounter = 0
+	paramCounter = 0;
+
+	address = vars_global[currentProc[0]]
+	typeAddress = getTypeForAddress(address)
+	temp = getTempForType(typeAddress)
+
+	cuadruplo = (ASSIGN, address, "", temp)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(temp)
+	pTipos.append(typeAddress)
+
 
 def p_checkFunction(p):
 	'''checkFunction : '''
@@ -943,10 +962,6 @@ def p_checkFunction(p):
 		if proc[0] == previousToken:
 			currentProc = proc
 			generateQuadruple(ERA)
-
-			address = vars_global[previousToken]
-			pOper.append(address)
-			pTipos.append(getTypeForAddress(address))
 
 			return
 
@@ -985,11 +1000,11 @@ def p_checkParamType(p):
 		semanticError = "Number of parameters do not match function declaration"
 		semanticErrorHalt()
 
-	if currentProc[2][paramCounter - 1] != tipo:
+	if getTypeForAddress(currentProc[2][paramCounter - 1]) != tipo:
 		semanticError = "Parameter " + `paramCounter` + " type does not match function declaration"
 		semanticErrorHalt()
 
-	cuadruplo = (PARAM, argumento, "", paramCounter)
+	cuadruplo = (PARAM, argumento, "", currentProc[2][paramCounter - 1])
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
@@ -1741,5 +1756,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input2.txt", "r");
+file = open ("inputFibo.txt", "r");
 yacc.parse(file.read())

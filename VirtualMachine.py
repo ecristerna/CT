@@ -129,6 +129,15 @@ def saveValueToAddress(value, address):
 	elif address >= compiler.MIN_TEMP_STRING and address <= compiler.MAX_TEMP_STRING:
 		local_actual_memory[7][address - compiler.MIN_TEMP_STRING] = value
 
+def saveValueToNewMemory(value, address):
+	if address >= compiler.MIN_INT and address <= compiler.MAX_INT:
+		local_next_memory[0][address - compiler.MIN_INT] = value
+	elif address >= compiler.MIN_FLOAT and address <= compiler.MAX_FLOAT:
+		local_next_memory[1][address - compiler.MIN_FLOAT] = value
+	elif address >= compiler.MIN_BOOL and address <= compiler.MAX_BOOL:
+		local_next_memory[2][address - compiler.MIN_BOOL] = value
+	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
+		local_next_memory[3][address - compiler.MIN_STRING] = value
 # ---------------------------------------
 # OPERACIONES
 # ---------------------------------------
@@ -471,7 +480,7 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == PARAM:
-			
+			saveValueToNewMemory(getValueForAddress(currentQuadruple[1]), currentQuadruple[3])
 			
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
