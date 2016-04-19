@@ -3,7 +3,14 @@ program  a {
 		float d;
 
 	main {
-		vars struct int b[10];
+		vars struct int b[10][10];
 			int p;
+			float x;
+
+
+		p = b[9][2];
+		
+		print(p);
+		print(d);
 	}
 }

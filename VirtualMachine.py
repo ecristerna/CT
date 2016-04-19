@@ -1,4 +1,5 @@
 import CT as compiler
+import sys
 
 # ---------------------------------------
 # VARIABLES GLOBALES
@@ -40,6 +41,7 @@ GOSUB = 300
 RETORNO = 310
 PARAM = 320
 FUNCRETURN = 330
+VER = 340
 END = 400
 
 # ---------------------------------------
@@ -63,6 +65,8 @@ def getValueForAddress(address):
 	if address >= compiler.MIN_INT_GLOBAL and address <= compiler.MAX_INT_GLOBAL:
 		return global_memory[0][address - compiler.MIN_INT_GLOBAL]
 	elif address >= compiler.MIN_FLOAT_GLOBAL and address <= compiler.MAX_FLOAT_GLOBAL:
+		print(address - compiler.MIN_BOOL_GLOBAL)
+		print(global_memory)
 		return global_memory[1][address - compiler.MIN_FLOAT_GLOBAL]
 	elif address >= compiler.MIN_BOOL_GLOBAL and address <= compiler.MAX_BOOL_GLOBAL:
 		return global_memory[2][address - compiler.MIN_BOOL_GLOBAL]
@@ -138,13 +142,25 @@ def saveValueToNewMemory(value, address):
 		local_next_memory[2][address - compiler.MIN_BOOL] = value
 	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
 		local_next_memory[3][address - compiler.MIN_STRING] = value
+
+def semanticErrorHalt():
+	print("Array index out of range")
+	sys.exit()
+
 # ---------------------------------------
 # OPERACIONES
 # ---------------------------------------
 
 def add(leftOp, rightOp, result):
-	leftValue = getValueForAddress(leftOp)
-	rightValue = getValueForAddress(rightOp)
+	if isinstance(leftOp, list):
+		leftValue = leftOp[0]
+	else:
+		leftValue = getValueForAddress(leftOp)
+
+	if isinstance(rightOp, list):
+		rightValue = rightOp[0]
+	else:
+		rightValue = getValueForAddress(rightOp)
 
 	saveValueToAddress(leftValue + rightValue, result)
 
@@ -173,7 +189,11 @@ def residue(leftOp, rightOp, result):
 	saveValueToAddress(leftValue % rightValue, result)
 
 def assign(rightOp, result):
-	value = getValueForAddress(rightOp)
+	if isinstance(rightOp, list):
+		address = getValueForAddress(rightOp[0])
+		value = getValueForAddress(address)
+	else:
+		value = getValueForAddress(rightOp)
 
 	saveValueToAddress(value, result)
 
@@ -317,7 +337,7 @@ def main():
 
 	initMemoriaGlobal()
 
-	# print(global_memory)
+	print(global_memory)
 
 	while actualCode != END:
 		# print(local_actual_memory)
@@ -492,6 +512,16 @@ def main():
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
+		elif actualCode == VER:
+			value = getValueForAddress(currentQuadruple[3])
+
+			if value < currentQuadruple[1] or value > currentQuadruple[2]:
+				semanticErrorHalt()
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
 
 	# print(global_memory)
 	# print(local_actual_memory)
@@ -499,13 +529,3 @@ def main():
 	print("END OF PROGRAM\n\n")
 
 main()
-
-
-
-
-
-
-
-
-
-

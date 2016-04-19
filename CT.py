@@ -132,6 +132,7 @@ GOSUB = 300
 RETORNO = 310
 PARAM = 320
 FUNCRETURN = 330
+VER = 340
 
 
 # Semantic Cube
@@ -164,6 +165,7 @@ pilaO = []
 pOper = []
 pTipos = []
 pSaltos = []
+pDimensionadas = []
 
 # Tokens
 
@@ -1084,9 +1086,9 @@ def p_secondLap(p):
 			vars_local[currentDimensionedVariable][1][3][2] = 0
 	else:
 		if currentScope == 'global':
-			vars_global[currentDimensionedVariable][1][3] = 0
+			vars_global[currentDimensionedVariable][1][2] = 0
 		else:
-			vars_local[currentDimensionedVariable][1][3] = 0
+			vars_local[currentDimensionedVariable][1][2] = 0
 
 	currentDimensionedVariable = ''
 	varR = 1
@@ -1163,13 +1165,13 @@ def p_saveSecondDimensionSize(p):
 		vars_global[currentDimensionedVariable][1][3] = dimensionTable
 		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
 	else :
-		address = vars_global[currentDimensionedVariable]
+		address = vars_local[currentDimensionedVariable]
 		subDimensionTable = address[1]
 		dimensionTable = subDimensionTable[3]
 		dimensionTable.append(currentToken - 1)
 		dimensionTable.append('')
 		dimensionTable.append(None)
-		vars_global[currentDimensionedVariable][1][3] = dimensionTable
+		vars_local[currentDimensionedVariable][1][3] = dimensionTable
 		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
 
 
@@ -1311,11 +1313,22 @@ def p_errorFact(p):
 
 
 def p_opAccess(p):
-	'''opAccess : opStruct
+	'''opAccess : resaveID opStruct
 				| opDictionary
 				| empty '''
 	# print("optional access")
 
+def p_resaveID(p):
+	'''resaveID : '''
+	pTipos.pop()
+	pOper.pop()
+
+	if currentToken in vars_global:
+		pOper.append(vars_global[currentToken][0])
+		# pTipos.append(getTypeForAddress(vars_global[currentToken][0]))
+	else:
+		pOper.append(vars_local[currentToken][0])
+		pTipos.append(getTypeForAddress(vars_local[currentToken][0]))
 
 def p_errorOpAccess(p):
 	'''errorOpAccess : '''
@@ -1323,8 +1336,114 @@ def p_errorOpAccess(p):
 	errorMsg = "Error in rule ERROROPACCESS"
 
 def p_opStruct(p):
-	'''opStruct : errorOpStruct "[" expresion "]" opMatrix '''
+	'''opStruct : errorOpStruct saveToDimensionStacks "[" expresion verifyIndex "]" opMatrix accessStruct '''
 	# print("optional struct")
+
+def p_accessStruct(p):
+	'''accessStruct : '''
+	global contQuadruples
+
+	aux1 = pOper.pop()
+	temp = getTempForType(pTipos.pop())
+	cuadruplo = ()
+	toSave = ''
+	varType = 0
+
+	if currentDimensionedVariable in vars_global:
+		toSave = [vars_global[currentDimensionedVariable][0]]
+		varType = getTypeForAddress(vars_global[currentDimensionedVariable][0])
+	else:
+		toSave = [vars_local[currentDimensionedVariable][0]]
+		varType = getTypeForAddress(vars_local[currentDimensionedVariable][0])
+
+	cuadruplo = (ADD, aux1, toSave, temp)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	toSave = [temp]
+
+	pOper.append(toSave)
+	pTipos.append(varType)
+	pilaO.pop()
+
+def p_verifyIndex(p):
+	'''verifyIndex : '''
+	global currentDimensionedVariable
+	global contQuadruples
+
+	address = pOper.pop()
+	dimensionTable = []
+
+	if currentDimensionedVariable in vars_global:
+		dimensionTable = vars_global[currentDimensionedVariable][1]
+		limI = vars_global[currentDimensionedVariable][1][0]
+		limS = vars_global[currentDimensionedVariable][1][1]
+
+		cuadruplo = (VER, limI, limS, address)
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		pOper.append(address)
+
+		if vars_global[currentDimensionedVariable][1][3] != None:
+			aux = pOper.pop()
+			temp = getTempForType(pTipos.pop())
+
+			cuadruplo = (MULTIPLY, aux, dimensionTable[2], temp)
+			cuadruplos.append(cuadruplo)
+			contQuadruples += 1
+
+			pOper.append(temp)
+			pTipos.append(getTypeForAddress(temp))
+
+	elif currentDimensionedVariable in vars_local:
+		dimensionTable = vars_local[currentDimensionedVariable][1]
+		limI = vars_local[currentDimensionedVariable][1][0]
+		limS = vars_local[currentDimensionedVariable][1][1]
+
+		cuadruplo = (VER, limI, limS, address)
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		pOper.append(address)
+
+		if vars_local[currentDimensionedVariable][1][3] != None:
+			aux = pOper.pop()
+			temp = getTempForType(pTipos.pop())
+			cuadruplo = (MULTIPLY, aux, dimensionTable[2], temp)
+			cuadruplos.append(cuadruplo)
+			contQuadruples += 1
+
+			pOper.append(temp)
+			pTipos.append(getTypeForAddress(temp))
+
+def p_saveToDimensionStacks(p):
+	'''saveToDimensionStacks : '''
+	global semanticError
+	global dim
+	global currentDimensionedVariable
+
+	varID = pOper.pop()
+	currentDimensionedVariable = currentToken
+
+	if varID in vars_global:
+		if (not isinstance(vars_global[vardID], list)):
+			semanticError = "Variable " + `varID` + " is not a struct"
+			semanticErrorHalt()
+		
+		dim = 1
+		pDimensionadas.append(varID)
+		pDimensionadas.append(dim)
+	elif varID in vars_global:
+		if (not isinstance(vars_local[vardID], list)):
+			semanticError = "Variable " + `varID` + " is not a struct"
+			semanticErrorHalt()
+		
+		dim = 1
+		pDimensionadas.append(varID)
+		pDimensionadas.append(dim)
+
+	pilaO.append(FONDO_FALSO)
 
 
 def p_errorOpStruct(p):
@@ -1334,9 +1453,87 @@ def p_errorOpStruct(p):
 
 
 def p_opMatrix(p):
-	'''opMatrix : errorOpMatrix "[" expresion "]"
+	'''opMatrix : errorOpMatrix "[" expresion verifySecondIndex "]"
 				| empty '''
 	# print("optional matrix")
+
+def p_verifySecondIndex(p):
+	'''verifySecondIndex : '''
+	global currentDimensionedVariable
+	global contQuadruples
+
+	address = pOper.pop()
+	dimensionTable = []
+
+	if currentDimensionedVariable in vars_global:
+		dimensionTable = vars_global[currentDimensionedVariable][1][3]
+		limI = vars_global[currentDimensionedVariable][1][0]
+		limS = vars_global[currentDimensionedVariable][1][1]
+
+		cuadruplo = (VER, limI, limS, address)
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		pOper.append(address)
+
+		if vars_global[currentDimensionedVariable][1][3] != None:
+			aux = pOper.pop()
+			temp = getTempForType(pTipos.pop())
+
+			cuadruplo = (MULTIPLY, aux, dimensionTable[2], temp)
+			cuadruplos.append(cuadruplo)
+			contQuadruples += 1
+
+			pOper.append(temp)
+			pTipos.append(getTypeForAddress(temp))
+
+		if dim > 1:
+			aux2 = pOper.pop()
+			aux1 = pOper.pop()
+			temp = getTempForType(pTipos.pop())
+			pTipos.pop()
+
+			cuadruplo = (ADD, aux1, aux2, temp)
+			cuadruplos.append(cuadruplo)
+			contQuadruples += 1
+
+			pOper.append(temp)
+			pTipos.append(getTypeForAddress(temp))
+
+	elif currentDimensionedVariable in vars_local:
+		dimensionTable = vars_local[currentDimensionedVariable][1][3]
+		limI = vars_local[currentDimensionedVariable][1][0]
+		limS = vars_local[currentDimensionedVariable][1][1]
+
+		cuadruplo = (VER, limI, limS, address)
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		pOper.append(address)
+
+		if vars_local[currentDimensionedVariable][1][3] != None:
+			aux = pOper.pop()
+			temp = getTempForType(pTipos.pop())
+
+			cuadruplo = (MULTIPLY, aux, dimensionTable[2], temp)
+			cuadruplos.append(cuadruplo)
+			contQuadruples += 1
+
+			pOper.append(temp)
+			pTipos.append(getTypeForAddress(temp))
+
+		if dim > 1:
+			aux2 = pOper.pop()
+			aux1 = pOper.pop()
+			temp = getTempForType(pTipos.pop())
+			pTipos.pop()
+
+			cuadruplo = (ADD, aux1, aux2, temp)
+			cuadruplos.append(cuadruplo)
+			contQuadruples += 1
+
+			pOper.append(temp)
+			pTipos.append(getTypeForAddress(temp))
 
 
 def p_errorOpMatrix(p):
@@ -1598,6 +1795,9 @@ def p_performMulDiv(p):
 
 def p_performAddSub(p):
 	'''performAddSub : '''
+
+	print(pOper)
+	print(pTipos)
 
 	if not pilaO:
 		return
