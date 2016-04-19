@@ -702,7 +702,11 @@ def p_saveReturnValue(p):
 		semanticError = "Return expression does not match function type"
 		semanticErrorHalt()
 
-	cuadruplo = (FUNCRETURN, value, "", vars_global[dir_procs[len(dir_procs) - 1][0]])
+
+	address = vars_global[dir_procs[len(dir_procs) - 1][0]]
+	typeAddress = getTypeForAddress(address)
+
+	cuadruplo = (FUNCRETURN, value, "", address)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
@@ -936,7 +940,19 @@ def p_checkNumParams(p):
 	cuadruplo = (GOSUB, currentProc[0], "", currentProc[5])
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
-	paramCounter = 0
+	paramCounter = 0;
+
+	address = vars_global[currentProc[0]]
+	typeAddress = getTypeForAddress(address)
+	temp = getTempForType(typeAddress)
+
+	cuadruplo = (ASSIGN, address, "", temp)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(temp)
+	pTipos.append(typeAddress)
+
 
 def p_checkFunction(p):
 	'''checkFunction : '''
@@ -946,10 +962,6 @@ def p_checkFunction(p):
 		if proc[0] == previousToken:
 			currentProc = proc
 			generateQuadruple(ERA)
-
-			address = vars_global[previousToken]
-			pOper.append(address)
-			pTipos.append(getTypeForAddress(address))
 
 			return
 
@@ -1744,5 +1756,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input2.txt", "r");
+file = open ("inputFibo.txt", "r");
 yacc.parse(file.read())
