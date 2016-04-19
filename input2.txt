@@ -2,8 +2,8 @@ program  a {
 	vars int i, qi, qj;
 		bool qb;
 	
-	func m(int z, y, d; bool l; float p) returns bool {
-		return l;
+	func m(int z, y, d; bool l; float p) returns int {
+		return z * y;
 	}
 
 	func q() {
@@ -19,11 +19,13 @@ program  a {
 	}
 
 	main {
-		vars float op, aLeer;
-		qb = true;
-		qb = m(qi + qj * 2, 4 % 2, 5, qb, 2.0);
+		vars int res;float op, aLeer;
+		qb = false;
+		qi = 10;
+		qj = qi * 9;
+		res = m(qi + qj * 2, 4 / 2, 5, qb, 2.0);
 
-		print(qb);
+		print(res);
 
 		op = up() + up();
 
