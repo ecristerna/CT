@@ -1,0 +1,5 @@
+program  a {
+	main {
+		vars struct int b[1];
+	}
+}

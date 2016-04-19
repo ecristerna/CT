@@ -479,7 +479,7 @@ def p_errorType(p):
 
 
 def p_main(p):
-	'''main : errorMain MAIN saveMain "{" opVars generateInitialQuadruple body "}" clearVarsTable'''
+	'''main : errorMain MAIN saveCurrentTemps saveMain "{" opVars generateInitialQuadruple body "}" clearVarsTable'''
 	# print("main")
 
 def p_generateInitialQuadruple(p):
@@ -778,7 +778,7 @@ def p_errorBasicDeclare(p):
 
 
 def p_structDeclare(p):
-	'''structDeclare : errorStructDeclare STRUCT ID struct ";" cyDeclare '''
+	'''structDeclare : errorStructDeclare STRUCT struct ";" cyDeclare '''
 	# print("struct declare")
 
 
@@ -1010,12 +1010,12 @@ def p_checkParamType(p):
 
 
 def p_struct(p):
-	'''struct : structType "[" CTED "]" optionalMatrix '''
+	'''struct : structType ID saveID "[" CTED "]" optionalMatrix '''
 	# print("struct")
 
 
 def p_structType(p):
-	'''structType : type
+	'''structType : saveType type
 				| DICT dict '''
 	# print("struct type")
 
@@ -1756,5 +1756,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("inputFibo.txt", "r");
+file = open ("input5.txt", "r");
 yacc.parse(file.read())
