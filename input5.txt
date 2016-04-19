@@ -1,5 +1,9 @@
 program  a {
+	vars struct float c[2][2];
+		float d;
+
 	main {
-		vars struct int b[1];
+		vars struct int b[10];
+			int p;
 	}
 }

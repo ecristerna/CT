@@ -26,6 +26,9 @@ semanticError = ""
 declaringParameters = False
 paramCounter = 0
 currentProc = []
+dim = 1
+varR = 1
+currentDimensionedVariable = ''
 
 # Addresses
 
@@ -1010,9 +1013,127 @@ def p_checkParamType(p):
 
 
 def p_struct(p):
-	'''struct : structType ID saveID "[" CTED "]" optionalMatrix '''
+	'''struct : structType ID saveID createDimension "[" CTED saveDimensionSize "]" optionalMatrix secondLap '''
 	# print("struct")
 
+def p_secondLap(p):
+	'''secondLap : '''
+	global dim
+	global varR
+	global currentDimensionedVariable
+	global contInt
+	global contFloat
+	global contBool
+	global contString
+	global contIntGlobal
+	global contFloatGlobal
+	global contBoolGlobal
+	global contStringGlobal
+
+	currentDim = 1
+	suma = 0
+	aux = varR
+	typeVar = 0
+
+	if currentScope == 'global':
+		typeVar = getTypeForAddress(vars_global[currentDimensionedVariable][0])
+		dimensionTable = vars_global[currentDimensionedVariable][1]
+		m = aux / (dimensionTable[1] - dimensionTable[0] + 1)
+		aux = m
+		dimensionTable[2] = m
+		vars_global[currentDimensionedVariable][1] = dimensionTable
+
+		if typeVar == INT:
+			contIntGlobal += varR - 1
+		elif typeVar == FLOAT:
+			contFloatGlobal += varR - 1
+		elif typeVar == BOOL:
+			contBoolGlobal += varR - 1
+		elif typeVar == STRING:
+			contStringGlobal += varR - 1
+
+	else:
+		typeVar = getTypeForAddress(vars_local[currentDimensionedVariable][0])
+		dimensionTable = vars_local[currentDimensionedVariable][1]
+		m = aux / (dimensionTable[1] - dimensionTable[0] + 1)
+		aux = m
+		dimensionTable[2] = m
+		vars_local[currentDimensionedVariable][1] = dimensionTable
+
+		if typeVar == INT:
+			contInt += varR - 1
+		elif typeVar == FLOAT:
+			contFloat += varR - 1
+		elif typeVar == BOOL:
+			contBool += varR - 1
+		elif typeVar == STRING:
+			contString += varR - 1
+
+	if dim > 1:
+		if currentScope == 'global':
+			dimensionTable = vars_global[currentDimensionedVariable][1][3]
+			m = aux / (dimensionTable[1] - dimensionTable[0] + 1)
+			dimensionTable[2] = m
+			vars_global[currentDimensionedVariable][1][3] = dimensionTable
+			vars_global[currentDimensionedVariable][1][3][2] = 0
+		else:
+			dimensionTable = vars_local[currentDimensionedVariable][1][3]
+			m = aux / (dimensionTable[1] - dimensionTable[0] + 1)
+			dimensionTable[2] = m
+			vars_local[currentDimensionedVariable][1][3] = dimensionTable
+			vars_local[currentDimensionedVariable][1][3][2] = 0
+	else:
+		if currentScope == 'global':
+			vars_global[currentDimensionedVariable][1][3] = 0
+		else:
+			vars_local[currentDimensionedVariable][1][3] = 0
+
+	currentDimensionedVariable = ''
+	varR = 1
+	dim = 1
+
+def p_saveDimensionSize(p):
+	'''saveDimensionSize : '''
+	global vars_global
+	global vars_local
+	global currentDimensionedVariable
+	global varR
+
+	if currentScope == 'global':
+		address = vars_global[currentDimensionedVariable]
+		dimensionTable = address[1]
+		dimensionTable.append(currentToken - 1)
+		dimensionTable.append('')
+		dimensionTable.append(None)
+		vars_global[currentDimensionedVariable][1] = dimensionTable
+		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
+	else :
+		address = vars_local[currentDimensionedVariable]
+		dimensionTable = address[1]
+		dimensionTable.append(currentToken - 1)
+		dimensionTable.append('')
+		dimensionTable.append(None)
+		vars_local[currentDimensionedVariable][1] = dimensionTable
+		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
+
+def p_createDimension(p):
+	'''createDimension : '''
+	global vars_global
+	global vars_local
+	global currentDimensionedVariable
+
+	currentDimensionedVariable = currentToken
+
+	if currentScope == 'global':
+		address = vars_global[currentDimensionedVariable]
+		dimensionTable = [address]
+		dimensionTable.append([0])
+		vars_global[currentDimensionedVariable] = dimensionTable
+	else :
+		address = vars_local[currentDimensionedVariable]
+		dimensionTable = [address]
+		dimensionTable.append([0])
+		vars_local[currentDimensionedVariable] = dimensionTable
 
 def p_structType(p):
 	'''structType : saveType type
@@ -1021,11 +1142,55 @@ def p_structType(p):
 
 
 def p_optionalMatrix(p):
-	'''optionalMatrix : "[" CTED "]"
+	'''optionalMatrix : createSecondDimension "[" CTED saveSecondDimensionSize "]"
 					| empty '''
 	# print("matrix")
 
+def p_saveSecondDimensionSize(p):
+	'''saveSecondDimensionSize : '''
+	global vars_global
+	global vars_local
+	global currentDimensionedVariable
+	global varR
 
+	if currentScope == 'global':
+		address = vars_global[currentDimensionedVariable]
+		subDimensionTable = address[1]
+		dimensionTable = subDimensionTable[3]
+		dimensionTable.append(currentToken - 1)
+		dimensionTable.append('')
+		dimensionTable.append(None)
+		vars_global[currentDimensionedVariable][1][3] = dimensionTable
+		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
+	else :
+		address = vars_global[currentDimensionedVariable]
+		subDimensionTable = address[1]
+		dimensionTable = subDimensionTable[3]
+		dimensionTable.append(currentToken - 1)
+		dimensionTable.append('')
+		dimensionTable.append(None)
+		vars_global[currentDimensionedVariable][1][3] = dimensionTable
+		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
+
+
+def p_createSecondDimension(p):
+	'''createSecondDimension : '''
+	global dim
+	global currentDimensionedVariable
+
+	dim += 1
+
+	if currentScope == 'global':
+		address = vars_global[currentDimensionedVariable]
+		dimensionTable =  address
+		dimensionTable[1][3] = [0]
+		vars_global[currentDimensionedVariable] = dimensionTable
+	else :
+		address = vars_local[currentDimensionedVariable]
+		dimensionTable = address
+		dimensionTable[1][3] = [0]
+		vars_local[currentDimensionedVariable] = dimensionTable
+	
 def p_condition(p):
 	'''condition : errorCondition IF PARINI expresion PARFIN saveFalso "{" body "}" optionalElse rellenaFalso '''
 	# print("condition")
