@@ -360,7 +360,12 @@ def p_program(p):
 def p_changeCurrentScope(p):
 	'''changeCurrentScope : '''
 	global currentScope
+	global dir_procs
 	currentScope = "local"
+
+	dir_procs[-1].append(0)
+	dir_procs[-1].append([contIntGlobal - MIN_INT_GLOBAL, contFloatGlobal - MIN_FLOAT_GLOBAL, contBoolGlobal - MIN_BOOL_GLOBAL, contStringGlobal - MIN_STRING_GLOBAL, 0, 0, 0, 0])
+
 
 def p_saveType(p):
 	'''saveType : '''
@@ -1389,7 +1394,7 @@ def p_verifyIndex(p):
 			aux = pOper.pop()
 			temp = getTempForType(pTipos.pop())
 
-			cuadruplo = (MULTIPLY, aux, dimensionTable[2], temp)
+			cuadruplo = (MULTIPLY, aux, [dimensionTable[2]], temp)
 			cuadruplos.append(cuadruplo)
 			contQuadruples += 1
 
@@ -1410,7 +1415,7 @@ def p_verifyIndex(p):
 		if vars_local[currentDimensionedVariable][1][3] != None:
 			aux = pOper.pop()
 			temp = getTempForType(pTipos.pop())
-			cuadruplo = (MULTIPLY, aux, dimensionTable[2], temp)
+			cuadruplo = (MULTIPLY, aux, [dimensionTable[2]], temp)
 			cuadruplos.append(cuadruplo)
 			contQuadruples += 1
 
@@ -1476,7 +1481,7 @@ def p_verifySecondIndex(p):
 
 		pOper.append(address)
 
-		if vars_global[currentDimensionedVariable][1][3] != None:
+		if vars_global[currentDimensionedVariable][1][3][3] != None:
 			aux = pOper.pop()
 			temp = getTempForType(pTipos.pop())
 
@@ -1511,7 +1516,7 @@ def p_verifySecondIndex(p):
 
 		pOper.append(address)
 
-		if vars_local[currentDimensionedVariable][1][3] != None:
+		if vars_local[currentDimensionedVariable][1][3][3] != None:
 			aux = pOper.pop()
 			temp = getTempForType(pTipos.pop())
 
@@ -2121,5 +2126,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input5.txt", "r");
+file = open ("inputFibo.txt", "r");
 yacc.parse(file.read())

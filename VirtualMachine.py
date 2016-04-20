@@ -171,8 +171,15 @@ def substract(leftOp, rightOp, result):
 	saveValueToAddress(leftValue - rightValue, result)
 
 def multiply(leftOp, rightOp, result):
-	leftValue = getValueForAddress(leftOp)
-	rightValue = getValueForAddress(rightOp)
+	if isinstance(leftOp, list):
+		leftValue = leftOp[0]
+	else:
+		leftValue = getValueForAddress(leftOp)
+
+	if isinstance(rightOp, list):
+		rightValue = rightOp[0]
+	else:
+		rightValue = getValueForAddress(rightOp)
 	
 	saveValueToAddress(leftValue * rightValue, result)
 
@@ -300,22 +307,37 @@ def era(size):
 
 	# print(local_next_memory)
 
+def initMemoriaGlobal():
+	global global_memory
+
+	for proc in compiler.dir_procs:
+		if proc[3] == 10:
+			global_memory[0].append(0)
+		if proc[3] == 20:
+			global_memory[1].append(0)
+		if proc[3] == 30:
+			global_memory[2].append(0)
+		if proc[3] == 40:
+			global_memory[3].append(0)
+	
+	size = compiler.dir_procs[0][6]
+	
+	for x in range(0, size[0]):
+		global_memory[0].append(0)
+
+	for x in range(0, size[1]):
+		global_memory[1].append(0)
+
+	for x in range(0, size[2]):
+		global_memory[2].append(False)
+
+	for x in range(0, size[3]):
+		global_memory[3].append("")
+
+
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
 # ---------------------------------------
-
-def initMemoriaGlobal():
-	for variable in compiler.vars_global:
-		varType = compiler.getTypeForAddress(compiler.vars_global[variable])
-
-		if varType == INT:
-			global_memory[0].append(0)
-		elif varType == FLOAT:
-			global_memory[1].append(0)
-		elif varType == BOOL:
-			global_memory[2].append(False)
-		elif varType == STRING:
-			global_memory[3].append("")
 
 def main():
 	global instructionPointer
@@ -524,7 +546,7 @@ def main():
 
 
 	# print(global_memory)
-	# print(local_actual_memory)
+	print(local_actual_memory)
 
 	print("END OF PROGRAM\n\n")
 

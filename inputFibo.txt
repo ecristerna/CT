@@ -28,9 +28,9 @@ program a {
 	main {
 		vars int i;
 		k = 0;
-		i = 6;
+		i = 3;
 
 		print("Fibo: ", fibo(i));
-		print("Fact: ", factorial(i));
+		print("Fact: ", factorial(factorial(i)));
 	}
 }

@@ -1,15 +1,15 @@
 program  a {
-	vars struct float c[2][2];
-		float d;
+	vars struct int arr[6];
+		int d;
 
 	main {
-		vars struct int b[10][10];
-			int p;
-			float x;
+		vars struct int b[2][2];
+			int p, x;
 
+		x = 5;
 
-		p = b[9][2];
-		
+		p = b[1][1];
+		d = arr[4];
 		print(p);
 		print(d);
 	}
