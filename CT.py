@@ -952,16 +952,17 @@ def p_checkNumParams(p):
 	contQuadruples += 1
 	paramCounter = 0;
 
-	address = vars_global[currentProc[0]]
-	typeAddress = getTypeForAddress(address)
-	temp = getTempForType(typeAddress)
+	if currentProc[3] != None:
+		address = vars_global[currentProc[0]]
+		typeAddress = getTypeForAddress(address)
+		temp = getTempForType(typeAddress)
 
-	cuadruplo = (ASSIGN, address, "", temp)
-	cuadruplos.append(cuadruplo)
-	contQuadruples += 1
+		cuadruplo = (ASSIGN, address, "", temp)
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
 
-	pOper.append(temp)
-	pTipos.append(typeAddress)
+		pOper.append(temp)
+		pTipos.append(typeAddress)
 
 
 def p_checkFunction(p):
@@ -2126,5 +2127,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input5.txt", "r");
+file = open ("inputFibo.txt", "r");
 yacc.parse(file.read())

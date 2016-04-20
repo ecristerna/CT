@@ -25,6 +25,19 @@ program a {
 		return val;
 	}
 
+	func bubbleSort() {
+		vars struct int array[10];
+			int n, c, d, swapm, x, elem;
+
+		n = 10;
+
+		for (x = 0; x < n; x = x + 1) {
+			read(elem);
+			array[(x)] = elem;
+			print(array[(x)]);
+		}
+	}
+
 	main {
 		vars int i;
 		k = 0;
@@ -32,5 +45,6 @@ program a {
 
 		print("Fibo: ", fibo(i));
 		print("Fact: ", factorial(factorial(i)));
+		bubbleSort();
 	}
 }
