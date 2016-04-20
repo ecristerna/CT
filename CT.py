@@ -914,12 +914,12 @@ def p_errorAssign(p):
 def p_assignOptions(p):
 	'''assignOptions : init
 					| initDict
-					| "[" expresion "]" assignMatrix init '''
+					| resaveID saveToDimensionStacks "[" expresion verifyIndex "]" assignMatrix accessStruct init '''
 	# print("assignOptions")
 
 
 def p_assignMatrix(p):
-	'''assignMatrix : "[" expresion "]" errorAssignMatrix
+	'''assignMatrix : "[" expresion verifySecondIndex "]" errorAssignMatrix
 					| empty '''
 	# print("assignMatrix")
 
@@ -1340,7 +1340,7 @@ def p_errorOpAccess(p):
 	global errorMsg
 	errorMsg = "Error in rule ERROROPACCESS"
 
-def p_opStruct(p):
+def p_opStruct(p):          
 	'''opStruct : errorOpStruct saveToDimensionStacks "[" expresion verifyIndex "]" opMatrix accessStruct '''
 	# print("optional struct")
 
@@ -2126,5 +2126,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("inputFibo.txt", "r");
+file = open ("input5.txt", "r");
 yacc.parse(file.read())

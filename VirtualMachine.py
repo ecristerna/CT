@@ -359,7 +359,7 @@ def main():
 
 	initMemoriaGlobal()
 
-	print(global_memory)
+	# print(global_memory)
 
 	while actualCode != END:
 		# print(local_actual_memory)
@@ -443,7 +443,12 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == ASSIGN:
-			assign(currentQuadruple[1], currentQuadruple[3])
+			address = currentQuadruple[3]
+
+			if isinstance(address, list):
+				address = getValueForAddress(address[0])
+
+			assign(currentQuadruple[1], address)
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
@@ -452,7 +457,12 @@ def main():
 			toPrint = ''
 
 			while actualCode == PRINT:
-				toPrint += str(getValueForAddress(currentQuadruple[3]))
+				value = currentQuadruple[3]
+
+				if isinstance(value, list):
+					value = getValueForAddress(getValueForAddress(value[0]))
+
+				toPrint += str(value)
 				toPrint += ' '
 				
 				currentQuadruple = compiler.cuadruplos[instructionPointer]
@@ -546,7 +556,7 @@ def main():
 
 
 	# print(global_memory)
-	print(local_actual_memory)
+	# print(local_actual_memory)
 
 	print("END OF PROGRAM\n\n")
 
