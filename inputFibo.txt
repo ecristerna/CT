@@ -43,9 +43,7 @@ program a {
 
 		for (x = 0; x < (n - 1); x = x + 1) {
 			for (y = 0; y < (n - x - 1); y = y + 1) {
-				elem = array[(y)];
-				elem2 = array[(y + 1)];
-				if (elem > elem2) {
+				if (array[(y)] > array[(y + 1)]) {
 					swap = array[(y)];
 					array[(y)] = array[(y + 1)];
 					array[(y + 1)] = swap;
