@@ -63,6 +63,13 @@ MAIN = 80
 # ---------------------------------------
 
 def getValueForAddress(address):
+	
+	if isinstance(address, str):
+		if '|' in address:
+			return int(address[1:-1])
+		if '(' in address:
+			address = getValueForAddress(int(address[1:-1]))
+
 	if address >= compiler.MIN_INT_GLOBAL and address <= compiler.MAX_INT_GLOBAL:
 		return global_memory[0][address - compiler.MIN_INT_GLOBAL]
 	elif address >= compiler.MIN_FLOAT_GLOBAL and address <= compiler.MAX_FLOAT_GLOBAL:
@@ -107,6 +114,11 @@ def getValueForAddress(address):
 		return value
 
 def saveValueToAddress(value, address):
+
+	if isinstance(address, str):
+		if '(' in address:
+			address = getValueForAddress(int(address[1:-1]))
+
 	if address >= compiler.MIN_INT_GLOBAL and address <= compiler.MAX_INT_GLOBAL:
 		global_memory[0][address - compiler.MIN_INT_GLOBAL] = value
 	elif address >= compiler.MIN_FLOAT_GLOBAL and address <= compiler.MAX_FLOAT_GLOBAL:
@@ -153,15 +165,8 @@ def semanticErrorHalt():
 # ---------------------------------------
 
 def add(leftOp, rightOp, result):
-	if isinstance(leftOp, list):
-		leftValue = leftOp[0]
-	else:
-		leftValue = getValueForAddress(leftOp)
-
-	if isinstance(rightOp, list):
-		rightValue = rightOp[0]
-	else:
-		rightValue = getValueForAddress(rightOp)
+	leftValue = getValueForAddress(leftOp)
+	rightValue = getValueForAddress(rightOp)
 
 	saveValueToAddress(leftValue + rightValue, result)
 
@@ -197,11 +202,7 @@ def residue(leftOp, rightOp, result):
 	saveValueToAddress(leftValue % rightValue, result)
 
 def assign(rightOp, result):
-	if isinstance(rightOp, list):
-		address = getValueForAddress(rightOp[0])
-		value = getValueForAddress(address)
-	else:
-		value = getValueForAddress(rightOp)
+	value = getValueForAddress(rightOp)
 
 	saveValueToAddress(value, result)
 
@@ -444,12 +445,7 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == ASSIGN:
-			address = currentQuadruple[3]
-
-			if isinstance(address, list):
-				address = getValueForAddress(address[0])
-
-			assign(currentQuadruple[1], address)
+			assign(currentQuadruple[1], currentQuadruple[3])
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
@@ -476,6 +472,7 @@ def main():
 
 		elif actualCode == READ:
 			toRead = raw_input()
+			# toRead = sys.stdin.readline()
 
 			addressType = compiler.getTypeForAddress(currentQuadruple[3])
 
@@ -558,7 +555,11 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == VER:
-			value = getValueForAddress(currentQuadruple[3])
+			value = currentQuadruple[3]
+
+			value = getValueForAddress(value)
+
+			# print("VALUE", value)
 
 			if value < currentQuadruple[1] or value > currentQuadruple[2]:
 				semanticErrorHalt()
@@ -568,9 +569,9 @@ def main():
 			instructionPointer += 1
 
 
-	# print(global_memory)
+	print(global_memory)
 	# print(local_actual_memory)
 
-	print("END OF PROGRAM\n\n")
+	print("\nEND OF PROGRAM\n\n")
 
 main()

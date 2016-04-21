@@ -1,5 +1,8 @@
 program a {
-	vars int k;
+	vars struct int array[4];
+		int k;
+		int n, swap, x, y;
+		int elem, elem2;
 
 	func fibo(int i) returns int {
 		vars int val;
@@ -26,10 +29,11 @@ program a {
 	}
 
 	func bubbleSort() {
-		vars struct float array[10];
+		vars struct int array[4];
 			int n, swap, x, y;
-			float elem, elem2;
+			int elem, elem2;
 
+		k = 10;
 		n = 4;
 
 		for (x = 0; x < n; x = x + 1) {
@@ -52,15 +56,24 @@ program a {
 		for (x = 0; x < n; x = x + 1) {
 			print(array[(x)]);
 		}
+
+		print(array[array[0]]);
 	}
 
 	main {
 		vars int i;
-		k = 0;
+		struct int matrix[5][5];
+
 		i = 3;
+
+		array[3] = 5;
+		k = array[3];
 
 		print("Fibo: ", fibo(i));
 		print("Fact: ", factorial(factorial(i)));
 		bubbleSort();
+
+		matrix[(i)][(i)] = i;
+		print(matrix[(i)][(i)]);
 	}
 }
