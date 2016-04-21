@@ -26,14 +26,30 @@ program a {
 	}
 
 	func bubbleSort() {
-		vars struct int array[10];
-			int n, c, d, swapm, x, elem;
+		vars struct float array[10];
+			int n, swap, x, y;
+			float elem, elem2;
 
-		n = 10;
+		n = 4;
 
 		for (x = 0; x < n; x = x + 1) {
 			read(elem);
 			array[(x)] = elem;
+		}
+
+		for (x = 0; x < (n - 1); x = x + 1) {
+			for (y = 0; y < (n - x - 1); y = y + 1) {
+				elem = array[(y)];
+				elem2 = array[(y + 1)];
+				if (elem > elem2) {
+					swap = array[(y)];
+					array[(y)] = array[(y + 1)];
+					array[(y + 1)] = swap;
+				}
+			}
+		}
+
+		for (x = 0; x < n; x = x + 1) {
 			print(array[(x)]);
 		}
 	}

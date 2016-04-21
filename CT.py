@@ -1308,7 +1308,7 @@ def p_fact(p):
 			| cte
 			| funcCall
 			| PARINI putFondo expresion PARFIN takeFondo
-			| ID saveVariable opAccess errorOpAccess'''
+			| ID saveVariable opAccess errorOpAccess '''
 	# print("fact")
 
 

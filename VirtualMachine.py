@@ -1,3 +1,4 @@
+from __future__ import print_function
 import CT as compiler
 import sys
 
@@ -460,7 +461,9 @@ def main():
 				value = currentQuadruple[3]
 
 				if isinstance(value, list):
-					value = getValueForAddress(getValueForAddress(value[0]))
+					value = getValueForAddress(value[0])
+
+				value = getValueForAddress(value)
 
 				toPrint += str(value)
 				toPrint += ' '
@@ -469,11 +472,21 @@ def main():
 				actualCode = currentQuadruple[0]
 				instructionPointer += 1
 
-			print(toPrint)
+			print(toPrint, end='')
 
 		elif actualCode == READ:
 			toRead = raw_input()
-			saveValueToAddress(toRead, currentQuadruple[3])
+
+			addressType = compiler.getTypeForAddress(currentQuadruple[3])
+
+			if addressType == INT:
+				saveValueToAddress(int(toRead), currentQuadruple[3])
+			elif addressType == FLOAT:
+				saveValueToAddress(float(toRead), currentQuadruple[3])
+			elif addressType == BOOL:
+				saveValueToAddress(bool(toRead), currentQuadruple[3])
+			elif addressType == STRING:
+				saveValueToAddress(str(toRead), currentQuadruple[3])
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
