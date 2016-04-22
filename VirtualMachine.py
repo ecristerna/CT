@@ -451,24 +451,23 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == PRINT:
-			toPrint = ''
-
 			while actualCode == PRINT:
-				value = currentQuadruple[3]
-
-				if isinstance(value, list):
-					value = getValueForAddress(value[0])
-
-				value = getValueForAddress(value)
-
-				toPrint += str(value)
-				toPrint += ' '
+				toPrint = ''
 				
+				value = getValueForAddress(currentQuadruple[3])
+				value = str(value)
+			
+				if value == '%n':
+					print()
+				else:
+					toPrint += value
+					toPrint += ' '
+				
+					print(toPrint, end='')
+			
 				currentQuadruple = compiler.cuadruplos[instructionPointer]
 				actualCode = currentQuadruple[0]
 				instructionPointer += 1
-
-			print(toPrint, end='')
 
 		elif actualCode == READ:
 			toRead = raw_input()
@@ -569,7 +568,7 @@ def main():
 			instructionPointer += 1
 
 
-	print(global_memory)
+	# print(global_memory)
 	# print(local_actual_memory)
 
 	print("\nEND OF PROGRAM\n\n")

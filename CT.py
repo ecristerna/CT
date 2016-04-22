@@ -1410,7 +1410,6 @@ def p_saveToDimensionStacks(p):
 	global currentDimensionedVariable
 	global currentStructDimension
 
-	print("PILA", pOper)
 	pOper.pop()
 	pTipos.pop()
 	varID = currentToken
@@ -2048,5 +2047,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("inputFibo.txt", "r");
+file = open ("pruebasBasicas.txt", "r");
 yacc.parse(file.read())
