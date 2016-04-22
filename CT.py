@@ -931,7 +931,7 @@ def p_errorAssignMatrix(p):
 	errorMsg = "Error in rule ASSIGNMATRIX"
 
 def p_funcCall(p):
-	'''funcCall : ID checkFunction PARINI opParamCall PARFIN checkNumParams '''
+	'''funcCall : ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams '''
 	# print("funcCall")
 
 def p_checkNumParams(p):

@@ -9,7 +9,7 @@ program a {
 		if (i < 2) {
 			val = i;
 		} else {
-			val = fiboRec(i - 1) + (fiboRec(i - 2));
+			val = fiboRec(i - 1) + fiboRec(i - 2);
 		}
 
 		return val;
@@ -37,7 +37,7 @@ program a {
 		if (n <= 1) {
 			val = 1;
 		} else {
-			val = n * (factorialRec(n - 1));
+			val = n * factorialRec(n - 1);
 		}
 
 		return val;
