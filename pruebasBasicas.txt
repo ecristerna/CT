@@ -91,7 +91,7 @@ program a {
 	}
 
 	func matrixMult() {
-		vars int i, j, k, sum, m, n, o, p;
+		vars int i, j, k, sum, m, n, o, p, elem;
 
 		sum = 0;
 
