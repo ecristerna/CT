@@ -1,0 +1,17 @@
+program  a {
+	vars struct int arr[5];
+		int d;
+
+	main {
+		vars struct int b[2];
+			int p, x;
+
+		p = 2;
+
+		for (x = 0; x < 5; x = x + 1) {
+			arr[(x)] = x * p;
+			print(arr[(x)]);
+		}
+		
+	}
+}

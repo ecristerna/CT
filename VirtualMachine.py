@@ -1,4 +1,6 @@
+from __future__ import print_function
 import CT as compiler
+import sys
 
 # ---------------------------------------
 # VARIABLES GLOBALES
@@ -40,6 +42,7 @@ GOSUB = 300
 RETORNO = 310
 PARAM = 320
 FUNCRETURN = 330
+VER = 340
 END = 400
 
 # ---------------------------------------
@@ -60,9 +63,18 @@ MAIN = 80
 # ---------------------------------------
 
 def getValueForAddress(address):
+	
+	if isinstance(address, str):
+		if '|' in address:
+			return int(address[1:-1])
+		if '(' in address:
+			address = getValueForAddress(int(address[1:-1]))
+
 	if address >= compiler.MIN_INT_GLOBAL and address <= compiler.MAX_INT_GLOBAL:
 		return global_memory[0][address - compiler.MIN_INT_GLOBAL]
 	elif address >= compiler.MIN_FLOAT_GLOBAL and address <= compiler.MAX_FLOAT_GLOBAL:
+		print(address - compiler.MIN_BOOL_GLOBAL)
+		print(global_memory)
 		return global_memory[1][address - compiler.MIN_FLOAT_GLOBAL]
 	elif address >= compiler.MIN_BOOL_GLOBAL and address <= compiler.MAX_BOOL_GLOBAL:
 		return global_memory[2][address - compiler.MIN_BOOL_GLOBAL]
@@ -102,6 +114,11 @@ def getValueForAddress(address):
 		return value
 
 def saveValueToAddress(value, address):
+
+	if isinstance(address, str):
+		if '(' in address:
+			address = getValueForAddress(int(address[1:-1]))
+
 	if address >= compiler.MIN_INT_GLOBAL and address <= compiler.MAX_INT_GLOBAL:
 		global_memory[0][address - compiler.MIN_INT_GLOBAL] = value
 	elif address >= compiler.MIN_FLOAT_GLOBAL and address <= compiler.MAX_FLOAT_GLOBAL:
@@ -138,6 +155,11 @@ def saveValueToNewMemory(value, address):
 		local_next_memory[2][address - compiler.MIN_BOOL] = value
 	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
 		local_next_memory[3][address - compiler.MIN_STRING] = value
+
+def semanticErrorHalt():
+	print("Array index out of range")
+	sys.exit()
+
 # ---------------------------------------
 # OPERACIONES
 # ---------------------------------------
@@ -155,8 +177,15 @@ def substract(leftOp, rightOp, result):
 	saveValueToAddress(leftValue - rightValue, result)
 
 def multiply(leftOp, rightOp, result):
-	leftValue = getValueForAddress(leftOp)
-	rightValue = getValueForAddress(rightOp)
+	if isinstance(leftOp, list):
+		leftValue = leftOp[0]
+	else:
+		leftValue = getValueForAddress(leftOp)
+
+	if isinstance(rightOp, list):
+		rightValue = rightOp[0]
+	else:
+		rightValue = getValueForAddress(rightOp)
 	
 	saveValueToAddress(leftValue * rightValue, result)
 
@@ -280,22 +309,37 @@ def era(size):
 
 	# print(local_next_memory)
 
+def initMemoriaGlobal():
+	global global_memory
+
+	for proc in compiler.dir_procs:
+		if proc[3] == 10:
+			global_memory[0].append(0)
+		if proc[3] == 20:
+			global_memory[1].append(0)
+		if proc[3] == 30:
+			global_memory[2].append(0)
+		if proc[3] == 40:
+			global_memory[3].append(0)
+	
+	size = compiler.dir_procs[0][6]
+	
+	for x in range(0, size[0]):
+		global_memory[0].append(0)
+
+	for x in range(0, size[1]):
+		global_memory[1].append(0)
+
+	for x in range(0, size[2]):
+		global_memory[2].append(False)
+
+	for x in range(0, size[3]):
+		global_memory[3].append("")
+
+
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
 # ---------------------------------------
-
-def initMemoriaGlobal():
-	for variable in compiler.vars_global:
-		varType = compiler.getTypeForAddress(compiler.vars_global[variable])
-
-		if varType == INT:
-			global_memory[0].append(0)
-		elif varType == FLOAT:
-			global_memory[1].append(0)
-		elif varType == BOOL:
-			global_memory[2].append(False)
-		elif varType == STRING:
-			global_memory[3].append("")
 
 def main():
 	global instructionPointer
@@ -407,21 +451,38 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == PRINT:
-			toPrint = ''
-
 			while actualCode == PRINT:
-				toPrint += str(getValueForAddress(currentQuadruple[3]))
-				toPrint += ' '
+				toPrint = ''
 				
+				value = getValueForAddress(currentQuadruple[3])
+				value = str(value)
+			
+				if value == '%n':
+					print()
+				else:
+					toPrint += value
+					toPrint += ' '
+				
+					print(toPrint, end='')
+			
 				currentQuadruple = compiler.cuadruplos[instructionPointer]
 				actualCode = currentQuadruple[0]
 				instructionPointer += 1
 
-			print(toPrint)
-
 		elif actualCode == READ:
 			toRead = raw_input()
-			saveValueToAddress(toRead, currentQuadruple[3])
+			# toRead = sys.stdin.readline()
+
+			addressType = compiler.getTypeForAddress(currentQuadruple[3])
+
+			if addressType == INT:
+				saveValueToAddress(int(toRead), currentQuadruple[3])
+			elif addressType == FLOAT:
+				saveValueToAddress(float(toRead), currentQuadruple[3])
+			elif addressType == BOOL:
+				saveValueToAddress(bool(toRead), currentQuadruple[3])
+			elif addressType == STRING:
+				saveValueToAddress(str(toRead), currentQuadruple[3])
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
@@ -492,20 +553,24 @@ def main():
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
+		elif actualCode == VER:
+			value = currentQuadruple[3]
+
+			value = getValueForAddress(value)
+
+			# print("VALUE", value)
+
+			if value < currentQuadruple[1] or value > currentQuadruple[2]:
+				semanticErrorHalt()
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
 
 	# print(global_memory)
 	# print(local_actual_memory)
 
-	print("END OF PROGRAM\n\n")
+	print("\nEND OF PROGRAM\n\n")
 
 main()
-
-
-
-
-
-
-
-
-
-

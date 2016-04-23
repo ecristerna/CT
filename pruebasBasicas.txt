@@ -1,0 +1,190 @@
+program a {
+	vars struct int m1[5][5];
+		struct int m2[5][5];
+		struct int m3[5][5];
+
+	func fiboRec(int i) returns int {
+		vars int val;
+
+		if (i < 2) {
+			val = i;
+		} else {
+			val = fiboRec(i - 1) + fiboRec(i - 2);
+		}
+
+		return val;
+	}
+
+	func fiboIt(int i) returns int {
+		vars int previous, current, next, j;
+
+		previous = 1;
+		current = 1;
+		next = 1;
+
+		for (j = 3; j <= i; j = j + 1) {
+			next = current + previous;
+			previous = current;
+			current = next;
+		}
+
+		return next;
+	}
+
+	func factorialRec(int n) returns int {
+		vars int val;
+
+		if (n <= 1) {
+			val = 1;
+		} else {
+			val = n * factorialRec(n - 1);
+		}
+
+		return val;
+	}
+
+	func factorialIt(int n) returns int {
+		vars int acum, i;
+
+		acum = 1;
+		i = 1;
+
+		while (i <= n) {
+			acum = acum * i;
+
+			i = i + 1;
+		}
+
+		return acum;
+	}
+
+	func bubbleSort() {
+		vars struct int array[4];
+			int n, swap, x, y;
+			int elem, elem2;
+
+		n = 4;
+
+		for (x = 0; x < n; x = x + 1) {
+			print("Elemento ", x + 1, ": ");
+			read(elem);
+			array[(x)] = elem;
+		}
+
+		for (x = 0; x < (n - 1); x = x + 1) {
+			for (y = 0; y < (n - x - 1); y = y + 1) {
+				if (array[(y)] > array[(y + 1)]) {
+					swap = array[(y)];
+					array[(y)] = array[(y + 1)];
+					array[(y + 1)] = swap;
+				}
+			}
+		}
+
+		print("Arreglo ordenado: ");
+
+		for (x = 0; x < n; x = x + 1) {
+			print(array[(x)]);
+		}
+
+		print("%n");
+	}
+
+	func matrixMult() {
+		vars int i, j, k, sum, m, n, o, p, elem;
+
+		sum = 0;
+
+		print("Renglones de m1: ");
+		read(m);
+
+		print("Columnas de m1: ");
+		read(n);
+
+		print("Renglones de m2: ");
+		read(o);
+
+		print("Columnas de m2: ");
+		read(p);
+
+		if (n != o) {
+			print("Matrices no compatibles", "%n");
+		} else {
+			print("Elementos de m1", "%n");
+
+			for (i = 0; i < m; i = i + 1) {
+				print("Renglon ", i + 1, ": ", "%n");
+
+				for (j = 0; j < n; j = j + 1) {
+					read(elem);
+					m1[(i)][(j)] = elem;
+				}
+			}
+
+			print("Elementos de la segunda matriz", "%n");
+
+			for (i = 0; i < o; i = i + 1) {
+				print("Renglon ", i + 1, ": ", "%n");
+
+				for (j = 0; j < p; j = j + 1) {
+					read(elem);
+					m2[(i)][(j)] = elem;	
+				}
+			}
+
+			for (i = 0; i < m; i = i + 1) {
+				for (j = 0; j < p; j = j + 1) {
+					sum = 0;
+
+					for (k = 0; k < n; k = k + 1) {
+						sum = sum + m1[(i)][(k)] * m2[(k)][(j)];
+					}
+
+					m3[(i)][(j)] = sum;
+				}
+			}
+
+			print("Matriz resultante");
+
+			for (i = 0; i < m; i = i + 1) {
+				print("%n");
+
+				for (j = 0; j < p; j = j + 1) {
+					print(m3[(i)][(j)]);
+				}
+			}
+		}
+	}
+
+	main {
+		vars int i;
+			struct int matrix[5][5];
+
+		print("Fibonacci Recursivo: ", "%n");
+		print("Cual elemento en la serie? ");
+		read(i);
+		print(fiboRec(i), "%n");
+
+
+		print("Fibonacci Iterativo: ", "%n");
+		print("Cual elemento en la serie? ");
+		read(i);
+		print(fiboIt(i), "%n");
+
+		print("Factorial Recursivo: ", "%n");
+		print("Cual numero? ");
+		read(i);
+		print(factorialRec(i), "%n");
+
+		print("Factorial Recursivo: ", "%n");
+		print("Cual numero? ");
+		read(i);
+		print(factorialIt(i), "%n");
+
+		print("Bubble Sort: ", "%n");
+		bubbleSort();
+
+		print("Matrix Mult: ", "%n");
+		matrixMult();
+	}
+}

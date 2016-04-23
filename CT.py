@@ -26,6 +26,10 @@ semanticError = ""
 declaringParameters = False
 paramCounter = 0
 currentProc = []
+dim = 1
+varR = 1
+currentDimensionedVariable = ''
+currentStructDimension = []
 
 # Addresses
 
@@ -129,6 +133,7 @@ GOSUB = 300
 RETORNO = 310
 PARAM = 320
 FUNCRETURN = 330
+VER = 340
 
 
 # Semantic Cube
@@ -161,6 +166,7 @@ pilaO = []
 pOper = []
 pTipos = []
 pSaltos = []
+pDimensionadas = []
 
 # Tokens
 
@@ -355,7 +361,12 @@ def p_program(p):
 def p_changeCurrentScope(p):
 	'''changeCurrentScope : '''
 	global currentScope
+	global dir_procs
 	currentScope = "local"
+
+	dir_procs[-1].append(0)
+	dir_procs[-1].append([contIntGlobal - MIN_INT_GLOBAL, contFloatGlobal - MIN_FLOAT_GLOBAL, contBoolGlobal - MIN_BOOL_GLOBAL, contStringGlobal - MIN_STRING_GLOBAL, 0, 0, 0, 0])
+
 
 def p_saveType(p):
 	'''saveType : '''
@@ -479,7 +490,7 @@ def p_errorType(p):
 
 
 def p_main(p):
-	'''main : errorMain MAIN saveMain "{" opVars generateInitialQuadruple body "}" clearVarsTable'''
+	'''main : errorMain MAIN saveCurrentTemps saveMain "{" opVars generateInitialQuadruple body "}" clearVarsTable'''
 	# print("main")
 
 def p_generateInitialQuadruple(p):
@@ -778,7 +789,7 @@ def p_errorBasicDeclare(p):
 
 
 def p_structDeclare(p):
-	'''structDeclare : errorStructDeclare STRUCT ID struct ";" cyDeclare '''
+	'''structDeclare : errorStructDeclare STRUCT struct ";" cyDeclare '''
 	# print("struct declare")
 
 
@@ -904,12 +915,12 @@ def p_errorAssign(p):
 def p_assignOptions(p):
 	'''assignOptions : init
 					| initDict
-					| "[" expresion "]" assignMatrix init '''
+					| saveToDimensionStacks "[" expresion verifyIndex "]" assignMatrix accessStruct init '''
 	# print("assignOptions")
 
 
 def p_assignMatrix(p):
-	'''assignMatrix : "[" expresion "]" errorAssignMatrix
+	'''assignMatrix : updateDimension "[" expresion verifyIndex "]" errorAssignMatrix
 					| empty '''
 	# print("assignMatrix")
 
@@ -920,7 +931,7 @@ def p_errorAssignMatrix(p):
 	errorMsg = "Error in rule ASSIGNMATRIX"
 
 def p_funcCall(p):
-	'''funcCall : ID checkFunction PARINI opParamCall PARFIN checkNumParams '''
+	'''funcCall : ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams '''
 	# print("funcCall")
 
 def p_checkNumParams(p):
@@ -942,16 +953,17 @@ def p_checkNumParams(p):
 	contQuadruples += 1
 	paramCounter = 0;
 
-	address = vars_global[currentProc[0]]
-	typeAddress = getTypeForAddress(address)
-	temp = getTempForType(typeAddress)
+	if currentProc[3] != None:
+		address = vars_global[currentProc[0]]
+		typeAddress = getTypeForAddress(address)
+		temp = getTempForType(typeAddress)
 
-	cuadruplo = (ASSIGN, address, "", temp)
-	cuadruplos.append(cuadruplo)
-	contQuadruples += 1
+		cuadruplo = (ASSIGN, address, "", temp)
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
 
-	pOper.append(temp)
-	pTipos.append(typeAddress)
+		pOper.append(temp)
+		pTipos.append(typeAddress)
 
 
 def p_checkFunction(p):
@@ -1010,22 +1022,184 @@ def p_checkParamType(p):
 
 
 def p_struct(p):
-	'''struct : structType "[" CTED "]" optionalMatrix '''
+	'''struct : structType ID saveID createDimension "[" CTED saveDimensionSize "]" optionalMatrix secondLap '''
 	# print("struct")
 
+def p_secondLap(p):
+	'''secondLap : '''
+	global dim
+	global varR
+	global currentDimensionedVariable
+	global contInt
+	global contFloat
+	global contBool
+	global contString
+	global contIntGlobal
+	global contFloatGlobal
+	global contBoolGlobal
+	global contStringGlobal
+
+	currentDim = 1
+	suma = 0
+	aux = varR
+	typeVar = 0
+
+	if currentScope == 'global':
+		typeVar = getTypeForAddress(vars_global[currentDimensionedVariable][0])
+		dimensionTable = vars_global[currentDimensionedVariable][1]
+		m = aux / (dimensionTable[1] - dimensionTable[0] + 1)
+		aux = m
+		dimensionTable[2] = m
+		vars_global[currentDimensionedVariable][1] = dimensionTable
+
+		if typeVar == INT:
+			contIntGlobal += varR - 1
+		elif typeVar == FLOAT:
+			contFloatGlobal += varR - 1
+		elif typeVar == BOOL:
+			contBoolGlobal += varR - 1
+		elif typeVar == STRING:
+			contStringGlobal += varR - 1
+
+	else:
+		typeVar = getTypeForAddress(vars_local[currentDimensionedVariable][0])
+		dimensionTable = vars_local[currentDimensionedVariable][1]
+		m = aux / (dimensionTable[1] - dimensionTable[0] + 1)
+		aux = m
+		dimensionTable[2] = m
+		vars_local[currentDimensionedVariable][1] = dimensionTable
+
+		if typeVar == INT:
+			contInt += varR - 1
+		elif typeVar == FLOAT:
+			contFloat += varR - 1
+		elif typeVar == BOOL:
+			contBool += varR - 1
+		elif typeVar == STRING:
+			contString += varR - 1
+
+	if dim > 1:
+		if currentScope == 'global':
+			dimensionTable = vars_global[currentDimensionedVariable][1][3]
+			m = aux / (dimensionTable[1] - dimensionTable[0] + 1)
+			dimensionTable[2] = m
+			vars_global[currentDimensionedVariable][1][3] = dimensionTable
+			vars_global[currentDimensionedVariable][1][3][2] = 0
+		else:
+			dimensionTable = vars_local[currentDimensionedVariable][1][3]
+			m = aux / (dimensionTable[1] - dimensionTable[0] + 1)
+			dimensionTable[2] = m
+			vars_local[currentDimensionedVariable][1][3] = dimensionTable
+			vars_local[currentDimensionedVariable][1][3][2] = 0
+	else:
+		if currentScope == 'global':
+			vars_global[currentDimensionedVariable][1][2] = 0
+		else:
+			vars_local[currentDimensionedVariable][1][2] = 0
+
+	currentDimensionedVariable = ''
+	varR = 1
+	dim = 1
+
+def p_saveDimensionSize(p):
+	'''saveDimensionSize : '''
+	global vars_global
+	global vars_local
+	global currentDimensionedVariable
+	global varR
+
+	if currentScope == 'global':
+		address = vars_global[currentDimensionedVariable]
+		dimensionTable = address[1]
+		dimensionTable.append(currentToken - 1)
+		dimensionTable.append('')
+		dimensionTable.append(None)
+		vars_global[currentDimensionedVariable][1] = dimensionTable
+		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
+	else :
+		address = vars_local[currentDimensionedVariable]
+		dimensionTable = address[1]
+		dimensionTable.append(currentToken - 1)
+		dimensionTable.append('')
+		dimensionTable.append(None)
+		vars_local[currentDimensionedVariable][1] = dimensionTable
+		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
+
+def p_createDimension(p):
+	'''createDimension : '''
+	global vars_global
+	global vars_local
+	global currentDimensionedVariable
+
+	currentDimensionedVariable = currentToken
+
+	if currentScope == 'global':
+		address = vars_global[currentDimensionedVariable]
+		dimensionTable = [address]
+		dimensionTable.append([0])
+		vars_global[currentDimensionedVariable] = dimensionTable
+	else :
+		address = vars_local[currentDimensionedVariable]
+		dimensionTable = [address]
+		dimensionTable.append([0])
+		vars_local[currentDimensionedVariable] = dimensionTable
 
 def p_structType(p):
-	'''structType : type
+	'''structType : saveType type
 				| DICT dict '''
 	# print("struct type")
 
 
 def p_optionalMatrix(p):
-	'''optionalMatrix : "[" CTED "]"
+	'''optionalMatrix : createSecondDimension "[" CTED saveSecondDimensionSize "]"
 					| empty '''
 	# print("matrix")
 
+def p_saveSecondDimensionSize(p):
+	'''saveSecondDimensionSize : '''
+	global vars_global
+	global vars_local
+	global currentDimensionedVariable
+	global varR
 
+	if currentScope == 'global':
+		address = vars_global[currentDimensionedVariable]
+		subDimensionTable = address[1]
+		dimensionTable = subDimensionTable[3]
+		dimensionTable.append(currentToken - 1)
+		dimensionTable.append('')
+		dimensionTable.append(None)
+		vars_global[currentDimensionedVariable][1][3] = dimensionTable
+		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
+	else :
+		address = vars_local[currentDimensionedVariable]
+		subDimensionTable = address[1]
+		dimensionTable = subDimensionTable[3]
+		dimensionTable.append(currentToken - 1)
+		dimensionTable.append('')
+		dimensionTable.append(None)
+		vars_local[currentDimensionedVariable][1][3] = dimensionTable
+		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
+
+
+def p_createSecondDimension(p):
+	'''createSecondDimension : '''
+	global dim
+	global currentDimensionedVariable
+
+	dim += 1
+
+	if currentScope == 'global':
+		address = vars_global[currentDimensionedVariable]
+		dimensionTable =  address
+		dimensionTable[1][3] = [0]
+		vars_global[currentDimensionedVariable] = dimensionTable
+	else :
+		address = vars_local[currentDimensionedVariable]
+		dimensionTable = address
+		dimensionTable[1][3] = [0]
+		vars_local[currentDimensionedVariable] = dimensionTable
+	
 def p_condition(p):
 	'''condition : errorCondition IF PARINI expresion PARFIN saveFalso "{" body "}" optionalElse rellenaFalso '''
 	# print("condition")
@@ -1135,7 +1309,7 @@ def p_fact(p):
 			| cte
 			| funcCall
 			| PARINI putFondo expresion PARFIN takeFondo
-			| ID saveVariable opAccess errorOpAccess'''
+			| ID saveVariable opAccess errorOpAccess '''
 	# print("fact")
 
 
@@ -1157,9 +1331,111 @@ def p_errorOpAccess(p):
 	global errorMsg
 	errorMsg = "Error in rule ERROROPACCESS"
 
-def p_opStruct(p):
-	'''opStruct : errorOpStruct "[" expresion "]" opMatrix '''
+def p_opStruct(p):          
+	'''opStruct : errorOpStruct saveToDimensionStacks "[" expresion verifyIndex "]" opMatrix accessStruct '''
 	# print("optional struct")
+
+def p_accessStruct(p):
+	'''accessStruct : '''
+	global contQuadruples
+
+	aux1 = pOper.pop()
+	temp = getTempForType(pTipos.pop())
+
+	cuadruplo = ()
+	toSave = 0
+	varType = 0
+
+	if currentDimensionedVariable in vars_global:
+		toSave = vars_global[currentDimensionedVariable][0]
+		varType = getTypeForAddress(toSave)
+	else:
+		toSave = vars_local[currentDimensionedVariable][0]
+		varType = getTypeForAddress(toSave)
+
+	cuadruplo = (ADD, aux1, '|' + str(toSave) + '|', temp)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append('(' + str(temp) + ')')
+	pTipos.append(getTypeForAddress(temp))
+
+	pilaO.pop()
+	pDimensionadas.pop()
+
+def p_verifyIndex(p):
+	'''verifyIndex : '''
+	global currentDimensionedVariable
+	global contQuadruples
+
+	address = pOper.pop()
+	pOper.append(address)
+
+	limI = currentStructDimension[0]
+	limS = currentStructDimension[1]
+
+	cuadruplo = (VER, limI, limS, address)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	if currentStructDimension[3] != None:
+		aux = pOper.pop()
+		temp = getTempForType(pTipos.pop())
+
+		cuadruplo = (MULTIPLY, aux, '|' + str(currentStructDimension[2]) + '|', temp)
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+
+		pOper.append(temp)
+		pTipos.append(getTypeForAddress(temp))
+
+	if dim > 1:
+		aux2 = pOper.pop()
+		aux1 = pOper.pop()
+		temp = getTempForType(pTipos.pop())
+		pTipos.pop()
+
+		cuadruplo = (ADD, aux1, aux2, temp)
+		cuadruplos.append(cuadruplo)
+		contQuadruples += 1
+		
+		pOper.append(temp)
+		pTipos.append(getTypeForAddress(temp))
+
+
+def p_saveToDimensionStacks(p):
+	'''saveToDimensionStacks : '''
+	global semanticError
+	global dim
+	global currentDimensionedVariable
+	global currentStructDimension
+
+	pOper.pop()
+	pTipos.pop()
+	varID = currentToken
+	currentDimensionedVariable = varID
+
+	if varID in vars_global:
+		if (not isinstance(vars_global[varID], list)):
+			semanticError = "Variable " + `currentDimensionedVariable` + " is not a struct"
+			semanticErrorHalt()
+		
+		dim = 1
+		pDimensionadas.append(currentDimensionedVariable)
+		pDimensionadas.append(dim)
+		currentStructDimension = vars_global[currentDimensionedVariable][1]
+
+	elif varID in vars_local:
+		if (not isinstance(vars_local[varID], list)):
+			semanticError = "Variable " + `currentDimensionedVariable` + " is not a struct"
+			semanticErrorHalt()
+		
+		dim = 1
+		pDimensionadas.append(currentDimensionedVariable)
+		pDimensionadas.append(dim)
+		currentStructDimension = vars_local[currentDimensionedVariable][1]
+
+	pilaO.append(FONDO_FALSO)
 
 
 def p_errorOpStruct(p):
@@ -1169,9 +1445,24 @@ def p_errorOpStruct(p):
 
 
 def p_opMatrix(p):
-	'''opMatrix : errorOpMatrix "[" expresion "]"
+	'''opMatrix : errorOpMatrix updateDimension "[" expresion verifyIndex "]"
 				| empty '''
 	# print("optional matrix")
+
+def p_updateDimension(p):
+	'''updateDimension : '''
+	global dim
+	global currentDimensionedVariable
+	global currentStructDimension
+
+	pDimensionadas.pop()
+	pDimensionadas.pop()
+
+	dim += 1
+	pDimensionadas.append(currentDimensionedVariable)
+	pDimensionadas.append(dim)
+
+	currentStructDimension = currentStructDimension[3]
 
 
 def p_errorOpMatrix(p):
@@ -1756,5 +2047,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("inputFibo.txt", "r");
+file = open ("pruebasBasicas.txt", "r");
 yacc.parse(file.read())
