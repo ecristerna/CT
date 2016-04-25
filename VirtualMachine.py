@@ -43,6 +43,7 @@ RETORNO = 310
 PARAM = 320
 FUNCRETURN = 330
 VER = 340
+NEG = 350
 END = 400
 
 # ---------------------------------------
@@ -566,7 +567,17 @@ def main():
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
+		elif actualCode == NEG:
+			value = getValueForAddress(currentQuadruple[3])
 
+			if compiler.getTypeForAddress(currentQuadruple[3]) == BOOL:
+				saveValueToAddress(not value, currentQuadruple[3])
+			else:
+				saveValueToAddress(-1 * value, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
 
 	# print(global_memory)
 	# print(local_actual_memory)

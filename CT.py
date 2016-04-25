@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
+reserved = ['NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -134,6 +134,7 @@ RETORNO = 310
 PARAM = 320
 FUNCRETURN = 330
 VER = 340
+NEG = 350
 
 
 # Semantic Cube
@@ -1305,13 +1306,33 @@ def p_cyTerm(p):
 
 
 def p_fact(p):
-	'''fact : CTES saveConstantString
+	'''fact : putFondo NEG PARINI expresion performNeg PARFIN takeFondo
+			| CTES saveConstantString
 			| cte
 			| funcCall
 			| PARINI putFondo expresion PARFIN takeFondo
 			| ID saveVariable opAccess errorOpAccess '''
 	# print("fact")
 
+
+def p_performNeg(p):
+	'''performNeg : '''
+	global semanticError
+	global contQuadruples
+
+	valor = pOper.pop()
+	tipo = pTipos.pop()
+
+	if tipo == STRING:
+		semanticError = "Cannot negate a string value."
+		semanticErrorHalt()
+
+	cuadruplo = (NEG, '', '', valor)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(valor)
+	pTipos.append(tipo)
 
 def p_errorFact(p):
 	'''errorFact : '''
@@ -2047,5 +2068,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("pruebasBasicas.txt", "r");
+file = open ("input4.txt", "r");
 yacc.parse(file.read())

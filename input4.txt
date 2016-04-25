@@ -1,13 +1,17 @@
 program  a {
 	func up(bool s, g; float h) returns float {
-		return 2.0 * 5.6;
+		return 2 * 5.6;
 	}
 
 	main {
 		vars float op;
+			bool h;
+			string let;
 
-		op = up(true, false, 1.0) + (up(false, false, 2.0));
-
-		print(op, up(true, false, 1.0) + (up(false, false, 2.0)));
+		let = "hola";
+		h = true;
+		op = 5.5;
+		print(let, h, op, "%n");
+		print(neg(h), neg(up(h, h, op)));
 	}
 }
