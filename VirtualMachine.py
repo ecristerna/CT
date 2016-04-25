@@ -568,7 +568,7 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == NEG:
-			value = getValueForAddress(currentQuadruple[3])
+			value = getValueForAddress(currentQuadruple[1])
 
 			if compiler.getTypeForAddress(currentQuadruple[3]) == BOOL:
 				saveValueToAddress(not value, currentQuadruple[3])

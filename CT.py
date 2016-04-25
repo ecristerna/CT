@@ -1327,11 +1327,13 @@ def p_performNeg(p):
 		semanticError = "Cannot negate a string value."
 		semanticErrorHalt()
 
-	cuadruplo = (NEG, '', '', valor)
+	newAddress = getTempForType(tipo)
+	
+	cuadruplo = (NEG, valor, '', newAddress)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
-	pOper.append(valor)
+	pOper.append(newAddress)
 	pTipos.append(tipo)
 
 def p_errorFact(p):

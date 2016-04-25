@@ -13,5 +13,6 @@ program  a {
 		op = 5.5;
 		print(let, h, op, "%n");
 		print(neg(h), neg(up(h, h, op)));
+		print(neg(neg(5)) * neg(5));
 	}
 }
