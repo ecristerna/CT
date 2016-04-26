@@ -1309,7 +1309,7 @@ def p_cyTerm(p):
 
 
 def p_fact(p):
-	'''fact : putFondo languageFunctions takeFondo
+	'''fact : putFondo basicLanguageFunctions takeFondo
 			| CTES saveConstantString
 			| cte
 			| funcCall
@@ -1318,8 +1318,8 @@ def p_fact(p):
 	# print("fact")
 
 
-def p_languageFunctions(p):
-	'''languageFunctions : NEG PARINI expresion performNeg PARFIN
+def p_basicLanguageFunctions(p):
+	'''basicLanguageFunctions : NEG PARINI expresion performNeg PARFIN
 						| AVERAGE PARINI ID saveStructID "," expresion performAvg PARFIN
 						| VARIANCE PARINI ID saveStructID "," expresion performVariance PARFIN
 						| STDEVIATION PARINI ID saveStructID "," expresion performStdDev PARFIN '''
