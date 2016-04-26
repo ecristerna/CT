@@ -156,8 +156,8 @@ def saveValueToNewMemory(value, address):
 	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
 		local_next_memory[3][address - compiler.MIN_STRING] = value
 
-def semanticErrorHalt():
-	print("Array index out of range")
+def semanticErrorHalt(error):
+	print("Semantic Error: " + error)
 	sys.exit()
 
 # ---------------------------------------
@@ -475,15 +475,29 @@ def main():
 			addressType = compiler.getTypeForAddress(currentQuadruple[3])
 
 			if addressType == INT:
-				saveValueToAddress(int(toRead), currentQuadruple[3])
+
+				if toRead.isdigit():
+					saveValueToAddress(int(toRead), currentQuadruple[3])
+				else:
+					semanticErrorHalt("Invalid input for integer varaible")
+
 			elif addressType == FLOAT:
-				saveValueToAddress(float(toRead), currentQuadruple[3])
+
+				if toRead.isdigit():
+					saveValueToAddress(float(toRead), currentQuadruple[3])
+				else:
+					semanticErrorHalt("Invalid input for float varaible")
+
 			elif addressType == BOOL:
 				toRead = toRead.lower()
+
 				if toRead == 'true' or toRead == 't':
 					saveValueToAddress(True, currentQuadruple[3])
 				elif toRead == 'false' or toRead == 'f':
 					saveValueToAddress(False, currentQuadruple[3])
+				else:
+					semanticErrorHalt("Invalid input for boolean variable")
+
 			elif addressType == STRING:
 				saveValueToAddress(str(toRead), currentQuadruple[3])
 
@@ -557,14 +571,10 @@ def main():
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == VER:
-			value = currentQuadruple[3]
-
-			value = getValueForAddress(value)
-
-			# print("VALUE", value)
+			value = getValueForAddress(currentQuadruple[3])
 
 			if value < currentQuadruple[1] or value > currentQuadruple[2]:
-				semanticErrorHalt()
+				semanticErrorHalt("Array index out of range")
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
