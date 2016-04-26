@@ -204,8 +204,8 @@
          
          <div class="ebnf"><pre><a href="#TYPE" title="TYPE" shape="rect">TYPE</a>     ::= 'int'
            | 'float'
-           | 'string'
-           | 'bool'</pre></div>
+           | 'bool'
+           | 'string'</pre></div>
          
       </p>
       
@@ -214,8 +214,6 @@
          <ul>
             
             <li><a href="#DECLARE" title="DECLARE">DECLARE</a></li>
-            
-            <li><a href="#DICT" title="DICT">DICT</a></li>
             
             <li><a href="#FUNCTION" title="FUNCTION">FUNCTION</a></li>
             
@@ -305,14 +303,13 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="DECLARE">DECLARE:</a></p>
-      <img border="0" src="diagram/DECLARE.png" height="184" width="380" usemap="#DECLARE.map"><map name="DECLARE.map">
+      <img border="0" src="diagram/DECLARE.png" height="140" width="380" usemap="#DECLARE.map"><map name="DECLARE.map">
          <area shape="rect" coords="69,61,119,93" href="#TYPE" title="TYPE">
-         <area shape="rect" coords="199,105,267,137" href="#STRUCT" title="STRUCT">
-         <area shape="rect" coords="185,149,235,181" href="#DICT" title="DICT"></map>
+         <area shape="rect" coords="199,105,267,137" href="#STRUCT" title="STRUCT"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#DECLARE" title="DECLARE" shape="rect">DECLARE</a>  ::= ( <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> 'id' ( ',' 'id' )* ';' | 'struct' 'id' <a href="#STRUCT" title="STRUCT" shape="rect">STRUCT</a> ';' | 'dict' 'id' <a href="#DICT" title="DICT" shape="rect">DICT</a> ';' )+</pre></div>
+         <div class="ebnf"><pre><a href="#DECLARE" title="DECLARE" shape="rect">DECLARE</a>  ::= ( <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> 'id' ( ',' 'id' )* ';' | 'struct' 'id' <a href="#STRUCT" title="STRUCT" shape="rect">STRUCT</a> ';' )+</pre></div>
          
       </p>
       
@@ -332,26 +329,6 @@
       <p>
          
          <div class="ebnf"><pre><a href="#INIT" title="INIT" shape="rect">INIT</a>     ::= '=' ( <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> | <a href="#FUNC_CALL" title="FUNC_CALL" shape="rect">FUNC_CALL</a> )</pre></div>
-         
-      </p>
-      
-      <p>referenced by:
-         
-         <ul>
-            
-            <li><a href="#ASSIGN" title="ASSIGN">ASSIGN</a></li>
-            
-         </ul>
-         
-      </p><br><p style="font-size: 14px; font-weight:bold"><a name="INIT_DICT">INIT_DICT:</a></p>
-      <img border="0" src="diagram/INIT_DICT.png" height="124" width="456" usemap="#INIT_DICT.map"><map name="INIT_DICT.map">
-         <area shape="rect" coords="145,45,189,77" href="#CTE" title="CTE">
-         <area shape="rect" coords="305,45,349,77" href="#CTE" title="CTE"></map>
-      
-      <p>
-         
-         <div class="ebnf"><pre><a href="#INIT_DICT" title="INIT_DICT" shape="rect">INIT_DICT</a>
-         ::= '=' '(' ( 'cte_s' | <a href="#CTE" title="CTE" shape="rect">CTE</a> | 'id' ) ':' ( 'cte_s' | <a href="#CTE" title="CTE" shape="rect">CTE</a> | 'id' ) ')'</pre></div>
          
       </p>
       
@@ -424,13 +401,12 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="STRUCT">STRUCT:</a></p>
-      <img border="0" src="diagram/STRUCT.png" height="80" width="588" usemap="#STRUCT.map"><map name="STRUCT.map">
-         <area shape="rect" coords="49,1,99,33" href="#TYPE" title="TYPE">
-         <area shape="rect" coords="113,45,163,77" href="#DICT" title="DICT"></map>
+      <img border="0" src="diagram/STRUCT.png" height="68" width="484" usemap="#STRUCT.map"><map name="STRUCT.map">
+         <area shape="rect" coords="29,1,79,33" href="#TYPE" title="TYPE"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#STRUCT" title="STRUCT" shape="rect">STRUCT</a>   ::= ( <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> | 'dict' <a href="#DICT" title="DICT" shape="rect">DICT</a> ) '[' 'cte_d' ']' ( '[' 'cte_d' ']' )?</pre></div>
+         <div class="ebnf"><pre><a href="#STRUCT" title="STRUCT" shape="rect">STRUCT</a>   ::= <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> '[' 'cte_d' ']' ( '[' 'cte_d' ']' )?</pre></div>
          
       </p>
       
@@ -439,27 +415,6 @@
          <ul>
             
             <li><a href="#DECLARE" title="DECLARE">DECLARE</a></li>
-            
-         </ul>
-         
-      </p><br><p style="font-size: 14px; font-weight:bold"><a name="DICT">DICT:</a></p>
-      <img border="0" src="diagram/DICT.png" height="36" width="314" usemap="#DICT.map"><map name="DICT.map">
-         <area shape="rect" coords="75,1,125,33" href="#TYPE" title="TYPE">
-         <area shape="rect" coords="189,1,239,33" href="#TYPE" title="TYPE"></map>
-      
-      <p>
-         
-         <div class="ebnf"><pre><a href="#DICT" title="DICT" shape="rect">DICT</a>     ::= '(' <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> ':' <a href="#TYPE" title="TYPE" shape="rect">TYPE</a> ')'</pre></div>
-         
-      </p>
-      
-      <p>referenced by:
-         
-         <ul>
-            
-            <li><a href="#DECLARE" title="DECLARE">DECLARE</a></li>
-            
-            <li><a href="#STRUCT" title="STRUCT">STRUCT</a></li>
             
          </ul>
          
@@ -490,15 +445,14 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="ASSIGN">ASSIGN:</a></p>
-      <img border="0" src="diagram/ASSIGN.png" height="144" width="684" usemap="#ASSIGN.map"><map name="ASSIGN.map">
-         <area shape="rect" coords="167,33,259,65" href="#EXPRESION" title="EXPRESION">
-         <area shape="rect" coords="391,65,483,97" href="#EXPRESION" title="EXPRESION">
-         <area shape="rect" coords="589,1,635,33" href="#INIT" title="INIT">
-         <area shape="rect" coords="101,109,185,141" href="#INIT_DICT" title="INIT_DICT"></map>
+      <img border="0" src="diagram/ASSIGN.png" height="100" width="644" usemap="#ASSIGN.map"><map name="ASSIGN.map">
+         <area shape="rect" coords="147,33,239,65" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="371,65,463,97" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="569,1,615,33" href="#INIT" title="INIT"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#ASSIGN" title="ASSIGN" shape="rect">ASSIGN</a>   ::= 'id' ( ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' )? )? <a href="#INIT" title="INIT" shape="rect">INIT</a> | <a href="#INIT_DICT" title="INIT_DICT" shape="rect">INIT_DICT</a> )</pre></div>
+         <div class="ebnf"><pre><a href="#ASSIGN" title="ASSIGN" shape="rect">ASSIGN</a>   ::= 'id' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' )? )? <a href="#INIT" title="INIT" shape="rect">INIT</a></pre></div>
          
       </p>
       
@@ -605,8 +559,6 @@
             
             <li><a href="#FACT" title="FACT">FACT</a></li>
             
-            <li><a href="#INIT_DICT" title="INIT_DICT">INIT_DICT</a></li>
-            
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="EXPRESION">EXPRESION:</a></p>
@@ -625,6 +577,10 @@
          <ul>
             
             <li><a href="#ASSIGN" title="ASSIGN">ASSIGN</a></li>
+            
+            <li><a href="#BASIC_FUNC" title="BASIC_FUNC">BASIC_FUNC</a></li>
+            
+            <li><a href="#BASIC_LANGUAGE_FUNCTIONS" title="BASIC_LANGUAGE_FUNCTIONS">BASIC_LANGUAGE_FUNCTIONS</a></li>
             
             <li><a href="#CONDITION" title="CONDITION">CONDITION</a></li>
             
@@ -682,12 +638,12 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="TERM">TERM:</a></p>
-      <img border="0" src="diagram/TERM.png" height="124" width="148" usemap="#TERM.map"><map name="TERM.map">
-         <area shape="rect" coords="49,89,99,121" href="#FACT" title="FACT"></map>
+      <img border="0" src="diagram/TERM.png" height="168" width="148" usemap="#TERM.map"><map name="TERM.map">
+         <area shape="rect" coords="49,133,99,165" href="#FACT" title="FACT"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#TERM" title="TERM" shape="rect">TERM</a>     ::= <a href="#FACT" title="FACT" shape="rect">FACT</a> ( ( '*' | '/' ) <a href="#FACT" title="FACT" shape="rect">FACT</a> )*</pre></div>
+         <div class="ebnf"><pre><a href="#TERM" title="TERM" shape="rect">TERM</a>     ::= <a href="#FACT" title="FACT" shape="rect">FACT</a> ( ( '*' | '/' | '%' ) <a href="#FACT" title="FACT" shape="rect">FACT</a> )*</pre></div>
          
       </p>
       
@@ -700,17 +656,19 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="FACT">FACT:</a></p>
-      <img border="0" src="diagram/FACT.png" height="364" width="618" usemap="#FACT.map"><map name="FACT.map">
-         <area shape="rect" coords="167,77,259,109" href="#EXPRESION" title="EXPRESION">
-         <area shape="rect" coords="391,109,483,141" href="#EXPRESION" title="EXPRESION">
-         <area shape="rect" coords="49,241,93,273" href="#CTE" title="CTE">
-         <area shape="rect" coords="95,285,187,317" href="#EXPRESION" title="EXPRESION">
-         <area shape="rect" coords="49,329,141,361" href="#FUNC_CALL" title="FUNC_CALL"></map>
+      <img border="0" src="diagram/FACT.png" height="320" width="618" usemap="#FACT.map"><map name="FACT.map">
+         <area shape="rect" coords="49,1,263,33" href="#BASIC_LANGUAGE_FUNCTIONS" title="BASIC_LANGUAGE_FUNCTIONS">
+         <area shape="rect" coords="167,121,259,153" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="391,153,483,185" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="49,197,93,229" href="#CTE" title="CTE">
+         <area shape="rect" coords="95,241,187,273" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="49,285,141,317" href="#FUNC_CALL" title="FUNC_CALL"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#FACT" title="FACT" shape="rect">FACT</a>     ::= 'cte_s'
-           | 'id' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' )? | '.' ( '0' | '1' ) )?
+         <div class="ebnf"><pre><a href="#FACT" title="FACT" shape="rect">FACT</a>     ::= <a href="#BASIC_LANGUAGE_FUNCTIONS" title="BASIC_LANGUAGE_FUNCTIONS" shape="rect">BASIC_LANGUAGE_FUNCTIONS</a>
+           | 'cte_s'
+           | 'id' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' ( '[' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ']' )? )?
            | <a href="#CTE" title="CTE" shape="rect">CTE</a>
            | '(' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ')'
            | <a href="#FUNC_CALL" title="FUNC_CALL" shape="rect">FUNC_CALL</a></pre></div>
@@ -745,6 +703,46 @@
             <li><a href="#INIT" title="INIT">INIT</a></li>
             
             <li><a href="#INSTR" title="INSTR">INSTR</a></li>
+            
+         </ul>
+         
+      </p><br><p style="font-size: 14px; font-weight:bold"><a name="BASIC_LANGUAGE_FUNCTIONS">BASIC_LANGUAGE_FUNCTIONS:</a></p>
+      <img border="0" src="diagram/BASIC_LANGUAGE_FUNCTIONS.png" height="168" width="350" usemap="#BASIC_LANGUAGE_FUNCTIONS.map"><map name="BASIC_LANGUAGE_FUNCTIONS.map">
+         <area shape="rect" coords="159,1,251,33" href="#EXPRESION" title="EXPRESION">
+         <area shape="rect" coords="201,45,301,77" href="#BASIC_FUNC" title="BASIC_FUNC"></map>
+      
+      <p>
+         
+         <div class="ebnf"><pre><a href="#BASIC_LANGUAGE_FUNCTIONS" title="BASIC_LANGUAGE_FUNCTIONS" shape="rect">BASIC_LANGUAGE_FUNCTIONS</a>
+         ::= 'neg' '(' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ')'
+           | ( 'average' | 'variance' | 'stdeviation' ) <a href="#BASIC_FUNC" title="BASIC_FUNC" shape="rect">BASIC_FUNC</a></pre></div>
+         
+      </p>
+      
+      <p>referenced by:
+         
+         <ul>
+            
+            <li><a href="#FACT" title="FACT">FACT</a></li>
+            
+         </ul>
+         
+      </p><br><p style="font-size: 14px; font-weight:bold"><a name="BASIC_FUNC">BASIC_FUNC:</a></p>
+      <img border="0" src="diagram/BASIC_FUNC.png" height="36" width="338" usemap="#BASIC_FUNC.map"><map name="BASIC_FUNC.map">
+         <area shape="rect" coords="171,1,263,33" href="#EXPRESION" title="EXPRESION"></map>
+      
+      <p>
+         
+         <div class="ebnf"><pre><a href="#BASIC_FUNC" title="BASIC_FUNC" shape="rect">BASIC_FUNC</a>
+         ::= '(' 'id' ',' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ')'</pre></div>
+         
+      </p>
+      
+      <p>referenced by:
+         
+         <ul>
+            
+            <li><a href="#BASIC_LANGUAGE_FUNCTIONS" title="BASIC_LANGUAGE_FUNCTIONS">BASIC_LANGUAGE_FUNCTIONS</a></li>
             
          </ul>
          

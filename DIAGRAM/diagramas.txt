@@ -1,0 +1,55 @@
+PROGRAM ::= 'program' 'id' '{' VARS? FUNCTION* MAIN '}'
+
+VARS ::= 'vars' DECLARE
+
+TYPE ::=  'int' | 'float' | 'bool' | 'string'
+
+MAIN ::= 'main' '{' VARS? BODY '}'
+
+INSTR ::= ((ASSIGN | FUNC_CALL | PRINT | READ) ';' | CONDITION | CYCLE)
+
+PRINT ::= 'print' '(' EXP (',' EXP)* ')'
+
+READ ::= 'read' '(' 'id' (',' 'id')* ')'
+
+DECLARE ::= (TYPE 'id' (',' 'id')* ';' | 'struct' 'id' STRUCT ';')+
+
+INIT ::= '=' (EXPRESION | FUNC_CALL)
+
+PARAM ::= (TYPE 'id' (',' 'id')*) (';' TYPE 'id' (',' 'id')*)* 
+
+FUNCTION ::= 'func' 'id' ('(' PARAM+ ')')? ('returns' TYPE '{' VARS? BODY RETURN)? '{' VARS? BODY '}'
+
+RETURN ::= 'return' EXPRESION ';'
+
+STRUCT ::= (TYPE) '[' 'cte_d' ']' ('[' 'cte_d' ']')?
+
+BODY ::=  (INSTR+)?
+
+ASSIGN ::= 'id' (('[' EXPRESION ']' ('[' EXPRESION ']')?)? INIT)
+
+CONDITION ::= 'if' '(' EXPRESION ')' '{' BODY '}' ('else' '{' BODY '}')?
+
+CYCLE ::= FOR_CYCLE | WHLE_CYCLE
+
+WHILE_CYCLE ::= 'while' '(' EXPRESION ')' '{' BODY '}'
+
+FOR_CYCLE ::= 'for' '(' ASSIGN ';' EXPRESION ';' ASSIGN ')'  '{' BODY '}'
+
+CTE ::= 'cte_d' | 'cte_f' | 'true' | 'false'
+
+EXPRESION ::= S_EXP (('or' | 'and') S_EXP)*
+
+S_EXP ::=  EXP (('>' | '>=' | '<' | '<=' | '!=' | '==') EXP)?
+
+EXP ::= TERM (('+' | '-') TERM)*
+
+TERM ::= FACT (('*' | '/' | '%') FACT)*
+
+FACT ::= (BASIC_LANGUAGE_FUNCTIONS | 'cte_s' | 'id' ('[' EXPRESION ']' ('[' EXPRESION ']')?)? | CTE | '(' EXPRESION ')' | FUNC_CALL )
+
+FUNC_CALL ::= 'id' '(' (EXPRESION (',' EXPRESION)*)? ')'
+
+BASIC_LANGUAGE_FUNCTIONS ::= ('neg' '(' EXPRESION ')' | ('average' | 'variance' | 'stdeviation') BASIC_FUNC)
+
+BASIC_FUNC ::= '(' 'id' ',' EXPRESION ')'
