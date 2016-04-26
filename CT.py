@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
+reserved = ['AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -554,8 +554,7 @@ def p_fix(p):
 
 def p_declare(p):
 	'''declare : basicDeclare
-			| structDeclare
-			| dictDeclare '''
+			| structDeclare '''
 	# print("declare")
 
 
@@ -573,30 +572,6 @@ def p_initWith(p):
 	'''initWith : expresion
 		| funcCall '''
 	# print("init with")
-
-
-def p_initDict(p):
-	'''initDict : ASGN PARINI dictType ":" dictType PARFIN errorInitDict'''
-	# print("initDict")
-
-
-def p_errorInitDict(p):
-	'''errorInitDict : '''
-	global errorMsg
-	errorMsg = "Error in rule INITDICT"
-
-
-def p_dictType(p):
-	'''dictType : errorDictType CTES
-				| cte
-				| ID '''
-	# print("dict type")
-
-
-def p_errorDictType(p):
-	'''errorDictType : '''
-	global errorMsg
-	errorMsg = "Error in rule DICTTYPE. Dictionary not initialized."
 
 
 def p_param(p):
@@ -802,18 +777,6 @@ def p_errorStructDeclare(p):
 	global errorMsg
 	errorMsg = "Error in rule STRUCTDECLARE"
 
-
-def p_dictDeclare(p):
-	'''dictDeclare : errorDictDeclare DICT ID dict ";" cyDeclare '''
-	# print("dict declare")
-
-
-def p_errorDictDeclare(p):
-	'''errorDictDeclare : '''
-	global errorMsg
-	errorMsg = "Error in rule DICTDECLARE"
-
-
 def p_cyDeclare(p):
 	'''cyDeclare : declare
 		| empty '''
@@ -918,7 +881,6 @@ def p_errorAssign(p):
 
 def p_assignOptions(p):
 	'''assignOptions : init
-					| initDict
 					| saveToDimensionStacks "[" expresion verifyIndex "]" assignMatrix accessStruct init '''
 	# print("assignOptions")
 
@@ -1149,8 +1111,7 @@ def p_createDimension(p):
 		vars_local[currentDimensionedVariable] = dimensionTable
 
 def p_structType(p):
-	'''structType : saveType type
-				| DICT dict '''
+	'''structType : saveType type'''
 	# print("struct type")
 
 
@@ -1225,17 +1186,6 @@ def p_errorElse(p):
 	'''errorElse : '''
 	global errorMsg
 	errorMsg = "Error in rule OPTIONALELSE"
-
-
-def p_dict(p):
-	'''dict : errorDict PARINI type ":" type PARFIN '''
-	# print("dict")
-
-
-def p_errorDict(p):
-	'''errorDict : '''
-	global errorMsg
-	errorMsg = "Error in rule DICT"
 
 
 def p_expresion(p):
@@ -1459,7 +1409,6 @@ def p_errorFact(p):
 
 def p_opAccess(p):
 	'''opAccess : opStruct
-				| opDictionary
 				| empty '''
 	# print("optional access")
 
@@ -1607,18 +1556,6 @@ def p_errorOpMatrix(p):
 	'''errorOpMatrix : '''
 	global errorMsg
 	errorMsg = "Error in rule ERROROPMATRIX"
-
-
-def p_opDictionary(p):
-	'''opDictionary : "." dictIndex '''
-	# print("optional dictionary")
-
-
-def p_dictIndex(p):
-	'''dictIndex : FIRST
-				| LAST '''
-	# print("dictionary index")
-
 
 def p_cte(p):
 	'''cte : CTED saveConstantInt
@@ -2185,5 +2122,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("input4.txt", "r");
+file = open ("pruebasBasicas.txt", "r");
 yacc.parse(file.read())
