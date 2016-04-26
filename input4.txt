@@ -1,13 +1,25 @@
-program  a {
-	func up(bool s, g; float h) returns float {
-		return 2.0 * 5.6;
-	}
-
+program prog {
 	main {
 		vars float op;
+			bool aux;
+			int aux2;
+			float aux3;
+			string aux4;
+	
+			print("Boolean: ");
+			read(aux);
+			print(aux, "%n");
 
-		op = up(true, false, 1.0) + (up(false, false, 2.0));
+			print("Int: ");
+			read(aux2);
+			print(aux2, "%n");
 
-		print(op, up(true, false, 1.0) + (up(false, false, 2.0)));
+			print("Float: ");
+			read(aux3);
+			print(aux3, "%n");
+
+			print("String: ");
+			read(aux4);
+			print(aux4, "%n");
 	}
 }
