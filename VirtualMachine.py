@@ -1,4 +1,5 @@
 from __future__ import print_function
+from math import sqrt
 import CT as compiler
 import sys
 
@@ -44,7 +45,9 @@ PARAM = 320
 FUNCRETURN = 330
 VER = 340
 NEG = 350
-AVG = 360
+AVERAGE = 360
+VARIANCE = 370
+STDEV = 380
 END = 400
 
 # ---------------------------------------
@@ -367,6 +370,21 @@ def getAverage(initialAddress, lenght):
 
 	return accum / lenght
 
+def getVariance(initialAddress, lenght):
+	data = getArrayValues(initialAddress, lenght)
+	accum = 0.0
+
+	average = getAverage(initialAddress, lenght)
+
+	for x in range(0, len(data)):
+		accum += pow(data[x] - average, 2)
+
+	return accum / lenght
+
+def getStdDeviation(initialAddress, lenght):
+	return sqrt(getVariance(initialAddress, lenght))
+
+
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
 # ---------------------------------------
@@ -607,11 +625,23 @@ def main():
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
-		elif actualCode == AVG:
+		elif actualCode == AVERAGE:
 			result = getAverage(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
 			saveValueToAddress(result, currentQuadruple[3])
 
-			print(local_actual_memory)
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+		elif actualCode == VARIANCE:
+			result = getVariance(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
+			saveValueToAddress(result, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+		elif actualCode == STDEV:
+			result = getStdDeviation(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
+			saveValueToAddress(result, currentQuadruple[3])
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]

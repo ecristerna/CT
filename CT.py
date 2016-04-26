@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['AVG', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
+reserved = ['AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -135,7 +135,9 @@ PARAM = 320
 FUNCRETURN = 330
 VER = 340
 NEG = 350
-AVG = 360
+AVERAGE = 360
+VARIANCE = 370
+STDEV = 380
 
 
 # Semantic Cube
@@ -1318,7 +1320,9 @@ def p_fact(p):
 
 def p_languageFunctions(p):
 	'''languageFunctions : NEG PARINI expresion performNeg PARFIN
-						| AVG PARINI ID saveStructID "," expresion performAvg PARFIN '''
+						| AVERAGE PARINI ID saveStructID "," expresion performAvg PARFIN
+						| VARIANCE PARINI ID saveStructID "," expresion performVariance PARFIN
+						| STDEVIATION PARINI ID saveStructID "," expresion performStdDev PARFIN '''
 
 
 def p_saveStructID(p):
@@ -1346,7 +1350,7 @@ def p_saveStructID(p):
 	tipo = getTypeForAddress(address)
 
 	if tipo != INT and tipo != FLOAT:
-		semanticError = "Cannot get average of non numerical values."
+		semanticError = "Cannot get stats from non numerical values."
 		semanticErrorHalt()
 
 	pOper.append(address)
@@ -1370,6 +1374,54 @@ def p_performAvg(p):
 	newAddress = getTempForType(FLOAT)
 
 	cuadruplo = (AVG, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(FLOAT)
+
+def p_performVariance(p):
+	'''performVariance : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(FLOAT)
+
+	cuadruplo = (VARIANCE, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(FLOAT)
+
+def p_performStdDev(p):
+	'''performStdDev : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(FLOAT)
+
+	cuadruplo = (STDEV, address, lenght, newAddress)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 

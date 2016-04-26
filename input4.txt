@@ -10,14 +10,16 @@ program prog {
 			struct int a[5];
 			struct bool b[5];
 
-		a[0] = 10;
-		a[1] = 56;
-		a[2] = 2567;
-		a[3] = 31345;
-		a[4] = 3;
+		a[0] = 600;
+		a[1] = 470;
+		a[2] = 170;
+		a[3] = 430;
+		a[4] = 300;
 
-		op = 2 * avg(a, op);
+		op = variance(a, 5);
+		print(op);
 
+		op = stdeviation(a, 5);
 		print(op);
 	}
 }
