@@ -1320,10 +1320,12 @@ def p_fact(p):
 
 def p_basicLanguageFunctions(p):
 	'''basicLanguageFunctions : NEG PARINI expresion performNeg PARFIN
-						| AVERAGE PARINI ID saveStructID "," expresion performAvg PARFIN
-						| VARIANCE PARINI ID saveStructID "," expresion performVariance PARFIN
-						| STDEVIATION PARINI ID saveStructID "," expresion performStdDev PARFIN '''
+						| AVERAGE basicFunc performAvg
+						| VARIANCE basicFunc performVariance
+						| STDEVIATION basicFunc performStdDev '''
 
+def p_basicFunc(p):
+	'''basicFunc : PARINI ID saveStructID "," expresion PARFIN '''
 
 def p_saveStructID(p):
 	'''saveStructID : '''
