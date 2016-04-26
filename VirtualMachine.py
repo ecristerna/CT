@@ -471,7 +471,6 @@ def main():
 
 		elif actualCode == READ:
 			toRead = raw_input()
-			# toRead = sys.stdin.readline()
 
 			addressType = compiler.getTypeForAddress(currentQuadruple[3])
 
@@ -480,7 +479,11 @@ def main():
 			elif addressType == FLOAT:
 				saveValueToAddress(float(toRead), currentQuadruple[3])
 			elif addressType == BOOL:
-				saveValueToAddress(bool(toRead), currentQuadruple[3])
+				toRead = toRead.lower()
+				if toRead == 'true' or toRead == 't':
+					saveValueToAddress(True, currentQuadruple[3])
+				elif toRead == 'false' or toRead == 'f':
+					saveValueToAddress(False, currentQuadruple[3])
 			elif addressType == STRING:
 				saveValueToAddress(str(toRead), currentQuadruple[3])
 
