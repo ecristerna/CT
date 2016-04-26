@@ -4,9 +4,10 @@ program prog {
 	}
 
 	main {
-		vars float op;
-			bool h;
-			string let;
+		vars float op, aux3;
+			bool h, aux;
+			int aux2;
+			string let, aux4;
 			struct int a[5];
 			struct bool b[5];
 
@@ -22,20 +23,20 @@ program prog {
 		op = stdeviation(a, 5);
 		print(op);
 
-			print("Boolean: ");
-			read(aux);
-			print(aux, "%n");
+		print("Boolean: ");
+		read(aux);
+		print(aux, "%n");
 
-			print("Int: ");
-			read(aux2);
-			print(aux2, "%n");
+		print("Int: ");
+		read(aux2);
+		print(aux2, "%n");
 
-			print("Float: ");
-			read(aux3);
-			print(aux3, "%n");
+		print("Float: ");
+		read(aux3);
+		print(aux3, "%n");
 
-			print("String: ");
-			read(aux4);
-			print(aux4, "%n");
+		print("String: ");
+		read(aux4);
+		print(aux4, "%n");
 	}
 }

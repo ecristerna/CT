@@ -157,16 +157,16 @@ Rule 151   cyTerm -> MULT saveOperator errorFact term
 Rule 152   cyTerm -> DIV saveOperator term
 Rule 153   cyTerm -> RES saveOperator term
 Rule 154   cyTerm -> empty
-Rule 155   fact -> putFondo languageFunctions takeFondo
+Rule 155   fact -> putFondo basicLanguageFunctions takeFondo
 Rule 156   fact -> CTES saveConstantString
 Rule 157   fact -> cte
 Rule 158   fact -> funcCall
 Rule 159   fact -> PARINI putFondo expresion PARFIN takeFondo
 Rule 160   fact -> ID saveVariable opAccess errorOpAccess
-Rule 161   languageFunctions -> NEG PARINI expresion performNeg PARFIN
-Rule 162   languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN
-Rule 163   languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN
-Rule 164   languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN
+Rule 161   basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN
+Rule 162   basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN
+Rule 163   basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN
+Rule 164   basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN
 Rule 165   saveStructID -> <empty>
 Rule 166   performAvg -> <empty>
 Rule 167   performVariance -> <empty>
@@ -279,6 +279,7 @@ assign               : 25 92 92
 assignMatrix         : 102
 assignOptions        : 98
 basicDeclare         : 36
+basicLanguageFunctions : 155
 basicStatements      : 22
 body                 : 18 69 70 85 88 92 124 126
 changeCurrentScope   : 1
@@ -351,7 +352,6 @@ init                 : 100 102
 initDict             : 101
 initWith             : 39
 instr                : 85
-languageFunctions    : 155
 main                 : 1
 opAccess             : 160
 opDictionary         : 172
@@ -1837,7 +1837,7 @@ state 121
     (29) print -> PRINT PARINI . exp performPrint cyPrint PARFIN
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -1851,18 +1851,18 @@ state 121
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -1985,32 +1985,6 @@ state 134
 
 state 135
 
-    (189) cte -> TRUE . saveConstantBool
-    (198) saveConstantBool -> .
-
-    MULT            reduce using rule 198 (saveConstantBool -> .)
-    DIV             reduce using rule 198 (saveConstantBool -> .)
-    RES             reduce using rule 198 (saveConstantBool -> .)
-    PLUS            reduce using rule 198 (saveConstantBool -> .)
-    MINUS           reduce using rule 198 (saveConstantBool -> .)
-    ,               reduce using rule 198 (saveConstantBool -> .)
-    PARFIN          reduce using rule 198 (saveConstantBool -> .)
-    EQ              reduce using rule 198 (saveConstantBool -> .)
-    DIF             reduce using rule 198 (saveConstantBool -> .)
-    LTOEQ           reduce using rule 198 (saveConstantBool -> .)
-    GTOEQ           reduce using rule 198 (saveConstantBool -> .)
-    GT              reduce using rule 198 (saveConstantBool -> .)
-    LT              reduce using rule 198 (saveConstantBool -> .)
-    AND             reduce using rule 198 (saveConstantBool -> .)
-    OR              reduce using rule 198 (saveConstantBool -> .)
-    ]               reduce using rule 198 (saveConstantBool -> .)
-    :               reduce using rule 198 (saveConstantBool -> .)
-    ;               reduce using rule 198 (saveConstantBool -> .)
-
-    saveConstantBool               shift and go to state 160
-
-state 136
-
     (159) fact -> PARINI . putFondo expresion PARFIN takeFondo
     (202) putFondo -> .
 
@@ -2026,9 +2000,9 @@ state 136
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
 
-    putFondo                       shift and go to state 161
+    putFondo                       shift and go to state 160
 
-state 137
+state 136
 
     (187) cte -> CTED . saveConstantInt
     (196) saveConstantInt -> .
@@ -2052,24 +2026,24 @@ state 137
     :               reduce using rule 196 (saveConstantInt -> .)
     ;               reduce using rule 196 (saveConstantInt -> .)
 
-    saveConstantInt                shift and go to state 162
+    saveConstantInt                shift and go to state 161
+
+state 137
+
+    (155) fact -> putFondo . basicLanguageFunctions takeFondo
+    (161) basicLanguageFunctions -> . NEG PARINI expresion performNeg PARFIN
+    (162) basicLanguageFunctions -> . AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN
+    (163) basicLanguageFunctions -> . VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN
+    (164) basicLanguageFunctions -> . STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN
+
+    NEG             shift and go to state 165
+    AVERAGE         shift and go to state 164
+    VARIANCE        shift and go to state 166
+    STDEVIATION     shift and go to state 162
+
+    basicLanguageFunctions         shift and go to state 163
 
 state 138
-
-    (155) fact -> putFondo . languageFunctions takeFondo
-    (161) languageFunctions -> . NEG PARINI expresion performNeg PARFIN
-    (162) languageFunctions -> . AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN
-    (163) languageFunctions -> . VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN
-    (164) languageFunctions -> . STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN
-
-    NEG             shift and go to state 163
-    AVERAGE         shift and go to state 164
-    VARIANCE        shift and go to state 167
-    STDEVIATION     shift and go to state 166
-
-    languageFunctions              shift and go to state 165
-
-state 139
 
     (160) fact -> ID . saveVariable opAccess errorOpAccess
     (106) funcCall -> ID . checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
@@ -2097,8 +2071,34 @@ state 139
     ;               reduce using rule 200 (saveVariable -> .)
     PARINI          reduce using rule 108 (checkFunction -> .)
 
-    saveVariable                   shift and go to state 168
+    saveVariable                   shift and go to state 167
     checkFunction                  shift and go to state 124
+
+state 139
+
+    (189) cte -> TRUE . saveConstantBool
+    (198) saveConstantBool -> .
+
+    MULT            reduce using rule 198 (saveConstantBool -> .)
+    DIV             reduce using rule 198 (saveConstantBool -> .)
+    RES             reduce using rule 198 (saveConstantBool -> .)
+    PLUS            reduce using rule 198 (saveConstantBool -> .)
+    MINUS           reduce using rule 198 (saveConstantBool -> .)
+    ,               reduce using rule 198 (saveConstantBool -> .)
+    PARFIN          reduce using rule 198 (saveConstantBool -> .)
+    EQ              reduce using rule 198 (saveConstantBool -> .)
+    DIF             reduce using rule 198 (saveConstantBool -> .)
+    LTOEQ           reduce using rule 198 (saveConstantBool -> .)
+    GTOEQ           reduce using rule 198 (saveConstantBool -> .)
+    GT              reduce using rule 198 (saveConstantBool -> .)
+    LT              reduce using rule 198 (saveConstantBool -> .)
+    AND             reduce using rule 198 (saveConstantBool -> .)
+    OR              reduce using rule 198 (saveConstantBool -> .)
+    ]               reduce using rule 198 (saveConstantBool -> .)
+    :               reduce using rule 198 (saveConstantBool -> .)
+    ;               reduce using rule 198 (saveConstantBool -> .)
+
+    saveConstantBool               shift and go to state 168
 
 state 140
 
@@ -2341,7 +2341,7 @@ state 152
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -2355,19 +2355,19 @@ state 152
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 185
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -2452,36 +2452,12 @@ state 159
 
 state 160
 
-    (189) cte -> TRUE saveConstantBool .
-
-    MULT            reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    DIV             reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    RES             reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    PLUS            reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    MINUS           reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    EQ              reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    DIF             reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    LTOEQ           reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    GTOEQ           reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    GT              reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    LT              reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    AND             reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    OR              reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    PARFIN          reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    ,               reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    ]               reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    ;               reduce using rule 189 (cte -> TRUE saveConstantBool .)
-    :               reduce using rule 189 (cte -> TRUE saveConstantBool .)
-
-
-state 161
-
     (159) fact -> PARINI putFondo . expresion PARFIN takeFondo
     (131) expresion -> . sExp performAndOr cyExpresion errorExpresion
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -2495,19 +2471,19 @@ state 161
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 193
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -2515,7 +2491,7 @@ state 161
     exp                            shift and go to state 186
     fact                           shift and go to state 147
 
-state 162
+state 161
 
     (187) cte -> CTED saveConstantInt .
 
@@ -2539,23 +2515,16 @@ state 162
     :               reduce using rule 187 (cte -> CTED saveConstantInt .)
 
 
-state 163
+state 162
 
-    (161) languageFunctions -> NEG . PARINI expresion performNeg PARFIN
+    (164) basicLanguageFunctions -> STDEVIATION . PARINI ID saveStructID , expresion performStdDev PARFIN
 
     PARINI          shift and go to state 194
 
 
-state 164
+state 163
 
-    (162) languageFunctions -> AVERAGE . PARINI ID saveStructID , expresion performAvg PARFIN
-
-    PARINI          shift and go to state 195
-
-
-state 165
-
-    (155) fact -> putFondo languageFunctions . takeFondo
+    (155) fact -> putFondo basicLanguageFunctions . takeFondo
     (203) takeFondo -> .
 
     MULT            reduce using rule 203 (takeFondo -> .)
@@ -2576,23 +2545,30 @@ state 165
     ]               reduce using rule 203 (takeFondo -> .)
     ;               reduce using rule 203 (takeFondo -> .)
 
-    takeFondo                      shift and go to state 196
+    takeFondo                      shift and go to state 195
 
-state 166
+state 164
 
-    (164) languageFunctions -> STDEVIATION . PARINI ID saveStructID , expresion performStdDev PARFIN
+    (162) basicLanguageFunctions -> AVERAGE . PARINI ID saveStructID , expresion performAvg PARFIN
+
+    PARINI          shift and go to state 196
+
+
+state 165
+
+    (161) basicLanguageFunctions -> NEG . PARINI expresion performNeg PARFIN
 
     PARINI          shift and go to state 197
 
 
-state 167
+state 166
 
-    (163) languageFunctions -> VARIANCE . PARINI ID saveStructID , expresion performVariance PARFIN
+    (163) basicLanguageFunctions -> VARIANCE . PARINI ID saveStructID , expresion performVariance PARFIN
 
     PARINI          shift and go to state 198
 
 
-state 168
+state 167
 
     (160) fact -> ID saveVariable . opAccess errorOpAccess
     (171) opAccess -> . opStruct
@@ -2628,6 +2604,30 @@ state 168
     opStruct                       shift and go to state 201
     opAccess                       shift and go to state 202
     empty                          shift and go to state 204
+
+state 168
+
+    (189) cte -> TRUE saveConstantBool .
+
+    MULT            reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    DIV             reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    RES             reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    PLUS            reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    MINUS           reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    EQ              reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    DIF             reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    LTOEQ           reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    GTOEQ           reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    GT              reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    LT              reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    AND             reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    OR              reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    PARFIN          reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    ,               reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    ]               reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    ;               reduce using rule 189 (cte -> TRUE saveConstantBool .)
+    :               reduce using rule 189 (cte -> TRUE saveConstantBool .)
+
 
 state 169
 
@@ -2772,7 +2772,7 @@ state 175
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -2786,19 +2786,19 @@ state 175
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 214
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -2872,7 +2872,7 @@ state 181
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -2887,21 +2887,21 @@ state 181
 
     PARFIN          reduce using rule 191 (empty -> .)
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     opParamCall                    shift and go to state 219
     sExp                           shift and go to state 184
     empty                          shift and go to state 220
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 221
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -3055,12 +3055,49 @@ state 193
 
 state 194
 
-    (161) languageFunctions -> NEG PARINI . expresion performNeg PARFIN
+    (164) basicLanguageFunctions -> STDEVIATION PARINI . ID saveStructID , expresion performStdDev PARFIN
+
+    ID              shift and go to state 237
+
+
+state 195
+
+    (155) fact -> putFondo basicLanguageFunctions takeFondo .
+
+    MULT            reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    DIV             reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    RES             reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    PLUS            reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    MINUS           reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    ,               reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    PARFIN          reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    EQ              reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    DIF             reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    LTOEQ           reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    GTOEQ           reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    GT              reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    LT              reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    AND             reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    OR              reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    ]               reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+    ;               reduce using rule 155 (fact -> putFondo basicLanguageFunctions takeFondo .)
+
+
+state 196
+
+    (162) basicLanguageFunctions -> AVERAGE PARINI . ID saveStructID , expresion performAvg PARFIN
+
+    ID              shift and go to state 238
+
+
+state 197
+
+    (161) basicLanguageFunctions -> NEG PARINI . expresion performNeg PARFIN
     (131) expresion -> . sExp performAndOr cyExpresion errorExpresion
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -3074,66 +3111,29 @@ state 194
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
-    expresion                      shift and go to state 237
+    putFondo                       shift and go to state 137
+    expresion                      shift and go to state 239
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
     exp                            shift and go to state 186
     fact                           shift and go to state 147
 
-state 195
-
-    (162) languageFunctions -> AVERAGE PARINI . ID saveStructID , expresion performAvg PARFIN
-
-    ID              shift and go to state 238
-
-
-state 196
-
-    (155) fact -> putFondo languageFunctions takeFondo .
-
-    MULT            reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    DIV             reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    RES             reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    PLUS            reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    MINUS           reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    ,               reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    PARFIN          reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    EQ              reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    DIF             reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    LTOEQ           reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    GTOEQ           reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    GT              reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    LT              reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    AND             reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    OR              reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    ]               reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-    ;               reduce using rule 155 (fact -> putFondo languageFunctions takeFondo .)
-
-
-state 197
-
-    (164) languageFunctions -> STDEVIATION PARINI . ID saveStructID , expresion performStdDev PARFIN
-
-    ID              shift and go to state 239
-
-
 state 198
 
-    (163) languageFunctions -> VARIANCE PARINI . ID saveStructID , expresion performVariance PARFIN
+    (163) basicLanguageFunctions -> VARIANCE PARINI . ID saveStructID , expresion performVariance PARFIN
 
     ID              shift and go to state 240
 
@@ -3422,7 +3422,7 @@ state 215
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -3436,19 +3436,19 @@ state 215
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 256
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -3489,9 +3489,9 @@ state 217
 
     ID              shift and go to state 261
     CTES            reduce using rule 48 (errorDictType -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     dictType                       shift and go to state 258
@@ -3725,16 +3725,16 @@ state 236
 
 state 237
 
-    (161) languageFunctions -> NEG PARINI expresion . performNeg PARFIN
-    (169) performNeg -> .
+    (164) basicLanguageFunctions -> STDEVIATION PARINI ID . saveStructID , expresion performStdDev PARFIN
+    (165) saveStructID -> .
 
-    PARFIN          reduce using rule 169 (performNeg -> .)
+    ,               reduce using rule 165 (saveStructID -> .)
 
-    performNeg                     shift and go to state 286
+    saveStructID                   shift and go to state 286
 
 state 238
 
-    (162) languageFunctions -> AVERAGE PARINI ID . saveStructID , expresion performAvg PARFIN
+    (162) basicLanguageFunctions -> AVERAGE PARINI ID . saveStructID , expresion performAvg PARFIN
     (165) saveStructID -> .
 
     ,               reduce using rule 165 (saveStructID -> .)
@@ -3743,16 +3743,16 @@ state 238
 
 state 239
 
-    (164) languageFunctions -> STDEVIATION PARINI ID . saveStructID , expresion performStdDev PARFIN
-    (165) saveStructID -> .
+    (161) basicLanguageFunctions -> NEG PARINI expresion . performNeg PARFIN
+    (169) performNeg -> .
 
-    ,               reduce using rule 165 (saveStructID -> .)
+    PARFIN          reduce using rule 169 (performNeg -> .)
 
-    saveStructID                   shift and go to state 288
+    performNeg                     shift and go to state 288
 
 state 240
 
-    (163) languageFunctions -> VARIANCE PARINI ID . saveStructID , expresion performVariance PARFIN
+    (163) basicLanguageFunctions -> VARIANCE PARINI ID . saveStructID , expresion performVariance PARFIN
     (165) saveStructID -> .
 
     ,               reduce using rule 165 (saveStructID -> .)
@@ -3871,9 +3871,9 @@ state 246
     AND             reduce using rule 145 (exp -> term performAddSub errorCyExp cyExp .)
     OR              reduce using rule 145 (exp -> term performAddSub errorCyExp cyExp .)
     ]               reduce using rule 145 (exp -> term performAddSub errorCyExp cyExp .)
-    ;               reduce using rule 145 (exp -> term performAddSub errorCyExp cyExp .)
     PARFIN          reduce using rule 145 (exp -> term performAddSub errorCyExp cyExp .)
     ,               reduce using rule 145 (exp -> term performAddSub errorCyExp cyExp .)
+    ;               reduce using rule 145 (exp -> term performAddSub errorCyExp cyExp .)
 
 
 state 247
@@ -3944,7 +3944,7 @@ state 251
     (30) cyPrint -> , fix . exp performPrint cyPrint
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -3958,18 +3958,18 @@ state 251
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -3980,7 +3980,7 @@ state 252
 
     (153) cyTerm -> RES saveOperator . term
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -3994,28 +3994,28 @@ state 252
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     term                           shift and go to state 294
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     fact                           shift and go to state 147
 
 state 253
 
     (152) cyTerm -> DIV saveOperator . term
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4029,21 +4029,21 @@ state 253
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     term                           shift and go to state 295
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     fact                           shift and go to state 147
 
 state 254
@@ -4093,7 +4093,7 @@ state 257
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4107,19 +4107,19 @@ state 257
 
     ID              shift and go to state 300
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
+    PARINI          shift and go to state 135
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     initWith                       shift and go to state 299
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 301
     term                           shift and go to state 141
     funcCall                       shift and go to state 302
@@ -4184,7 +4184,7 @@ state 264
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4198,19 +4198,19 @@ state 264
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 309
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -4503,28 +4503,28 @@ state 285
 
 state 286
 
-    (161) languageFunctions -> NEG PARINI expresion performNeg . PARFIN
+    (164) basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID . , expresion performStdDev PARFIN
 
-    PARFIN          shift and go to state 325
+    ,               shift and go to state 325
 
 
 state 287
 
-    (162) languageFunctions -> AVERAGE PARINI ID saveStructID . , expresion performAvg PARFIN
+    (162) basicLanguageFunctions -> AVERAGE PARINI ID saveStructID . , expresion performAvg PARFIN
 
     ,               shift and go to state 326
 
 
 state 288
 
-    (164) languageFunctions -> STDEVIATION PARINI ID saveStructID . , expresion performStdDev PARFIN
+    (161) basicLanguageFunctions -> NEG PARINI expresion performNeg . PARFIN
 
-    ,               shift and go to state 327
+    PARFIN          shift and go to state 327
 
 
 state 289
 
-    (163) languageFunctions -> VARIANCE PARINI ID saveStructID . , expresion performVariance PARFIN
+    (163) basicLanguageFunctions -> VARIANCE PARINI ID saveStructID . , expresion performVariance PARFIN
 
     ,               shift and go to state 328
 
@@ -4536,7 +4536,7 @@ state 290
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4550,19 +4550,19 @@ state 290
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 329
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -4575,7 +4575,7 @@ state 291
     (146) cyExp -> PLUS saveOperator . exp
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4589,18 +4589,18 @@ state 291
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -4612,7 +4612,7 @@ state 292
     (147) cyExp -> MINUS saveOperator . exp
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4626,18 +4626,18 @@ state 292
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -4698,7 +4698,7 @@ state 296
 
     (151) cyTerm -> MULT saveOperator errorFact . term
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4712,18 +4712,18 @@ state 296
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 333
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -4777,7 +4777,7 @@ state 300
     ;               reduce using rule 200 (saveVariable -> .)
     PARFIN          reduce using rule 200 (saveVariable -> .)
 
-    saveVariable                   shift and go to state 168
+    saveVariable                   shift and go to state 167
     checkFunction                  shift and go to state 124
 
 state 301
@@ -4829,9 +4829,9 @@ state 303
 
     ID              shift and go to state 261
     CTES            reduce using rule 48 (errorDictType -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     dictType                       shift and go to state 336
@@ -4892,7 +4892,7 @@ state 308
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4906,19 +4906,19 @@ state 308
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 338
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -4942,7 +4942,7 @@ state 310
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4956,19 +4956,19 @@ state 310
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 340
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -4983,7 +4983,7 @@ state 311
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -4997,19 +4997,19 @@ state 311
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 341
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -5052,7 +5052,7 @@ state 314
     (141) opSExp -> GT saveOperator . exp
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -5066,18 +5066,18 @@ state 314
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -5089,7 +5089,7 @@ state 315
     (139) opSExp -> LTOEQ saveOperator . exp
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -5103,18 +5103,18 @@ state 315
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -5126,7 +5126,7 @@ state 316
     (138) opSExp -> DIF saveOperator . exp
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -5140,18 +5140,18 @@ state 316
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -5163,7 +5163,7 @@ state 317
     (142) opSExp -> LT saveOperator . exp
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -5177,18 +5177,18 @@ state 317
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -5200,7 +5200,7 @@ state 318
     (140) opSExp -> GTOEQ saveOperator . exp
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -5214,18 +5214,18 @@ state 318
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -5237,7 +5237,7 @@ state 319
     (137) opSExp -> EQ saveOperator . exp
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -5251,18 +5251,18 @@ state 319
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -5330,35 +5330,12 @@ state 324
 
 state 325
 
-    (161) languageFunctions -> NEG PARINI expresion performNeg PARFIN .
-
-    MULT            reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    DIV             reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    RES             reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    PLUS            reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    MINUS           reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    ,               reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    PARFIN          reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    EQ              reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    DIF             reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    LTOEQ           reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    GTOEQ           reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    GT              reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    LT              reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    AND             reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    OR              reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    ]               reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-    ;               reduce using rule 161 (languageFunctions -> NEG PARINI expresion performNeg PARFIN .)
-
-
-state 326
-
-    (162) languageFunctions -> AVERAGE PARINI ID saveStructID , . expresion performAvg PARFIN
+    (164) basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , . expresion performStdDev PARFIN
     (131) expresion -> . sExp performAndOr cyExpresion errorExpresion
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -5372,20 +5349,61 @@ state 326
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 352
+    term                           shift and go to state 141
+    funcCall                       shift and go to state 143
+    cte                            shift and go to state 144
+    exp                            shift and go to state 186
+    fact                           shift and go to state 147
+
+state 326
+
+    (162) basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , . expresion performAvg PARFIN
+    (131) expresion -> . sExp performAndOr cyExpresion errorExpresion
+    (136) sExp -> . exp errorOpSExp opSExp performRelational
+    (145) exp -> . term performAddSub errorCyExp cyExp
+    (150) term -> . fact performMulDiv cyTerm
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
+    (156) fact -> . CTES saveConstantString
+    (157) fact -> . cte
+    (158) fact -> . funcCall
+    (159) fact -> . PARINI putFondo expresion PARFIN takeFondo
+    (160) fact -> . ID saveVariable opAccess errorOpAccess
+    (202) putFondo -> .
+    (187) cte -> . CTED saveConstantInt
+    (188) cte -> . CTEF saveConstantFloat
+    (189) cte -> . TRUE saveConstantBool
+    (190) cte -> . FALSE saveConstantBool
+    (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
+
+    CTES            shift and go to state 140
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
+    NEG             reduce using rule 202 (putFondo -> .)
+    AVERAGE         reduce using rule 202 (putFondo -> .)
+    VARIANCE        reduce using rule 202 (putFondo -> .)
+    STDEVIATION     reduce using rule 202 (putFondo -> .)
+    CTED            shift and go to state 136
+    CTEF            shift and go to state 145
+    TRUE            shift and go to state 139
+    FALSE           shift and go to state 142
+
+    sExp                           shift and go to state 184
+    putFondo                       shift and go to state 137
+    expresion                      shift and go to state 353
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
     cte                            shift and go to state 144
@@ -5394,53 +5412,35 @@ state 326
 
 state 327
 
-    (164) languageFunctions -> STDEVIATION PARINI ID saveStructID , . expresion performStdDev PARFIN
-    (131) expresion -> . sExp performAndOr cyExpresion errorExpresion
-    (136) sExp -> . exp errorOpSExp opSExp performRelational
-    (145) exp -> . term performAddSub errorCyExp cyExp
-    (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
-    (156) fact -> . CTES saveConstantString
-    (157) fact -> . cte
-    (158) fact -> . funcCall
-    (159) fact -> . PARINI putFondo expresion PARFIN takeFondo
-    (160) fact -> . ID saveVariable opAccess errorOpAccess
-    (202) putFondo -> .
-    (187) cte -> . CTED saveConstantInt
-    (188) cte -> . CTEF saveConstantFloat
-    (189) cte -> . TRUE saveConstantBool
-    (190) cte -> . FALSE saveConstantBool
-    (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
+    (161) basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .
 
-    CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
-    NEG             reduce using rule 202 (putFondo -> .)
-    AVERAGE         reduce using rule 202 (putFondo -> .)
-    VARIANCE        reduce using rule 202 (putFondo -> .)
-    STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
-    CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
-    FALSE           shift and go to state 142
+    MULT            reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    DIV             reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    RES             reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    PLUS            reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    MINUS           reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    ,               reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    PARFIN          reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    EQ              reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    DIF             reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    LTOEQ           reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    GTOEQ           reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    GT              reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    LT              reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    AND             reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    OR              reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    ]               reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
+    ;               reduce using rule 161 (basicLanguageFunctions -> NEG PARINI expresion performNeg PARFIN .)
 
-    sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
-    expresion                      shift and go to state 353
-    term                           shift and go to state 141
-    funcCall                       shift and go to state 143
-    cte                            shift and go to state 144
-    exp                            shift and go to state 186
-    fact                           shift and go to state 147
 
 state 328
 
-    (163) languageFunctions -> VARIANCE PARINI ID saveStructID , . expresion performVariance PARFIN
+    (163) basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , . expresion performVariance PARFIN
     (131) expresion -> . sExp performAndOr cyExpresion errorExpresion
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -5454,19 +5454,19 @@ state 328
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 354
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -5774,25 +5774,25 @@ state 351
 
 state 352
 
-    (162) languageFunctions -> AVERAGE PARINI ID saveStructID , expresion . performAvg PARFIN
-    (166) performAvg -> .
-
-    PARFIN          reduce using rule 166 (performAvg -> .)
-
-    performAvg                     shift and go to state 368
-
-state 353
-
-    (164) languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion . performStdDev PARFIN
+    (164) basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion . performStdDev PARFIN
     (168) performStdDev -> .
 
     PARFIN          reduce using rule 168 (performStdDev -> .)
 
-    performStdDev                  shift and go to state 369
+    performStdDev                  shift and go to state 368
+
+state 353
+
+    (162) basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion . performAvg PARFIN
+    (166) performAvg -> .
+
+    PARFIN          reduce using rule 166 (performAvg -> .)
+
+    performAvg                     shift and go to state 369
 
 state 354
 
-    (163) languageFunctions -> VARIANCE PARINI ID saveStructID , expresion . performVariance PARFIN
+    (163) basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion . performVariance PARFIN
     (167) performVariance -> .
 
     PARFIN          reduce using rule 167 (performVariance -> .)
@@ -5939,21 +5939,21 @@ state 367
 
 state 368
 
-    (162) languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg . PARFIN
+    (164) basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev . PARFIN
 
     PARFIN          shift and go to state 383
 
 
 state 369
 
-    (164) languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev . PARFIN
+    (162) basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg . PARFIN
 
     PARFIN          shift and go to state 384
 
 
 state 370
 
-    (163) languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance . PARFIN
+    (163) basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance . PARFIN
 
     PARFIN          shift and go to state 385
 
@@ -6021,7 +6021,7 @@ state 374
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -6035,19 +6035,19 @@ state 374
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 392
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -6136,71 +6136,71 @@ state 382
 
 state 383
 
-    (162) languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .
+    (164) basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .
 
-    MULT            reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    DIV             reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    RES             reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    PLUS            reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    MINUS           reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    ,               reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    PARFIN          reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    EQ              reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    DIF             reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    LTOEQ           reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    GTOEQ           reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    GT              reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    LT              reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    AND             reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    OR              reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    ]               reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
-    ;               reduce using rule 162 (languageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    MULT            reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    DIV             reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    RES             reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    PLUS            reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    MINUS           reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    ,               reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    PARFIN          reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    EQ              reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    DIF             reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    LTOEQ           reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    GTOEQ           reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    GT              reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    LT              reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    AND             reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    OR              reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    ]               reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    ;               reduce using rule 164 (basicLanguageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
 
 
 state 384
 
-    (164) languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .
+    (162) basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .
 
-    MULT            reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    DIV             reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    RES             reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    PLUS            reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    MINUS           reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    ,               reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    PARFIN          reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    EQ              reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    DIF             reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    LTOEQ           reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    GTOEQ           reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    GT              reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    LT              reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    AND             reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    OR              reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    ]               reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
-    ;               reduce using rule 164 (languageFunctions -> STDEVIATION PARINI ID saveStructID , expresion performStdDev PARFIN .)
+    MULT            reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    DIV             reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    RES             reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    PLUS            reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    MINUS           reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    ,               reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    PARFIN          reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    EQ              reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    DIF             reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    LTOEQ           reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    GTOEQ           reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    GT              reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    LT              reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    AND             reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    OR              reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    ]               reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
+    ;               reduce using rule 162 (basicLanguageFunctions -> AVERAGE PARINI ID saveStructID , expresion performAvg PARFIN .)
 
 
 state 385
 
-    (163) languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .
+    (163) basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .
 
-    MULT            reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    DIV             reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    RES             reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    PLUS            reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    MINUS           reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    ,               reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    PARFIN          reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    EQ              reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    DIF             reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    LTOEQ           reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    GTOEQ           reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    GT              reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    LT              reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    AND             reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    OR              reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    ]               reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
-    ;               reduce using rule 163 (languageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    MULT            reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    DIV             reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    RES             reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    PLUS            reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    MINUS           reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    ,               reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    PARFIN          reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    EQ              reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    DIF             reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    LTOEQ           reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    GTOEQ           reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    GT              reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    LT              reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    AND             reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    OR              reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    ]               reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
+    ;               reduce using rule 163 (basicLanguageFunctions -> VARIANCE PARINI ID saveStructID , expresion performVariance PARFIN .)
 
 
 state 386
@@ -6414,7 +6414,7 @@ state 403
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -6428,19 +6428,19 @@ state 403
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 408
     term                           shift and go to state 141
     funcCall                       shift and go to state 143
@@ -6455,7 +6455,7 @@ state 404
     (136) sExp -> . exp errorOpSExp opSExp performRelational
     (145) exp -> . term performAddSub errorCyExp cyExp
     (150) term -> . fact performMulDiv cyTerm
-    (155) fact -> . putFondo languageFunctions takeFondo
+    (155) fact -> . putFondo basicLanguageFunctions takeFondo
     (156) fact -> . CTES saveConstantString
     (157) fact -> . cte
     (158) fact -> . funcCall
@@ -6469,19 +6469,19 @@ state 404
     (106) funcCall -> . ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams
 
     CTES            shift and go to state 140
-    PARINI          shift and go to state 136
-    ID              shift and go to state 139
+    PARINI          shift and go to state 135
+    ID              shift and go to state 138
     NEG             reduce using rule 202 (putFondo -> .)
     AVERAGE         reduce using rule 202 (putFondo -> .)
     VARIANCE        reduce using rule 202 (putFondo -> .)
     STDEVIATION     reduce using rule 202 (putFondo -> .)
-    CTED            shift and go to state 137
+    CTED            shift and go to state 136
     CTEF            shift and go to state 145
-    TRUE            shift and go to state 135
+    TRUE            shift and go to state 139
     FALSE           shift and go to state 142
 
     sExp                           shift and go to state 184
-    putFondo                       shift and go to state 138
+    putFondo                       shift and go to state 137
     expresion                      shift and go to state 409
     term                           shift and go to state 141
     funcCall                       shift and go to state 143

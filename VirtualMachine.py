@@ -522,17 +522,15 @@ def main():
 			addressType = compiler.getTypeForAddress(currentQuadruple[3])
 
 			if addressType == INT:
-
-				if toRead.isdigit():
+				try:
 					saveValueToAddress(int(toRead), currentQuadruple[3])
-				else:
+				except ValueError:
 					semanticErrorHalt("Invalid input for integer varaible")
 
 			elif addressType == FLOAT:
-
-				if toRead.isdigit():
+				try:
 					saveValueToAddress(float(toRead), currentQuadruple[3])
-				else:
+				except ValueError:
 					semanticErrorHalt("Invalid input for float varaible")
 
 			elif addressType == BOOL:
