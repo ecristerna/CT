@@ -1,25 +1,45 @@
 program prog {
+	func up(bool s, g; float h) returns float {
+		return 2 * 5.6;
+	}
+
 	main {
-		vars float op;
-			bool aux;
+		vars float op, aux3;
+			bool h, aux;
 			int aux2;
-			float aux3;
-			string aux4;
-	
-			print("Boolean: ");
-			read(aux);
-			print(aux, "%n");
+			string let, aux4;
+			struct int a[5];
+			struct bool b[5];
 
-			print("Int: ");
-			read(aux2);
-			print(aux2, "%n");
+		a[0] = 600;
+		a[1] = 470;
+		a[2] = 170;
+		a[3] = 430;
+		a[4] = 300;
 
-			print("Float: ");
-			read(aux3);
-			print(aux3, "%n");
+		op = average(a, 5);
+		print(op);
 
-			print("String: ");
-			read(aux4);
-			print(aux4, "%n");
+		op = variance(a, 5);
+		print(op);
+
+		op = stdeviation(a, 5);
+		print(op);
+
+		print("Boolean: ");
+		read(aux);
+		print(aux, "%n");
+
+		print("Int: ");
+		read(aux2);
+		print(aux2, "%n");
+
+		print("Float: ");
+		read(aux3);
+		print(aux3, "%n");
+
+		print("String: ");
+		read(aux4);
+		print(aux4, "%n");
 	}
 }
