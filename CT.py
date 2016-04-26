@@ -1373,7 +1373,7 @@ def p_performAvg(p):
 
 	newAddress = getTempForType(FLOAT)
 
-	cuadruplo = (AVG, address, lenght, newAddress)
+	cuadruplo = (AVERAGE, address, lenght, newAddress)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 

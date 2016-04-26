@@ -17,6 +17,9 @@ program prog {
 		a[3] = 430;
 		a[4] = 300;
 
+		op = average(a, 5);
+		print(op);
+
 		op = variance(a, 5);
 		print(op);
 
