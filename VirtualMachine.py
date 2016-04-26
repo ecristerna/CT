@@ -1,4 +1,5 @@
 from __future__ import print_function
+from math import sqrt
 import CT as compiler
 import sys
 
@@ -43,6 +44,10 @@ RETORNO = 310
 PARAM = 320
 FUNCRETURN = 330
 VER = 340
+NEG = 350
+AVERAGE = 360
+VARIANCE = 370
+STDEV = 380
 END = 400
 
 # ---------------------------------------
@@ -155,6 +160,24 @@ def saveValueToNewMemory(value, address):
 		local_next_memory[2][address - compiler.MIN_BOOL] = value
 	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
 		local_next_memory[3][address - compiler.MIN_STRING] = value
+
+def getArrayValues(initialAddress, lenght):
+	arrayToReturn = []
+
+	if initialAddress >= compiler.MIN_INT_GLOBAL and initialAddress <= compiler.MAX_INT_GLOBAL:
+		for x in range(0, lenght):
+			arrayToReturn.append(global_memory[0][initialAddress + x - compiler.MIN_INT_GLOBAL])
+	elif initialAddress >= compiler.MIN_FLOAT_GLOBAL and initialAddress <= compiler.MAX_FLOAT_GLOBAL:
+		for x in range(0, lenght):
+			arrayToReturn.append(global_memory[1][initialAddress + x - compiler.MIN_FLOAT_GLOBAL])
+	elif initialAddress >= compiler.MIN_INT and initialAddress <= compiler.MAX_INT:
+		for x in range(0, lenght):
+			arrayToReturn.append(local_actual_memory[0][initialAddress + x - compiler.MIN_INT])
+	elif initialAddress >= compiler.MIN_FLOAT and initialAddress <= compiler.MAX_FLOAT:
+		for x in range(0, lenght):
+			arrayToReturn.append(local_actual_memory[1][initialAddress + x - compiler.MIN_FLOAT])
+
+	return arrayToReturn
 
 def semanticErrorHalt(error):
 	print("Semantic Error: " + error)
@@ -337,6 +360,30 @@ def initMemoriaGlobal():
 		global_memory[3].append("")
 
 
+def getAverage(initialAddress, lenght):
+	data = getArrayValues(initialAddress, lenght)
+	accum = 0.0
+
+	for x in range(0, len(data)):
+		accum += data[x]
+
+	return accum / lenght
+
+def getVariance(initialAddress, lenght):
+	data = getArrayValues(initialAddress, lenght)
+	accum = 0.0
+
+	average = getAverage(initialAddress, lenght)
+
+	for x in range(0, len(data)):
+		accum += pow(data[x] - average, 2)
+
+	return accum / lenght
+
+def getStdDeviation(initialAddress, lenght):
+	return sqrt(getVariance(initialAddress, lenght))
+
+
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
 # ---------------------------------------
@@ -475,17 +522,15 @@ def main():
 			addressType = compiler.getTypeForAddress(currentQuadruple[3])
 
 			if addressType == INT:
-
-				if toRead.isdigit():
+				try:
 					saveValueToAddress(int(toRead), currentQuadruple[3])
-				else:
+				except ValueError:
 					semanticErrorHalt("Invalid input for integer varaible")
 
 			elif addressType == FLOAT:
-
-				if toRead.isdigit():
+				try:
 					saveValueToAddress(float(toRead), currentQuadruple[3])
-				else:
+				except ValueError:
 					semanticErrorHalt("Invalid input for float varaible")
 
 			elif addressType == BOOL:
@@ -579,7 +624,38 @@ def main():
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
+		elif actualCode == NEG:
+			value = getValueForAddress(currentQuadruple[1])
 
+			if compiler.getTypeForAddress(currentQuadruple[3]) == BOOL:
+				saveValueToAddress(not value, currentQuadruple[3])
+			else:
+				saveValueToAddress(-1 * value, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+		elif actualCode == AVERAGE:
+			result = getAverage(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
+			saveValueToAddress(result, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+		elif actualCode == VARIANCE:
+			result = getVariance(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
+			saveValueToAddress(result, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+		elif actualCode == STDEV:
+			result = getStdDeviation(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
+			saveValueToAddress(result, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
 
 	# print(global_memory)
 	# print(local_actual_memory)
