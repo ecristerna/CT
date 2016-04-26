@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
+reserved = ['AVG', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','DICT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE', 'FIRST', 'LAST',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -135,6 +135,7 @@ PARAM = 320
 FUNCRETURN = 330
 VER = 340
 NEG = 350
+AVG = 360
 
 
 # Semantic Cube
@@ -1306,7 +1307,7 @@ def p_cyTerm(p):
 
 
 def p_fact(p):
-	'''fact : putFondo NEG PARINI expresion performNeg PARFIN takeFondo
+	'''fact : putFondo languageFunctions takeFondo
 			| CTES saveConstantString
 			| cte
 			| funcCall
@@ -1314,6 +1315,66 @@ def p_fact(p):
 			| ID saveVariable opAccess errorOpAccess '''
 	# print("fact")
 
+
+def p_languageFunctions(p):
+	'''languageFunctions : NEG PARINI expresion performNeg PARFIN
+						| AVG PARINI ID saveStructID "," expresion performAvg PARFIN '''
+
+
+def p_saveStructID(p):
+	'''saveStructID : '''
+	global semanticError
+
+	address = 0
+
+	if currentToken in vars_local:
+		if not isinstance(vars_local[currentToken], list):
+			semanticError = "First parameters must be a struct"
+			semanticErrorHalt()
+
+		address = vars_local[currentToken][0]
+	elif currentToken in vars_global:
+		if not isinstance(vars_global[currentToken], list):
+			semanticError = "First parameters must be a struct"
+			semanticErrorHalt()
+
+		address = vars_global[currentToken][0]
+	else:
+		semanticError = "Undeclared variable " + currentToken
+		semanticErrorHalt()
+
+	tipo = getTypeForAddress(address)
+
+	if tipo != INT and tipo != FLOAT:
+		semanticError = "Cannot get average of non numerical values."
+		semanticErrorHalt()
+
+	pOper.append(address)
+	pTipos.append(tipo)
+
+def p_performAvg(p):
+	'''performAvg : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(FLOAT)
+
+	cuadruplo = (AVG, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(FLOAT)
 
 def p_performNeg(p):
 	'''performNeg : '''
@@ -1328,7 +1389,7 @@ def p_performNeg(p):
 		semanticErrorHalt()
 
 	newAddress = getTempForType(tipo)
-	
+
 	cuadruplo = (NEG, valor, '', newAddress)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1

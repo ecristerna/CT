@@ -44,6 +44,7 @@ PARAM = 320
 FUNCRETURN = 330
 VER = 340
 NEG = 350
+AVG = 360
 END = 400
 
 # ---------------------------------------
@@ -156,6 +157,25 @@ def saveValueToNewMemory(value, address):
 		local_next_memory[2][address - compiler.MIN_BOOL] = value
 	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
 		local_next_memory[3][address - compiler.MIN_STRING] = value
+
+def getArrayValues(initialAddress, lenght):
+	arrayToReturn = []
+
+	if initialAddress >= compiler.MIN_INT_GLOBAL and initialAddress <= compiler.MAX_INT_GLOBAL:
+		for x in range(0, lenght):
+			arrayToReturn.append(global_memory[0][initialAddress + x - compiler.MIN_INT_GLOBAL])
+	elif initialAddress >= compiler.MIN_FLOAT_GLOBAL and initialAddress <= compiler.MAX_FLOAT_GLOBAL:
+		for x in range(0, lenght):
+			arrayToReturn.append(global_memory[1][initialAddress + x - compiler.MIN_FLOAT_GLOBAL])
+	elif initialAddress >= compiler.MIN_INT and initialAddress <= compiler.MAX_INT:
+		for x in range(0, lenght):
+			arrayToReturn.append(local_actual_memory[0][initialAddress + x - compiler.MIN_INT])
+	elif initialAddress >= compiler.MIN_FLOAT and initialAddress <= compiler.MAX_FLOAT:
+		for x in range(0, lenght):
+			arrayToReturn.append(local_actual_memory[1][initialAddress + x - compiler.MIN_FLOAT])
+
+	return arrayToReturn
+
 
 def semanticErrorHalt():
 	print("Array index out of range")
@@ -337,6 +357,15 @@ def initMemoriaGlobal():
 	for x in range(0, size[3]):
 		global_memory[3].append("")
 
+
+def getAverage(initialAddress, lenght):
+	data = getArrayValues(initialAddress, lenght)
+	accum = 0.0
+
+	for x in range(0, len(data)):
+		accum += data[x]
+
+	return accum / lenght
 
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
@@ -574,6 +603,15 @@ def main():
 				saveValueToAddress(not value, currentQuadruple[3])
 			else:
 				saveValueToAddress(-1 * value, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+		elif actualCode == AVG:
+			result = getAverage(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
+			saveValueToAddress(result, currentQuadruple[3])
+
+			print(local_actual_memory)
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
