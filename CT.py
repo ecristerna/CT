@@ -1984,5 +1984,5 @@ def typesValidator(left, right, operator):
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("pruebasBasicas.txt", "r");
+file = open ("tests/pruebasBasicas.txt", "r");
 yacc.parse(file.read())
