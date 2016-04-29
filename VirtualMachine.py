@@ -664,5 +664,3 @@ def run(fileName):
 	# print(local_actual_memory)
 
 	print("\nEND OF PROGRAM\n\n")
-
-run("tests/input4.txt")
