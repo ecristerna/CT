@@ -186,9 +186,10 @@ program Pruebas_Basicas {
 
 		print("Matrix Mult: ", "%n");
 		matrixMult();
-		print("Hola");
+		
 	}
 }
+
 
 
 
