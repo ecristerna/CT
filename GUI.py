@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from Tkinter import * 
-from Tkinter import Tk
+from Tkinter import *
 from sys import executable
 # from subprocess import Popen, CREATE_NEW_CONSOLE
 from subprocess import call
@@ -9,7 +8,7 @@ from tkFileDialog import askopenfilename
 import os
 import VirtualMachine as VM
 
-fileName = ""
+fileName = "./default.txt"
 data = ""
 
 # def delprof(): Popen(["cmd.exe"], creationflags=CREATE_NEW_CONSOLE)
@@ -52,12 +51,13 @@ root.wm_title("CT")
 S = Scrollbar(root)
 T = Text(root, height = 30, width = 100)
 
-button = Button(root, text = 'Execute', width = 25, command = executeFile)
-button2 = Button(root, text = 'Save', width = 25, command = saveFile)
-button3 = Button(root, text = 'Load', width = 25, command = loadFile)
-button.pack()
-button2.pack()
-button3.pack()
+executebutton = Button(root, text = 'Execute', width = 15, command = executeFile)
+saveButton = Button(root, text = 'Save', width = 15, command = saveFile)
+loadButton = Button(root, text = 'Load', width = 15, command = loadFile)
+
+executebutton.pack()
+saveButton.pack()
+loadButton.pack()
 
 S.pack(side = RIGHT, fill = Y)
 T.pack(side = LEFT, fill = Y)

@@ -359,7 +359,7 @@ lexer = lex.lex()
 # Parsing rules
 
 def p_program(p):
-	'''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}" printTables'''
+	'''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}" '''
 	# print("program")
 
 def p_changeCurrentScope(p):
@@ -405,9 +405,9 @@ def p_saveProc(p):
 def p_errorProgram(p):
 	'''errorProgram : '''
 
-	print("---------------")
-	print("   Compiler")
-	print("---------------")
+	# print("---------------")
+	# print("   Compiler")
+	# print("---------------")
 
 	global errorMsg
 	errorMsg = "Error in rule PROGRAM"
@@ -666,8 +666,8 @@ def p_clearVarsTable(p):
 	contBool = MIN_BOOL
 	contString = MIN_STRING
 
-	print("\nVARS " + currentProc[0])
-	print(vars_local)
+	# print("\nVARS " + currentProc[0])
+	# print(vars_local)
 
 	vars_local = {}
 
@@ -1914,7 +1914,8 @@ def generateQuadruple(operator):
 
 	if tipoRes == ERROR:
 		global semanticError
-		semanticError = "Types mismatch " + str(tipoIzq) + " " + str(operator) + " " + str(tipoDer)
+		semanticError = "Types mismatch "
+		 # + str(tipoIzq) + " " + str(operator) + " " + str(tipoDer)
 		semanticErrorHalt()
 
 	opDer = pOper.pop()

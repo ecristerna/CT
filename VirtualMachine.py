@@ -402,7 +402,7 @@ def run(fileName):
 	compiler.cuadruplos.append(cuadruplo)
 
 	print("---------------")
-	print("Virtual Machine")
+	print(compiler.dir_procs[0][0])
 	print("---------------")
 
 	currentQuadruple = compiler.cuadruplos[instructionPointer]
