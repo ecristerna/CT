@@ -2118,9 +2118,9 @@ def typesValidator(left, right, operator):
 
 	return semanticCube[(left / 10 - 1) * 4 + (right / 10 - 1)][opMap]
 
-
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("tests/pruebasBasicas.txt", "r");
-yacc.parse(file.read())
+def compile(fileName):
+	file = open (fileName, "r");
+	yacc.parse(file.read())

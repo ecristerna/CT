@@ -388,7 +388,10 @@ def getStdDeviation(initialAddress, lenght):
 # PROGRAMA PRINCIPAL
 # ---------------------------------------
 
-def main():
+def run(fileName):
+
+	compiler.compile(fileName)
+
 	global instructionPointer
 	global pointersStack
 	global memoriesStack
@@ -662,4 +665,4 @@ def main():
 
 	print("\nEND OF PROGRAM\n\n")
 
-main()
+run("tests/input4.txt")
