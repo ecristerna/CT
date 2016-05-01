@@ -10,6 +10,7 @@ program prog {
 			string let, aux4;
 			struct int a[5];
 			struct bool b[5];
+			struct string l[5];
 
 		a[0] = 600;
 		a[1] = 470;
@@ -17,7 +18,10 @@ program prog {
 		a[3] = 430;
 		a[4] = 300;
 
-		stacked(a, a, "hola", "hola", 8);
+		stacked(a, a, 5, "hola", "hola2");
+		bars(a, l, 5, "hola");
+		dbars(a, a, l, 5, "hola", "hola2");
+		histo(a, 5, 5);
 
 		print(sum(a, 5));
 		print(mul(a, 5));

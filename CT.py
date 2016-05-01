@@ -540,7 +540,7 @@ def p_graphFunctions(p):
 					|  BARS PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion "," expresion takeFondo PARFIN performBars
 					| DBARS PARINI putFondo ID saveStructID "," ID saveStructID "," ID saveStringStructID "," expresion "," expresion "," expresion takeFondo PARFIN performDBars
 					| PIE PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion takeFondo PARFIN performPie
-					| HISTO PARINI putFondo ID saveStructID expresion "," expresion takeFondo PARFIN performHisto '''
+					| HISTO PARINI putFondo ID saveStructID "," expresion "," expresion takeFondo PARFIN performHisto '''
 
 def p_performStacked(p):
 	'''performStacked : '''
@@ -685,7 +685,7 @@ def p_performHisto(p):
 	addressA = pOper.pop()
 	tipoA = pTipos.pop()
 
-	cuadruplo = (DBARS, addressA, lenght, nGroups)
+	cuadruplo = (HISTO, addressA, lenght, nGroups)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
@@ -2000,6 +2000,8 @@ def p_takeFondo(p):
 
 def p_performAssign(p):
 	'''performAssign : '''
+
+	print(cuadruplos)
 
 	if not pilaO:
 		return

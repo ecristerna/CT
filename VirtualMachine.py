@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as path
+from matplotlib.gridspec import GridSpec
 import sys
 
 # ---------------------------------------
@@ -414,7 +415,7 @@ def getMul(initialAddress, lenght):
 
 def bars(dataA, arrLabels, length, labelGroup):
 	fig, ax = plt.subplots()
-	index = np.arange(lenth)
+	index = np.arange(length)
 	bar_width = 0.35
 
 	opacity = 0.4
@@ -424,9 +425,9 @@ def bars(dataA, arrLabels, length, labelGroup):
 	                 alpha=opacity,
 	                 color='b',
 	                 error_kw=error_config,
-	                 label='Men')
+	                 label=labelGroup)
 
-	plt.xlabel(labelGroup)
+	plt.xlabel(arrLabels)
 	plt.xticks(index + bar_width, arrLabels)
 	plt.legend()
 
@@ -466,7 +467,7 @@ def dBars(dataA, dataB, labels, length, labelA, labelB):
 	ax.set_ylabel('Scores')
 	ax.set_title('Scores by group and gender')
 	ax.set_xticks(ind + width)
-	ax.set_xticklabels(('G1', 'G2', 'G3', 'G4', 'G5'))
+	ax.set_xticklabels(labels)
 
 	ax.legend((rects1[0], rects2[0]), (labelA, labelB))
 
@@ -513,9 +514,9 @@ def pie(dataA, arrLabels, length):
 
 def histo(dataA, length, numGroups):
 	fig, ax = plt.subplots()
-
+	print(dataA)
 	# Crear histograma con NUMPY
-	n, bins = np.histogram(dataA, numG)
+	n, bins = np.histogram(dataA, numGroups)
 	left = np.array(bins[:-1])
 	right = np.array(bins[1:])
 	bottom = np.zeros(len(left))
@@ -533,9 +534,6 @@ def histo(dataA, length, numGroups):
 	ax.set_ylim(bottom.min(), top.max())
 
 	plt.show()
-
-
-
 
 
 # ---------------------------------------
@@ -831,6 +829,65 @@ def run(fileName):
 				result = int(result)
 			
 			saveValueToAddress(result, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == STACKED:
+			length = getValueForAddress(currentQuadruple[3])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			dataB = getArrayValues(currentQuadruple[2], length)
+
+			stacked(dataA, dataB, length, getValueForAddress(currentQuadruple[4]), getValueForAddress(currentQuadruple[5]))
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == BARS:
+			length = getValueForAddress(currentQuadruple[3])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			labels = getArrayValues(currentQuadruple[2], length)
+
+			bars(dataA, labels, length, getValueForAddress(currentQuadruple[4]))
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == DBARS:
+			length = getValueForAddress(currentQuadruple[4])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			dataB = getArrayValues(currentQuadruple[2], length)
+			labels = getArrayValues(currentQuadruple[3], length)
+
+			dBars(dataA, dataB, labels, length, getValueForAddress(currentQuadruple[5]), getValueForAddress(currentQuadruple[6]))
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == PIE:
+			length = getValueForAddress(currentQuadruple[3])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			arrLabels = getArrayValues(currentQuadruple[2], length)
+
+			print("----------------")
+			print(arrLabels)
+
+			pie(dataA, arrLabels, length)
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == HISTO:
+			print("Empieza Histo")
+			length = getValueForAddress(currentQuadruple[2])
+			dataA = getArrayValues(currentQuadruple[1], length)
+
+			histo(dataA, length, currentQuadruple[3])
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
