@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['SUM', 'MUL', 'AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
+reserved = ['HISTO', 'PIE', 'STACKED', 'DBARS', 'BARS', 'SUM', 'MUL', 'AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -140,6 +140,11 @@ VARIANCE = 370
 STDEV = 380
 SUM = 390
 MUL = 400
+BARS = 410
+DBARS = 420
+STACKED = 430
+PIE = 440
+HISTO = 450
 
 
 # Semantic Cube
@@ -525,6 +530,7 @@ def p_errorMain(p):
 
 def p_instr(p):
 	'''instr : basicStatements ";"
+			| graphFunctions ";"
 			| condition
 			| cycle '''
 	# print("instr")

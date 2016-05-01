@@ -50,6 +50,11 @@ VARIANCE = 370
 STDEV = 380
 SUM = 390
 MUL = 400
+BARS = 410
+DBARS = 420
+STACKED = 430
+PIE = 440
+HISTO = 450
 END = 500
 
 # ---------------------------------------
