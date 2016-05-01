@@ -535,11 +535,7 @@ def histo(dataA, length, numGroups):
 	ax.set_ylim(bottom.min(), top.max())
 
 	plt.show()
-
-<<<<<<< HEAD
-
-=======
->>>>>>> af8b83cf1c95c594f0370591a3afcb319041daa9
+	
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
 # ---------------------------------------
