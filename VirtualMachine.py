@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.path as path
 from matplotlib.gridspec import GridSpec
->>>>>>> master
 import sys
 
 # ---------------------------------------
@@ -184,8 +183,6 @@ def getArrayValues(initialAddress, lenght):
 	elif initialAddress >= CT.MIN_FLOAT_GLOBAL and initialAddress <= CT.MAX_FLOAT_GLOBAL:
 		for x in range(0, lenght):
 			arrayToReturn.append(global_memory[1][initialAddress + x - CT.MIN_FLOAT_GLOBAL])
-	elif initialAddress >= CT.MIN_INT and initialAddress <= CT.MAX_INT:
-			arrayToReturn.append(global_memory[1][initialAddress + x - CT.MIN_FLOAT_GLOBAL])
 	elif initialAddress >= CT.MIN_STRING_GLOBAL and initialAddress <= CT.MAX_STRING_GLOBAL:
 		for x in range(0, lenght):
 			arrayToReturn.append(global_memory[3][initialAddress + x - CT.MIN_STRING_GLOBAL])
@@ -198,16 +195,13 @@ def getArrayValues(initialAddress, lenght):
 	elif initialAddress >= CT.MIN_FLOAT and initialAddress <= CT.MAX_FLOAT:
 		for x in range(0, lenght):
 			arrayToReturn.append(local_actual_memory[1][initialAddress + x - CT.MIN_FLOAT])
-			arrayToReturn.append(local_actual_memory[1][initialAddress + x - CT.MIN_FLOAT])
 	elif initialAddress >= CT.MIN_STRING and initialAddress <= CT.MAX_STRING:
 		for x in range(0, lenght):
 			arrayToReturn.append(local_actual_memory[3][initialAddress + x - CT.MIN_STRING])
 	elif initialAddress >= CT.MIN_BOOL and initialAddress <= CT.MAX_BOOL:
 		for x in range(0, lenght):
 			arrayToReturn.append(local_actual_memory[2][initialAddress + x - CT.MIN_BOOL])
-
-	print("toReturn ", arrayToReturn)
-
+			
 	return arrayToReturn
 
 def semanticErrorHalt(error):
@@ -938,3 +932,5 @@ def run(fileName):
 	# print(local_actual_memory)
 
 	print("\nEND OF PROGRAM\n\n")
+
+run("tests/input4.txt")
