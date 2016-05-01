@@ -540,7 +540,7 @@ def p_graphFunctions(p):
 					|  BARS PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion "," expresion takeFondo PARFIN performBars
 					| DBARS PARINI putFondo ID saveStructID "," ID saveStructID "," ID saveStringStructID "," expresion "," expresion "," expresion takeFondo PARFIN performDBars
 					| PIE PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion takeFondo PARFIN performPie
-					| HISTO PARINI putFondo ID saveStructID expresion "," expresion takeFondo PARFIN performHisto '''
+					| HISTO PARINI putFondo ID saveStructID "," expresion "," expresion takeFondo PARFIN performHisto '''
 
 def p_performStacked(p):
 	'''performStacked : '''
@@ -1076,7 +1076,6 @@ def p_assignOptions(p):
 	'''assignOptions : init
 					| saveToDimensionStacks "[" expresion verifyIndex "]" assignMatrix accessStruct init '''
 	# print("assignOptions")
-
 
 def p_assignMatrix(p):
 	'''assignMatrix : updateDimension "[" expresion verifyIndex "]" errorAssignMatrix
@@ -1670,7 +1669,7 @@ def p_accessStruct(p):
 	global contQuadruples
 
 	aux1 = pOper.pop()
-	temp = getTempForType(pTipos.pop())
+	temp = getTempForType(INT)
 
 	cuadruplo = ()
 	toSave = 0
@@ -1688,7 +1687,7 @@ def p_accessStruct(p):
 	contQuadruples += 1
 
 	pOper.append('(' + str(temp) + ')')
-	pTipos.append(getTypeForAddress(temp))
+	pTipos.append(varType)
 
 	pilaO.pop()
 	pDimensionadas.pop()

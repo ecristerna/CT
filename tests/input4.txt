@@ -9,7 +9,27 @@ program prog {
 			int aux2;
 			string let, aux4;
 			struct int a[5];
+			struct string s[5];
+			struct float f[5];
 			struct bool b[5];
+
+		aux2 = 0;
+
+		while (aux2 < 5) {
+			if (aux2 % 2 == 1) {
+				b[(aux2)] = true;
+			}
+			
+			print(b[(aux2)]);
+
+			aux2 = aux2 + 1;
+		}
+
+		f[4] = 9.2;
+		print(f[4]);
+
+		s[4] = "hola";
+		print(s[4]);
 
 		a[0] = 600;
 		a[1] = 470;
@@ -17,7 +37,6 @@ program prog {
 		a[3] = 430;
 		a[4] = 300;
 
-		stacked(a, a, "hola", "hola", 8);
 
 		print(sum(a, 5));
 		print(mul(a, 5));
