@@ -243,17 +243,18 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="INSTR">INSTR:</a></p>
-      <img border="0" src="diagram/INSTR.png" height="256" width="274" usemap="#INSTR.map"><map name="INSTR.map">
+      <img border="0" src="diagram/INSTR.png" height="300" width="324" usemap="#INSTR.map"><map name="INSTR.map">
          <area shape="rect" coords="69,1,135,33" href="#ASSIGN" title="ASSIGN">
          <area shape="rect" coords="69,45,161,77" href="#FUNC_CALL" title="FUNC_CALL">
          <area shape="rect" coords="69,89,125,121" href="#PRINT" title="PRINT">
          <area shape="rect" coords="69,133,121,165" href="#READ" title="READ">
-         <area shape="rect" coords="49,177,141,209" href="#CONDITION" title="CONDITION">
-         <area shape="rect" coords="49,221,109,253" href="#CYCLE" title="CYCLE"></map>
+         <area shape="rect" coords="69,177,211,209" href="#GRAPH_FUNCTIONS" title="GRAPH_FUNCTIONS">
+         <area shape="rect" coords="49,221,141,253" href="#CONDITION" title="CONDITION">
+         <area shape="rect" coords="49,265,109,297" href="#CYCLE" title="CYCLE"></map>
       
       <p>
          
-         <div class="ebnf"><pre><a href="#INSTR" title="INSTR" shape="rect">INSTR</a>    ::= ( <a href="#ASSIGN" title="ASSIGN" shape="rect">ASSIGN</a> | <a href="#FUNC_CALL" title="FUNC_CALL" shape="rect">FUNC_CALL</a> | <a href="#PRINT" title="PRINT" shape="rect">PRINT</a> | <a href="#READ" title="READ" shape="rect">READ</a> ) ';'
+         <div class="ebnf"><pre><a href="#INSTR" title="INSTR" shape="rect">INSTR</a>    ::= ( <a href="#ASSIGN" title="ASSIGN" shape="rect">ASSIGN</a> | <a href="#FUNC_CALL" title="FUNC_CALL" shape="rect">FUNC_CALL</a> | <a href="#PRINT" title="PRINT" shape="rect">PRINT</a> | <a href="#READ" title="READ" shape="rect">READ</a> | <a href="#GRAPH_FUNCTIONS" title="GRAPH_FUNCTIONS" shape="rect">GRAPH_FUNCTIONS</a> ) ';'
            | <a href="#CONDITION" title="CONDITION" shape="rect">CONDITION</a>
            | <a href="#CYCLE" title="CYCLE" shape="rect">CYCLE</a></pre></div>
          
@@ -707,7 +708,7 @@
          </ul>
          
       </p><br><p style="font-size: 14px; font-weight:bold"><a name="BASIC_LANGUAGE_FUNCTIONS">BASIC_LANGUAGE_FUNCTIONS:</a></p>
-      <img border="0" src="diagram/BASIC_LANGUAGE_FUNCTIONS.png" height="168" width="350" usemap="#BASIC_LANGUAGE_FUNCTIONS.map"><map name="BASIC_LANGUAGE_FUNCTIONS.map">
+      <img border="0" src="diagram/BASIC_LANGUAGE_FUNCTIONS.png" height="256" width="350" usemap="#BASIC_LANGUAGE_FUNCTIONS.map"><map name="BASIC_LANGUAGE_FUNCTIONS.map">
          <area shape="rect" coords="159,1,251,33" href="#EXPRESION" title="EXPRESION">
          <area shape="rect" coords="201,45,301,77" href="#BASIC_FUNC" title="BASIC_FUNC"></map>
       
@@ -715,7 +716,7 @@
          
          <div class="ebnf"><pre><a href="#BASIC_LANGUAGE_FUNCTIONS" title="BASIC_LANGUAGE_FUNCTIONS" shape="rect">BASIC_LANGUAGE_FUNCTIONS</a>
          ::= 'neg' '(' <a href="#EXPRESION" title="EXPRESION" shape="rect">EXPRESION</a> ')'
-           | ( 'average' | 'variance' | 'stdeviation' ) <a href="#BASIC_FUNC" title="BASIC_FUNC" shape="rect">BASIC_FUNC</a></pre></div>
+           | ( 'average' | 'variance' | 'stdeviation' | 'sum' | 'mul' ) <a href="#BASIC_FUNC" title="BASIC_FUNC" shape="rect">BASIC_FUNC</a></pre></div>
          
       </p>
       
@@ -743,6 +744,40 @@
          <ul>
             
             <li><a href="#BASIC_LANGUAGE_FUNCTIONS" title="BASIC_LANGUAGE_FUNCTIONS">BASIC_LANGUAGE_FUNCTIONS</a></li>
+            
+         </ul>
+         
+      </p><br><p style="font-size: 14px; font-weight:bold"><a name="GRAPH_FUNCTIONS">GRAPH_FUNCTIONS:</a></p>
+      <img border="0" src="diagram/GRAPH_FUNCTIONS.png" height="212" width="978" usemap="#GRAPH_FUNCTIONS.map"><map name="GRAPH_FUNCTIONS.map">
+         <area shape="rect" coords="377,1,459,33" href="#expresion" title="expresion">
+         <area shape="rect" coords="523,1,605,33" href="#expresion" title="expresion">
+         <area shape="rect" coords="669,1,751,33" href="#expresion" title="expresion">
+         <area shape="rect" coords="355,45,437,77" href="#expresion" title="expresion">
+         <area shape="rect" coords="501,45,583,77" href="#expresion" title="expresion">
+         <area shape="rect" coords="363,89,445,121" href="#expresion" title="expresion">
+         <area shape="rect" coords="509,89,591,121" href="#expresion" title="expresion">
+         <area shape="rect" coords="655,89,737,121" href="#expresion" title="expresion">
+         <area shape="rect" coords="801,89,883,121" href="#expresion" title="expresion">
+         <area shape="rect" coords="343,133,425,165" href="#expresion" title="expresion">
+         <area shape="rect" coords="263,177,345,209" href="#expresion" title="expresion">
+         <area shape="rect" coords="409,177,491,209" href="#expresion" title="expresion"></map>
+      
+      <p>
+         
+         <div class="ebnf"><pre><a href="#GRAPH_FUNCTIONS" title="GRAPH_FUNCTIONS" shape="rect">GRAPH_FUNCTIONS</a>
+         ::= 'stacked' '(' 'id' ',' 'id' ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ')'
+           | 'bars' '(' 'id' ',' 'id' ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ')'
+           | 'dbars' '(' 'id' ',' 'id' ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ')'
+           | 'pie' '(' 'id' ',' 'd' ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ')'
+           | 'histo' '(' 'id' ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ',' <a href="#expresion" title="expresion" shape="rect">expresion</a> ')'</pre></div>
+         
+      </p>
+      
+      <p>referenced by:
+         
+         <ul>
+            
+            <li><a href="#INSTR" title="INSTR">INSTR</a></li>
             
          </ul>
          
