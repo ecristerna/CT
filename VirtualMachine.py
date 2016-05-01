@@ -700,6 +700,7 @@ def run(fileName):
 
 			if compiler.getTypeForAddress(currentQuadruple[3]) == INT:
 				result = int(result)
+				print("hola")
 			
 			saveValueToAddress(result, currentQuadruple[3])
 
