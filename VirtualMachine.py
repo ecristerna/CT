@@ -48,7 +48,9 @@ NEG = 350
 AVERAGE = 360
 VARIANCE = 370
 STDEV = 380
-END = 400
+SUM = 390
+MUL = 400
+END = 500
 
 # ---------------------------------------
 # TYPES
@@ -383,6 +385,24 @@ def getVariance(initialAddress, lenght):
 def getStdDeviation(initialAddress, lenght):
 	return sqrt(getVariance(initialAddress, lenght))
 
+def getSum(initialAddress, lenght):
+	data = getArrayValues(initialAddress, lenght)
+	accum = 0.0
+
+	for x in range(0, len(data)):
+		accum += data[x]
+
+	return accum
+
+def getMul(initialAddress, lenght):
+	data = getArrayValues(initialAddress, lenght)
+	accum = 1.0
+
+	for x in range(0, len(data)):
+		accum *= data[x]
+
+	return accum
+
 
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
@@ -657,6 +677,28 @@ def run(fileName):
 			saveValueToAddress(result, currentQuadruple[3])
 
 			currentQuadruple = CT.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+		elif actualCode == SUM:
+			result = getSum(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
+			
+			if compiler.getTypeForAddress(currentQuadruple[3]) == INT:
+				result = int(result)
+			
+			saveValueToAddress(result, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+		elif actualCode == MUL:
+			result = getMul(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
+
+			if compiler.getTypeForAddress(currentQuadruple[3]) == INT:
+				result = int(result)
+			
+			saveValueToAddress(result, currentQuadruple[3])
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
