@@ -2000,8 +2000,6 @@ def p_takeFondo(p):
 def p_performAssign(p):
 	'''performAssign : '''
 
-	print(cuadruplos)
-
 	if not pilaO:
 		return
 

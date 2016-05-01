@@ -182,12 +182,26 @@ def getArrayValues(initialAddress, lenght):
 	elif initialAddress >= compiler.MIN_FLOAT_GLOBAL and initialAddress <= compiler.MAX_FLOAT_GLOBAL:
 		for x in range(0, lenght):
 			arrayToReturn.append(global_memory[1][initialAddress + x - compiler.MIN_FLOAT_GLOBAL])
+	elif initialAddress >= compiler.MIN_STRING_GLOBAL and initialAddress <= compiler.MAX_STRING_GLOBAL:
+		for x in range(0, lenght):
+			arrayToReturn.append(global_memory[3][initialAddress + x - compiler.MIN_STRING_GLOBAL])
+	elif initialAddress >= compiler.MIN_BOOL_GLOBAL and initialAddress <= compiler.MAX_BOOL_GLOBAL:
+		for x in range(0, lenght):
+			arrayToReturn.append(global_memory[2][initialAddress + x - compiler.MIN_BOOL_GLOBAL])
 	elif initialAddress >= compiler.MIN_INT and initialAddress <= compiler.MAX_INT:
 		for x in range(0, lenght):
 			arrayToReturn.append(local_actual_memory[0][initialAddress + x - compiler.MIN_INT])
 	elif initialAddress >= compiler.MIN_FLOAT and initialAddress <= compiler.MAX_FLOAT:
 		for x in range(0, lenght):
 			arrayToReturn.append(local_actual_memory[1][initialAddress + x - compiler.MIN_FLOAT])
+	elif initialAddress >= compiler.MIN_STRING and initialAddress <= compiler.MAX_STRING:
+		for x in range(0, lenght):
+			arrayToReturn.append(local_actual_memory[3][initialAddress + x - compiler.MIN_STRING])
+	elif initialAddress >= compiler.MIN_BOOL and initialAddress <= compiler.MAX_BOOL:
+		for x in range(0, lenght):
+			arrayToReturn.append(local_actual_memory[2][initialAddress + x - compiler.MIN_BOOL])
+
+	print("toReturn ", arrayToReturn)
 
 	return arrayToReturn
 
@@ -427,8 +441,6 @@ def bars(dataA, arrLabels, length, labelGroup):
 	                 color='b',
 	                 error_kw=error_config,
 	                 label=labelGroup)
-
-	plt.xlabel(arrLabels)
 	plt.xticks(index + bar_width, arrLabels)
 	plt.legend()
 
@@ -438,18 +450,17 @@ def bars(dataA, arrLabels, length, labelGroup):
 	return
 
 def stacked(dataA, dataB, length, labelA, labelB):
-	N = 5
 	ind = np.arange(length)
 	width = 0.35  
 
 	p1 = plt.bar(ind, dataA, width, color='r')
-	p2 = plt.bar(ind, dataB, width, color='y',
+	p2 = plt.bar(ind, dataB, width, color='b',
 	             bottom=dataA)
 
 	plt.ylabel('Scores')
 	plt.title('Scores by group')
-	#plt.xticks(ind + width/2., ('G1', 'G2', 'G3', 'G4', 'G5'))
-	plt.yticks(np.arange(0, 81, 10))
+	plt.xticks(ind + width/2., ('G1', 'G2', 'G3', 'G4', 'G5'))
+	plt.yticks(np.arange(0, 100, 300))
 	plt.legend((p1[0], p2[0]), (labelA, labelB))
 
 	plt.show()
@@ -490,7 +501,8 @@ def dBars(dataA, dataB, labels, length, labelA, labelB):
 
 def pie(dataA, arrLabels, length):
 	the_grid = GridSpec(2, 2)
-
+	print('-----------------------------------------')
+	print(arrLabels)
 	plt.pie(dataA, labels=arrLabels, autopct='%.0f%%', shadow=True)
 	plt.subplot(the_grid[1, 0], aspect=1)
 	patches, texts, autotexts = plt.pie(dataA, labels=arrLabels,
@@ -515,7 +527,6 @@ def pie(dataA, arrLabels, length):
 
 def histo(dataA, length, numGroups):
 	fig, ax = plt.subplots()
-	print(dataA)
 	# Crear histograma con NUMPY
 	n, bins = np.histogram(dataA, numGroups)
 	left = np.array(bins[:-1])
@@ -536,6 +547,8 @@ def histo(dataA, length, numGroups):
 
 	plt.show()
 	
+	return
+
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
 # ---------------------------------------
@@ -827,7 +840,6 @@ def run(fileName):
 
 			if compiler.getTypeForAddress(currentQuadruple[3]) == INT:
 				result = int(result)
-				print("hola")
 			
 			saveValueToAddress(result, currentQuadruple[3])
 
@@ -849,7 +861,11 @@ def run(fileName):
 		elif actualCode == BARS:
 			length = getValueForAddress(currentQuadruple[3])
 			dataA = getArrayValues(currentQuadruple[1], length)
+			print(local_actual_memory)
+			print(currentQuadruple[2])
 			labels = getArrayValues(currentQuadruple[2], length)
+
+
 
 			bars(dataA, labels, length, getValueForAddress(currentQuadruple[4]))
 
@@ -871,11 +887,13 @@ def run(fileName):
 
 		elif actualCode == PIE:
 			length = getValueForAddress(currentQuadruple[3])
+
 			dataA = getArrayValues(currentQuadruple[1], length)
 			arrLabels = getArrayValues(currentQuadruple[2], length)
 
 			print("----------------")
 			print(arrLabels)
+			print(length)
 
 			pie(dataA, arrLabels, length)
 
@@ -888,7 +906,7 @@ def run(fileName):
 			length = getValueForAddress(currentQuadruple[2])
 			dataA = getArrayValues(currentQuadruple[1], length)
 
-			histo(dataA, length, currentQuadruple[3])
+			histo(dataA, length, getValueForAddress(currentQuadruple[3]))
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
