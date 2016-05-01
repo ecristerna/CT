@@ -17,6 +17,9 @@ program prog {
 		a[3] = 430;
 		a[4] = 300;
 
+		print(sum(a, 5));
+		print(mul(a, 5));
+
 		op = average(a, 5);
 		print(op, "%n");
 
