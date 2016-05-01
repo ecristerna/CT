@@ -1077,7 +1077,6 @@ def p_assignOptions(p):
 					| saveToDimensionStacks "[" expresion verifyIndex "]" assignMatrix accessStruct init '''
 	# print("assignOptions")
 
-
 def p_assignMatrix(p):
 	'''assignMatrix : updateDimension "[" expresion verifyIndex "]" errorAssignMatrix
 					| empty '''
@@ -1670,7 +1669,7 @@ def p_accessStruct(p):
 	global contQuadruples
 
 	aux1 = pOper.pop()
-	temp = getTempForType(pTipos.pop())
+	temp = getTempForType(INT)
 
 	cuadruplo = ()
 	toSave = 0
@@ -1688,7 +1687,7 @@ def p_accessStruct(p):
 	contQuadruples += 1
 
 	pOper.append('(' + str(temp) + ')')
-	pTipos.append(getTypeForAddress(temp))
+	pTipos.append(varType)
 
 	pilaO.pop()
 	pDimensionadas.pop()

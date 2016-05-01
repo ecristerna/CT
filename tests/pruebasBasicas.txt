@@ -91,9 +91,9 @@ program a {
 	}
 
 	func matrixMult() {
-		vars int i, j, k, sum, m, n, o, p, elem;
+		vars int i, j, k, accum, m, n, o, p, elem;
 
-		sum = 0;
+		accum = 0;
 
 		print("Renglones de m1: ");
 		read(m);
@@ -134,13 +134,13 @@ program a {
 
 			for (i = 0; i < m; i = i + 1) {
 				for (j = 0; j < p; j = j + 1) {
-					sum = 0;
+					accum = 0;
 
 					for (k = 0; k < n; k = k + 1) {
-						sum = sum + m1[(i)][(k)] * m2[(k)][(j)];
+						accum = accum + m1[(i)][(k)] * m2[(k)][(j)];
 					}
 
-					m3[(i)][(j)] = sum;
+					m3[(i)][(j)] = accum;
 				}
 			}
 

@@ -193,6 +193,7 @@ def getArrayValues(initialAddress, lenght):
 
 def semanticErrorHalt(error):
 	print("Semantic Error: " + error)
+
 	sys.exit()
 
 # ---------------------------------------
@@ -535,7 +536,10 @@ def histo(dataA, length, numGroups):
 
 	plt.show()
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> af8b83cf1c95c594f0370591a3afcb319041daa9
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
 # ---------------------------------------
@@ -550,7 +554,7 @@ def run(fileName):
 	global local_actual_memory
 	global local_next_memory
 
-	cuadruplo = (400, "", "", "")
+	cuadruplo = (END, "", "", "")
 	compiler.cuadruplos.append(cuadruplo)
 
 	print("---------------")
