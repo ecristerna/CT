@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
+reserved = ['SUM', 'MUL', 'AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -138,6 +138,8 @@ NEG = 350
 AVERAGE = 360
 VARIANCE = 370
 STDEV = 380
+SUM = 390
+MUL = 400
 
 
 # Semantic Cube
@@ -1272,7 +1274,9 @@ def p_basicLanguageFunctions(p):
 	'''basicLanguageFunctions : NEG PARINI expresion performNeg PARFIN
 						| AVERAGE basicFunc performAvg
 						| VARIANCE basicFunc performVariance
-						| STDEVIATION basicFunc performStdDev '''
+						| STDEVIATION basicFunc performStdDev
+						| SUM basicFunc performSum
+						| MUL basicFunc performMul '''
 
 def p_basicFunc(p):
 	'''basicFunc : PARINI ID saveStructID "," expresion PARFIN '''
@@ -1306,6 +1310,54 @@ def p_saveStructID(p):
 		semanticErrorHalt()
 
 	pOper.append(address)
+	pTipos.append(tipo)
+
+def p_performSum(p):
+	'''performSum : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(tipo)
+
+	cuadruplo = (SUM, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(tipo)
+
+def p_performMul(p):
+	'''performMul : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(tipo)
+
+	cuadruplo = (MUL, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
 	pTipos.append(tipo)
 
 def p_performAvg(p):
