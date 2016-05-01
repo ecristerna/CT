@@ -535,6 +535,165 @@ def p_instr(p):
 			| cycle '''
 	# print("instr")
 
+def p_graphFunctions(p):
+	'''graphFunctions : STACKED PARINI putFondo ID saveStructID "," ID saveStructID "," expresion "," expresion "," expresion takeFondo PARFIN performStacked
+					|  BARS PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion "," expresion takeFondo PARFIN performBars
+					| DBARS PARINI putFondo ID saveStructID "," ID saveStructID "," ID saveStringStructID "," expresion "," expresion "," expresion takeFondo PARFIN performDBars
+					| PIE PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion takeFondo PARFIN performPie
+					| HISTO PARINI putFondo ID saveStructID expresion "," expresion takeFondo PARFIN performHisto '''
+
+def p_performStacked(p):
+	'''performStacked : '''
+	global semanticError
+	global contQuadruples
+
+	labelB = pOper.pop()
+	tipoLabelB = pTipos.pop()
+
+	if tipoLabelB != STRING:
+		semanticError = "LabelB parameter must be a STRING value."
+		semanticErrorHalt()
+
+	labelA = pOper.pop()
+	tipoLabelA = pTipos.pop()
+
+	if tipoLabelA != STRING:
+		semanticError = "LabelA parameter must be a STRING value."
+		semanticErrorHalt()
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Len parameter must be an INT value."
+		semanticErrorHalt()
+
+	addressB = pOper.pop()
+	tipoB = pTipos.pop()
+	addressA = pOper.pop()
+	tipoA = pTipos.pop()
+
+	cuadruplo = (STACKED, addressA, addressB, lenght, labelA, labelB)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+def p_performBars(p):
+	'''performBars : '''
+	global semanticError
+	global contQuadruples
+
+	labelGroup = pOper.pop()
+	tipoLabelGroup = pTipos.pop()
+
+	if tipoLabelGroup != STRING:
+		semanticError = "LabelGroup parameter must be a STRING value."
+		semanticErrorHalt()
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Len parameter must be an INT value."
+		semanticErrorHalt()
+
+	addressLabels = pOper.pop()
+	tipoLabels = pTipos.pop()
+	addressA = pOper.pop()
+	tipoA = pTipos.pop()
+
+	cuadruplo = (BARS, addressA, addressLabels, lenght, labelGroup)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+def p_performPie(p):
+	'''performPie : '''
+	global semanticError
+	global contQuadruples
+
+	labelB = pOper.pop()
+	tipoLabelB = pTipos.pop()
+
+	if tipoLabelB != STRING:
+		semanticError = "LabelB parameter must be a STRING value."
+		semanticErrorHalt()
+
+	labelA = pOper.pop()
+	tipoLabelA = pTipos.pop()
+
+	if tipoLabelA != STRING:
+		semanticError = "LabelA parameter must be a STRING value."
+		semanticErrorHalt()
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Len parameter must be an INT value."
+		semanticErrorHalt()
+
+	addressLabels = pOper.pop()
+	tipoLabels = pTipos.pop()
+	addressB = pOper.pop()
+	tipoB = pTipos.pop()
+	addressA = pOper.pop()
+	tipoA = pTipos.pop()
+
+	cuadruplo = (DBARS, addressA, addressB, addressLabels, lenght, labelA, labelB)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+def p_performPie(p):
+	'''performPie : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Len parameter must be an INT value."
+		semanticErrorHalt()
+
+	addressLabels = pOper.pop()
+	tipoLabels = pTipos.pop()
+	addressA = pOper.pop()
+	tipoA = pTipos.pop()
+
+	cuadruplo = (STACKED, addressA, addressB, lenght, labelA, labelB)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+def p_saveStringStructID(p):
+	'''saveStringStructID : '''
+	global semanticError
+
+	address = 0
+
+	if currentToken in vars_local:
+		if not isinstance(vars_local[currentToken], list):
+			semanticError = "Parameter must be a STRING struct."
+			semanticErrorHalt()
+
+		address = vars_local[currentToken][0]
+	elif currentToken in vars_global:
+		if not isinstance(vars_global[currentToken], list):
+			semanticError = "Parameter must be a STRING struct."
+			semanticErrorHalt()
+
+		address = vars_global[currentToken][0]
+	else:
+		semanticError = "Undeclared variable " + currentToken
+		semanticErrorHalt()
+
+	tipo = getTypeForAddress(address)
+
+	if tipo != STRING:
+		semanticError = "Parameter must be a STRING struct."
+		semanticErrorHalt()
+
+	pOper.append(address)
+	pTipos.append(tipo)
+
 def p_basicStatements(p):
 	'''basicStatements : assign
 					| funcCall
