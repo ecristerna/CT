@@ -9,13 +9,48 @@ program prog {
 			int aux2;
 			string let, aux4;
 			struct int a[5];
+			struct string s[5];
+			struct float f[5];
 			struct bool b[5];
+			struct string l[5];
+
+		aux2 = 0;
+
+		while (aux2 < 5) {
+			if (aux2 % 2 == 1) {
+				b[(aux2)] = true;
+			}
+			
+			print(b[(aux2)]);
+
+			aux2 = aux2 + 1;
+		}
+
+		f[4] = 9.2;
+		print(f[4]);
+
+		s[4] = "hola";
+		print(s[4]);
 
 		a[0] = 600;
 		a[1] = 470;
 		a[2] = 170;
 		a[3] = 430;
 		a[4] = 300;
+
+		l[0] = "dato1";
+		l[1] = "dato2";
+		l[2] = "dato3";
+		l[3] = "dato4";
+		l[4] = "dato5";
+
+
+		line(a, a, 5);
+		stacked(a, a, 5, "hola", "hola2");
+		bars(a, l, 5, "hola");
+		dbars(a, a, l, 5, "hola", "hola2");
+		pie(a, l, 5);
+		histo(a, 5, 5);
 
 		print(sum(a, 5));
 		print(mul(a, 5));

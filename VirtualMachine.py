@@ -1,6 +1,12 @@
 from __future__ import print_function
 from math import sqrt
 import CT as CT
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.path as path
+from matplotlib.gridspec import GridSpec
+>>>>>>> master
 import sys
 
 # ---------------------------------------
@@ -50,6 +56,12 @@ VARIANCE = 370
 STDEV = 380
 SUM = 390
 MUL = 400
+BARS = 410
+DBARS = 420
+STACKED = 430
+PIE = 440
+HISTO = 450
+LINE = 460
 END = 500
 
 # ---------------------------------------
@@ -173,16 +185,34 @@ def getArrayValues(initialAddress, lenght):
 		for x in range(0, lenght):
 			arrayToReturn.append(global_memory[1][initialAddress + x - CT.MIN_FLOAT_GLOBAL])
 	elif initialAddress >= CT.MIN_INT and initialAddress <= CT.MAX_INT:
+			arrayToReturn.append(global_memory[1][initialAddress + x - CT.MIN_FLOAT_GLOBAL])
+	elif initialAddress >= CT.MIN_STRING_GLOBAL and initialAddress <= CT.MAX_STRING_GLOBAL:
+		for x in range(0, lenght):
+			arrayToReturn.append(global_memory[3][initialAddress + x - CT.MIN_STRING_GLOBAL])
+	elif initialAddress >= CT.MIN_BOOL_GLOBAL and initialAddress <= CT.MAX_BOOL_GLOBAL:
+		for x in range(0, lenght):
+			arrayToReturn.append(global_memory[2][initialAddress + x - CT.MIN_BOOL_GLOBAL])
+	elif initialAddress >= CT.MIN_INT and initialAddress <= CT.MAX_INT:
 		for x in range(0, lenght):
 			arrayToReturn.append(local_actual_memory[0][initialAddress + x - CT.MIN_INT])
 	elif initialAddress >= CT.MIN_FLOAT and initialAddress <= CT.MAX_FLOAT:
 		for x in range(0, lenght):
 			arrayToReturn.append(local_actual_memory[1][initialAddress + x - CT.MIN_FLOAT])
+			arrayToReturn.append(local_actual_memory[1][initialAddress + x - CT.MIN_FLOAT])
+	elif initialAddress >= CT.MIN_STRING and initialAddress <= CT.MAX_STRING:
+		for x in range(0, lenght):
+			arrayToReturn.append(local_actual_memory[3][initialAddress + x - CT.MIN_STRING])
+	elif initialAddress >= CT.MIN_BOOL and initialAddress <= CT.MAX_BOOL:
+		for x in range(0, lenght):
+			arrayToReturn.append(local_actual_memory[2][initialAddress + x - CT.MIN_BOOL])
+
+	print("toReturn ", arrayToReturn)
 
 	return arrayToReturn
 
 def semanticErrorHalt(error):
 	print("Semantic Error: " + error)
+
 	sys.exit()
 
 # ---------------------------------------
@@ -403,6 +433,133 @@ def getMul(initialAddress, lenght):
 
 	return accum
 
+def line(dataA, dataB):
+	plt.plot(dataA, dataB)
+	plt.ylabel('Data')
+	plt.show()
+
+	return
+
+def bars(dataA, arrLabels, length, labelGroup):
+	fig, ax = plt.subplots()
+	index = np.arange(length)
+	bar_width = 0.35
+
+	opacity = 0.4
+	error_config = {'ecolor': '0.3'}
+
+	rects1 = plt.bar(index, dataA, bar_width,
+	                 alpha=opacity,
+	                 color='b',
+	                 error_kw=error_config,
+	                 label=labelGroup)
+	plt.xticks(index + bar_width, arrLabels)
+	plt.legend()
+
+	plt.tight_layout()
+	plt.show()
+
+	return
+
+def stacked(dataA, dataB, length, labelA, labelB):
+	ind = np.arange(length)
+	width = 0.35  
+
+	p1 = plt.bar(ind, dataA, width, color='r')
+	p2 = plt.bar(ind, dataB, width, color='b',
+	             bottom=dataA)
+
+	plt.ylabel('Scores')
+	plt.title('Scores by group')
+	plt.xticks(ind + width/2., ('G1', 'G2', 'G3', 'G4', 'G5'))
+	plt.yticks(np.arange(0, 100, 300))
+	plt.legend((p1[0], p2[0]), (labelA, labelB))
+
+	plt.show()
+	return
+
+def dBars(dataA, dataB, labels, length, labelA, labelB):
+
+	ind = np.arange(length)  # the x locations for the groups
+	width = 0.35       # the width of the bars
+
+	fig, ax = plt.subplots()
+	rects1 = ax.bar(ind, dataA, width, color='r')
+	rects2 = ax.bar(ind + width, dataB, width, color='y')
+
+	# add some text for labels, title and axes ticks
+	ax.set_ylabel('Scores')
+	ax.set_title('Scores by group and gender')
+	ax.set_xticks(ind + width)
+	ax.set_xticklabels(labels)
+
+	ax.legend((rects1[0], rects2[0]), (labelA, labelB))
+
+
+	def autolabel(rects):
+	    # attach some text labels
+	    for rect in rects:
+	        height = rect.get_height()
+	        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+	                '%d' % int(height),
+	                ha='center', va='bottom')
+
+	autolabel(rects1)
+	autolabel(rects2)
+
+	plt.show()
+
+	return
+
+def pie(dataA, arrLabels, length):
+	the_grid = GridSpec(2, 2)
+	print('-----------------------------------------')
+	print(arrLabels)
+	plt.pie(dataA, labels=arrLabels, autopct='%.0f%%', shadow=True)
+	plt.subplot(the_grid[1, 0], aspect=1)
+	patches, texts, autotexts = plt.pie(dataA, labels=arrLabels,
+	                                    autopct='%.0f%%',
+	                                    shadow=True, radius=1.5)
+
+	for t in texts:
+	    t.set_size('smaller')
+	for t in autotexts:
+	    t.set_size('x-small')
+	autotexts[0].set_color('y')
+
+	for t in texts:
+	    t.set_size('smaller')
+	for t in autotexts:
+	    t.set_size('x-small')
+	autotexts[0].set_color('y')
+
+	plt.show()
+
+	return
+
+def histo(dataA, length, numGroups):
+	fig, ax = plt.subplots()
+	# Crear histograma con NUMPY
+	n, bins = np.histogram(dataA, numGroups)
+	left = np.array(bins[:-1])
+	right = np.array(bins[1:])
+	bottom = np.zeros(len(left))
+	top = bottom + n
+
+	XY = np.array([[left, left, right, right], [bottom, top, top, bottom]]).T
+
+	barpath = path.Path.make_compound_path_from_polys(XY)
+
+	patch = patches.PathPatch(
+	    barpath, facecolor='blue', edgecolor='gray', alpha=0.8)
+	ax.add_patch(patch)
+
+	ax.set_xlim(left[0], right[-1])
+	ax.set_ylim(bottom.min(), top.max())
+
+	plt.show()
+	
+	return
 
 # ---------------------------------------
 # PROGRAMA PRINCIPAL
@@ -418,7 +575,7 @@ def run(fileName):
 	global local_actual_memory
 	global local_next_memory
 
-	cuadruplo = (400, "", "", "")
+	cuadruplo = (END, "", "", "")
 	CT.cuadruplos.append(cuadruplo)
 
 	print("---------------")
@@ -682,23 +839,98 @@ def run(fileName):
 		elif actualCode == SUM:
 			result = getSum(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
 			
-			if compiler.getTypeForAddress(currentQuadruple[3]) == INT:
+			if CT.getTypeForAddress(currentQuadruple[3]) == INT:
 				result = int(result)
 			
 			saveValueToAddress(result, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == MUL:
 			result = getMul(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
 
-			if compiler.getTypeForAddress(currentQuadruple[3]) == INT:
+			if CT.getTypeForAddress(currentQuadruple[3]) == INT:
 				result = int(result)
 			
 			saveValueToAddress(result, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == STACKED:
+			length = getValueForAddress(currentQuadruple[3])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			dataB = getArrayValues(currentQuadruple[2], length)
+
+			stacked(dataA, dataB, length, getValueForAddress(currentQuadruple[4]), getValueForAddress(currentQuadruple[5]))
+
+			currentQuadruple = CT.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == BARS:
+			length = getValueForAddress(currentQuadruple[3])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			print(local_actual_memory)
+			print(currentQuadruple[2])
+			labels = getArrayValues(currentQuadruple[2], length)
+
+
+
+			bars(dataA, labels, length, getValueForAddress(currentQuadruple[4]))
+
+			currentQuadruple = CT.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == DBARS:
+			length = getValueForAddress(currentQuadruple[4])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			dataB = getArrayValues(currentQuadruple[2], length)
+			labels = getArrayValues(currentQuadruple[3], length)
+
+			dBars(dataA, dataB, labels, length, getValueForAddress(currentQuadruple[5]), getValueForAddress(currentQuadruple[6]))
+
+			currentQuadruple = CT.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == PIE:
+			length = getValueForAddress(currentQuadruple[3])
+
+			dataA = getArrayValues(currentQuadruple[1], length)
+			arrLabels = getArrayValues(currentQuadruple[2], length)
+
+			print("----------------")
+			print(arrLabels)
+			print(length)
+
+			pie(dataA, arrLabels, length)
+
+			currentQuadruple = CT.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == HISTO:
+			length = getValueForAddress(currentQuadruple[2])
+			dataA = getArrayValues(currentQuadruple[1], length)
+
+			histo(dataA, length, getValueForAddress(currentQuadruple[3]))
+
+			currentQuadruple = CT.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == LINE:
+			length = getValueForAddress(currentQuadruple[3])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			dataB = getArrayValues(currentQuadruple[2], length)
+
+			line(dataA, dataB)
+
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
