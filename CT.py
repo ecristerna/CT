@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['HISTO', 'PIE', 'STACKED', 'DBARS', 'BARS', 'SUM', 'MUL', 'AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
+reserved = ['LINE','HISTO', 'PIE', 'STACKED', 'DBARS', 'BARS', 'SUM', 'MUL', 'AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -145,6 +145,7 @@ DBARS = 420
 STACKED = 430
 PIE = 440
 HISTO = 450
+LINE = 460
 
 
 # Semantic Cube
@@ -540,7 +541,30 @@ def p_graphFunctions(p):
 					|  BARS PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion "," expresion takeFondo PARFIN performBars
 					| DBARS PARINI putFondo ID saveStructID "," ID saveStructID "," ID saveStringStructID "," expresion "," expresion "," expresion takeFondo PARFIN performDBars
 					| PIE PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion takeFondo PARFIN performPie
-					| HISTO PARINI putFondo ID saveStructID "," expresion "," expresion takeFondo PARFIN performHisto '''
+					| HISTO PARINI putFondo ID saveStructID "," expresion "," expresion takeFondo PARFIN performHisto 
+					| LINE PARINI putFondo ID saveStructID "," ID saveStructID "," expresion takeFondo PARFIN performLine'''
+
+def p_performLine(p):
+	'''performLine : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Len parameter must be an INT value."
+		semanticErrorHalt()
+
+	addressB = pOper.pop()
+	tipoB = pTipos.pop()
+	addressA = pOper.pop()
+	tipoA = pTipos.pop()
+
+	cuadruplo = (LINE, addressA, addressB, lenght)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
 
 def p_performStacked(p):
 	'''performStacked : '''

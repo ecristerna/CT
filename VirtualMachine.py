@@ -60,6 +60,7 @@ DBARS = 420
 STACKED = 430
 PIE = 440
 HISTO = 450
+LINE = 460
 END = 500
 
 # ---------------------------------------
@@ -427,6 +428,13 @@ def getMul(initialAddress, lenght):
 		accum *= data[x]
 
 	return accum
+
+def line(dataA, dataB):
+	plt.plot(dataA, dataB)
+	plt.ylabel('Data')
+	plt.show()
+
+	return
 
 def bars(dataA, arrLabels, length, labelGroup):
 	fig, ax = plt.subplots()
@@ -902,11 +910,21 @@ def run(fileName):
 			instructionPointer += 1
 
 		elif actualCode == HISTO:
-			print("Empieza Histo")
 			length = getValueForAddress(currentQuadruple[2])
 			dataA = getArrayValues(currentQuadruple[1], length)
 
 			histo(dataA, length, getValueForAddress(currentQuadruple[3]))
+
+			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			actualCode = currentQuadruple[0]
+			instructionPointer += 1
+
+		elif actualCode == LINE:
+			length = getValueForAddress(currentQuadruple[3])
+			dataA = getArrayValues(currentQuadruple[1], length)
+			dataB = getArrayValues(currentQuadruple[2], length)
+
+			line(dataA, dataB)
 
 			currentQuadruple = compiler.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
