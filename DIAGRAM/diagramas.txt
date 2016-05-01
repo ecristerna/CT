@@ -6,7 +6,7 @@ TYPE ::=  'int' | 'float' | 'bool' | 'string'
 
 MAIN ::= 'main' '{' VARS? BODY '}'
 
-INSTR ::= ((ASSIGN | FUNC_CALL | PRINT | READ) ';' | CONDITION | CYCLE)
+INSTR ::= ((ASSIGN | FUNC_CALL | PRINT | READ | GRAPH_FUNCTIONS) ';' | CONDITION | CYCLE)
 
 PRINT ::= 'print' '(' EXP (',' EXP)* ')'
 
@@ -50,6 +50,8 @@ FACT ::= (BASIC_LANGUAGE_FUNCTIONS | 'cte_s' | 'id' ('[' EXPRESION ']' ('[' EXPR
 
 FUNC_CALL ::= 'id' '(' (EXPRESION (',' EXPRESION)*)? ')'
 
-BASIC_LANGUAGE_FUNCTIONS ::= ('neg' '(' EXPRESION ')' | ('average' | 'variance' | 'stdeviation') BASIC_FUNC)
+BASIC_LANGUAGE_FUNCTIONS ::= ('neg' '(' EXPRESION ')' | ('average' | 'variance' | 'stdeviation' | 'sum' | 'mul') BASIC_FUNC)
 
 BASIC_FUNC ::= '(' 'id' ',' EXPRESION ')'
+
+GRAPH_FUNCTIONS ::= ('stacked' '(' 'id' ',' 'id' ',' expresion ',' expresion ',' expresion ')' | 'bars' '(' 'id' ',' 'id' ',' expresion ',' expresion ')' | 'dbars' '(' 'id' ',' 'id' ',' expresion ',' expresion ',' expresion ',' expresion ')'| 'pie' '(' 'id' ',' 'd' ',' expresion ')'| 'histo' '(' 'id' ',' expresion ',' expresion ')' ) 
