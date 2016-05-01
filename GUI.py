@@ -2,7 +2,7 @@
 
 from Tkinter import *
 from sys import executable
-# from subprocess import Popen, CREATE_NEW_CONSOLE
+from subprocess import Popen, CREATE_NEW_CONSOLE
 from subprocess import call
 from tkFileDialog import askopenfilename
 import os
@@ -11,7 +11,7 @@ import VirtualMachine as VM
 fileName = "./default.txt"
 data = ""
 
-# def delprof(): Popen(["cmd.exe"], creationflags=CREATE_NEW_CONSOLE)
+def delprof(): Popen(["cmd.exe"], creationflags=CREATE_NEW_CONSOLE)
 
 def executeFile():
 	global fileName

@@ -921,4 +921,4 @@ def run(fileName):
 
 	print("\nEND OF PROGRAM\n\n")
 
-run("tests/input4.txt")
+#run("tests/input4.txt")
