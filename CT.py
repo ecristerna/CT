@@ -605,8 +605,8 @@ def p_performBars(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
-def p_performPie(p):
-	'''performPie : '''
+def p_performDBars(p):
+	'''performDBars : '''
 	global semanticError
 	global contQuadruples
 
@@ -659,7 +659,33 @@ def p_performPie(p):
 	addressA = pOper.pop()
 	tipoA = pTipos.pop()
 
-	cuadruplo = (STACKED, addressA, addressB, lenght, labelA, labelB)
+	cuadruplo = (PIE, addressA, addressLabels, lenght)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+def p_performHisto(p):
+	'''performHisto : '''
+	global semanticError
+	global contQuadruples
+
+	nGroups = pOper.pop()
+	tipoLabelnGroups = pTipos.pop()
+
+	if tipoLabelnGroups != INT:
+		semanticError = "NGroups parameter must be a INT value."
+		semanticErrorHalt()
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Len parameter must be an INT value."
+		semanticErrorHalt()
+
+	addressA = pOper.pop()
+	tipoA = pTipos.pop()
+
+	cuadruplo = (DBARS, addressA, lenght, nGroups)
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
