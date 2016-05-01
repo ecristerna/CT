@@ -18,13 +18,13 @@ program prog {
 		a[4] = 300;
 
 		op = average(a, 5);
-		print(op);
+		print(op, "%n");
 
 		op = variance(a, 5);
-		print(op);
+		print(op, "%n");
 
 		op = stdeviation(a, 5);
-		print(op);
+		print(op, "%n");
 
 		print("Boolean: ");
 		read(aux);
