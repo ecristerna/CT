@@ -1,6 +1,10 @@
 from __future__ import print_function
 from math import sqrt
 import CT as compiler
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import matplotlib.path as path
 import sys
 
 # ---------------------------------------
@@ -407,6 +411,131 @@ def getMul(initialAddress, lenght):
 		accum *= data[x]
 
 	return accum
+
+def bars(dataA, arrLabels, length, labelGroup):
+	fig, ax = plt.subplots()
+	index = np.arange(lenth)
+	bar_width = 0.35
+
+	opacity = 0.4
+	error_config = {'ecolor': '0.3'}
+
+	rects1 = plt.bar(index, dataA, bar_width,
+	                 alpha=opacity,
+	                 color='b',
+	                 error_kw=error_config,
+	                 label='Men')
+
+	plt.xlabel(labelGroup)
+	plt.xticks(index + bar_width, arrLabels)
+	plt.legend()
+
+	plt.tight_layout()
+	plt.show()
+
+	return
+
+def stacked(dataA, dataB, length, labelA, labelB):
+	N = 5
+	ind = np.arange(length)
+	width = 0.35  
+
+	p1 = plt.bar(ind, dataA, width, color='r')
+	p2 = plt.bar(ind, dataB, width, color='y',
+	             bottom=dataA)
+
+	plt.ylabel('Scores')
+	plt.title('Scores by group')
+	#plt.xticks(ind + width/2., ('G1', 'G2', 'G3', 'G4', 'G5'))
+	plt.yticks(np.arange(0, 81, 10))
+	plt.legend((p1[0], p2[0]), (labelA, labelB))
+
+	plt.show()
+	return
+
+def dBars(dataA, dataB, labels, length, labelA, labelB):
+
+	ind = np.arange(length)  # the x locations for the groups
+	width = 0.35       # the width of the bars
+
+	fig, ax = plt.subplots()
+	rects1 = ax.bar(ind, dataA, width, color='r')
+	rects2 = ax.bar(ind + width, dataB, width, color='y')
+
+	# add some text for labels, title and axes ticks
+	ax.set_ylabel('Scores')
+	ax.set_title('Scores by group and gender')
+	ax.set_xticks(ind + width)
+	ax.set_xticklabels(('G1', 'G2', 'G3', 'G4', 'G5'))
+
+	ax.legend((rects1[0], rects2[0]), (labelA, labelB))
+
+
+	def autolabel(rects):
+	    # attach some text labels
+	    for rect in rects:
+	        height = rect.get_height()
+	        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+	                '%d' % int(height),
+	                ha='center', va='bottom')
+
+	autolabel(rects1)
+	autolabel(rects2)
+
+	plt.show()
+
+	return
+
+def pie(dataA, arrLabels, length):
+	the_grid = GridSpec(2, 2)
+
+	plt.pie(dataA, labels=arrLabels, autopct='%.0f%%', shadow=True)
+	plt.subplot(the_grid[1, 0], aspect=1)
+	patches, texts, autotexts = plt.pie(dataA, labels=arrLabels,
+	                                    autopct='%.0f%%',
+	                                    shadow=True, radius=1.5)
+
+	for t in texts:
+	    t.set_size('smaller')
+	for t in autotexts:
+	    t.set_size('x-small')
+	autotexts[0].set_color('y')
+
+	for t in texts:
+	    t.set_size('smaller')
+	for t in autotexts:
+	    t.set_size('x-small')
+	autotexts[0].set_color('y')
+
+	plt.show()
+
+	return
+
+def histo(dataA, length, numGroups):
+	fig, ax = plt.subplots()
+
+	# Crear histograma con NUMPY
+	n, bins = np.histogram(dataA, numG)
+	left = np.array(bins[:-1])
+	right = np.array(bins[1:])
+	bottom = np.zeros(len(left))
+	top = bottom + n
+
+	XY = np.array([[left, left, right, right], [bottom, top, top, bottom]]).T
+
+	barpath = path.Path.make_compound_path_from_polys(XY)
+
+	patch = patches.PathPatch(
+	    barpath, facecolor='blue', edgecolor='gray', alpha=0.8)
+	ax.add_patch(patch)
+
+	ax.set_xlim(left[0], right[-1])
+	ax.set_ylim(bottom.min(), top.max())
+
+	plt.show()
+
+
+
 
 
 # ---------------------------------------
