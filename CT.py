@@ -7,7 +7,7 @@ if sys.version_info[0] >= 3:
 
 avoidTokens = ['{','}',',',';','[', ']', ':', '.', '+', '-', '*', '/', '%', '>', '>=', '<', '<=', '!=', '==', '=', '(', ')', 'RETURN', 'AND', 'OR']
 literals = ['{','}',',',';','[', ']', ':', '.']
-reserved = ['PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
+reserved = ['SUM', 'MUL', 'AVERAGE', 'VARIANCE', 'STDEVIATION', 'NEG', 'PRINT', 'READ', 'PROGRAM','STRUCT','FUNC','RETURNS','RETURN','INT', 'FLOAT', 'STRING', 'BOOL', 'TRUE', 'FALSE', 'VARS', 'MAIN', 'AND', 'OR', 'WHILE', 'FOR', 'IF', 'ELSE',]
 tokens = ['PARINI', 'PARFIN', 'ASGN', 'LT', 'GT', 'PLUS', 'MINUS', 'MULT', 'DIV', 'RES', 'GTOEQ', 'LTOEQ','DIF', 'EQ','ID','CTED','CTEF','CTES',] + reserved
 
 line = 1
@@ -134,6 +134,12 @@ RETORNO = 310
 PARAM = 320
 FUNCRETURN = 330
 VER = 340
+NEG = 350
+AVERAGE = 360
+VARIANCE = 370
+STDEV = 380
+SUM = 390
+MUL = 400
 
 
 # Semantic Cube
@@ -1255,13 +1261,197 @@ def p_cyTerm(p):
 
 
 def p_fact(p):
-	'''fact : CTES saveConstantString
+	'''fact : putFondo basicLanguageFunctions takeFondo
+			| CTES saveConstantString
 			| cte
 			| funcCall
 			| PARINI putFondo expresion PARFIN takeFondo
 			| ID saveVariable opAccess errorOpAccess '''
 	# print("fact")
 
+
+def p_basicLanguageFunctions(p):
+	'''basicLanguageFunctions : NEG PARINI expresion performNeg PARFIN
+						| AVERAGE basicFunc performAvg
+						| VARIANCE basicFunc performVariance
+						| STDEVIATION basicFunc performStdDev
+						| SUM basicFunc performSum
+						| MUL basicFunc performMul '''
+
+def p_basicFunc(p):
+	'''basicFunc : PARINI ID saveStructID "," expresion PARFIN '''
+
+def p_saveStructID(p):
+	'''saveStructID : '''
+	global semanticError
+
+	address = 0
+
+	if currentToken in vars_local:
+		if not isinstance(vars_local[currentToken], list):
+			semanticError = "First parameters must be a struct"
+			semanticErrorHalt()
+
+		address = vars_local[currentToken][0]
+	elif currentToken in vars_global:
+		if not isinstance(vars_global[currentToken], list):
+			semanticError = "First parameters must be a struct"
+			semanticErrorHalt()
+
+		address = vars_global[currentToken][0]
+	else:
+		semanticError = "Undeclared variable " + currentToken
+		semanticErrorHalt()
+
+	tipo = getTypeForAddress(address)
+
+	if tipo != INT and tipo != FLOAT:
+		semanticError = "Cannot get stats from non numerical values."
+		semanticErrorHalt()
+
+	pOper.append(address)
+	pTipos.append(tipo)
+
+def p_performSum(p):
+	'''performSum : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(tipo)
+
+	cuadruplo = (SUM, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(tipo)
+
+def p_performMul(p):
+	'''performMul : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(tipo)
+
+	cuadruplo = (MUL, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(tipo)
+
+def p_performAvg(p):
+	'''performAvg : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(FLOAT)
+
+	cuadruplo = (AVERAGE, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(FLOAT)
+
+def p_performVariance(p):
+	'''performVariance : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(FLOAT)
+
+	cuadruplo = (VARIANCE, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(FLOAT)
+
+def p_performStdDev(p):
+	'''performStdDev : '''
+	global semanticError
+	global contQuadruples
+
+	lenght = pOper.pop()
+	tipoLen = pTipos.pop()
+
+	if tipoLen != INT:
+		semanticError = "Second parameter must be an INT value."
+		semanticErrorHalt()
+
+	address = pOper.pop()
+	tipo = pTipos.pop()
+
+	newAddress = getTempForType(FLOAT)
+
+	cuadruplo = (STDEV, address, lenght, newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(FLOAT)
+
+def p_performNeg(p):
+	'''performNeg : '''
+	global semanticError
+	global contQuadruples
+
+	valor = pOper.pop()
+	tipo = pTipos.pop()
+
+	if tipo == STRING:
+		semanticError = "Cannot negate a string value."
+		semanticErrorHalt()
+
+	newAddress = getTempForType(tipo)
+
+	cuadruplo = (NEG, valor, '', newAddress)
+	cuadruplos.append(cuadruplo)
+	contQuadruples += 1
+
+	pOper.append(newAddress)
+	pTipos.append(tipo)
 
 def p_errorFact(p):
 	'''errorFact : '''
@@ -1980,9 +2170,9 @@ def typesValidator(left, right, operator):
 
 	return semanticCube[(left / 10 - 1) * 4 + (right / 10 - 1)][opMap]
 
-
 import ply.yacc as yacc
 parser = yacc.yacc()
 
-file = open ("tests/pruebasBasicas.txt", "r");
-yacc.parse(file.read())
+def compile(fileName):
+	file = open (fileName, "r");
+	yacc.parse(file.read())
