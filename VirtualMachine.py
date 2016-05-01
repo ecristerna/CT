@@ -91,8 +91,6 @@ def getValueForAddress(address):
 	if address >= CT.MIN_INT_GLOBAL and address <= CT.MAX_INT_GLOBAL:
 		return global_memory[0][address - CT.MIN_INT_GLOBAL]
 	elif address >= CT.MIN_FLOAT_GLOBAL and address <= CT.MAX_FLOAT_GLOBAL:
-		print(address - CT.MIN_BOOL_GLOBAL)
-		print(global_memory)
 		return global_memory[1][address - CT.MIN_FLOAT_GLOBAL]
 	elif address >= CT.MIN_BOOL_GLOBAL and address <= CT.MAX_BOOL_GLOBAL:
 		return global_memory[2][address - CT.MIN_BOOL_GLOBAL]
@@ -507,8 +505,6 @@ def dBars(dataA, dataB, labels, length, labelA, labelB):
 
 def pie(dataA, arrLabels, length):
 	the_grid = GridSpec(2, 2)
-	print('-----------------------------------------')
-	print(arrLabels)
 	plt.pie(dataA, labels=arrLabels, autopct='%.0f%%', shadow=True)
 	plt.subplot(the_grid[1, 0], aspect=1)
 	patches, texts, autotexts = plt.pie(dataA, labels=arrLabels,
@@ -867,11 +863,7 @@ def run(fileName):
 		elif actualCode == BARS:
 			length = getValueForAddress(currentQuadruple[3])
 			dataA = getArrayValues(currentQuadruple[1], length)
-			print(local_actual_memory)
-			print(currentQuadruple[2])
 			labels = getArrayValues(currentQuadruple[2], length)
-
-
 
 			bars(dataA, labels, length, getValueForAddress(currentQuadruple[4]))
 
@@ -896,10 +888,6 @@ def run(fileName):
 
 			dataA = getArrayValues(currentQuadruple[1], length)
 			arrLabels = getArrayValues(currentQuadruple[2], length)
-
-			print("----------------")
-			print(arrLabels)
-			print(length)
 
 			pie(dataA, arrLabels, length)
 
