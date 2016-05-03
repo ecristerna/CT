@@ -80,8 +80,10 @@ MAIN = 80
 # METODOS AUXILIARES
 # ---------------------------------------
 
+# Gets the value saved into memories for a given virtual address
 def getValueForAddress(address):
 	
+	# Validates that the given addres is in fact an address or an indirect address or literal value
 	if isinstance(address, str):
 		if '|' in address:
 			return int(address[1:-1])
@@ -129,8 +131,10 @@ def getValueForAddress(address):
 	elif address >= CT.MIN_CONST_STRING and address <= CT.MAX_CONST_STRING:
 		return value
 
+# Saves a given value into a given address
 def saveValueToAddress(value, address):
 
+	# Validates that the given addres is in fact an address or an indirect address
 	if isinstance(address, str):
 		if '(' in address:
 			address = getValueForAddress(int(address[1:-1]))
@@ -162,6 +166,7 @@ def saveValueToAddress(value, address):
 	elif address >= CT.MIN_TEMP_STRING and address <= CT.MAX_TEMP_STRING:
 		local_actual_memory[7][address - CT.MIN_TEMP_STRING] = value
 
+# Saves values to newly created memory, for parameters on function calls
 def saveValueToNewMemory(value, address):
 	if address >= CT.MIN_INT and address <= CT.MAX_INT:
 		local_next_memory[0][address - CT.MIN_INT] = value
@@ -172,6 +177,7 @@ def saveValueToNewMemory(value, address):
 	elif address >= CT.MIN_STRING and address <= CT.MAX_STRING:
 		local_next_memory[3][address - CT.MIN_STRING] = value
 
+# Returns an array of the values to work on, given the initial struct address, and the number of slots
 def getArrayValues(initialAddress, lenght):
 	arrayToReturn = []
 
@@ -202,6 +208,7 @@ def getArrayValues(initialAddress, lenght):
 			
 	return arrayToReturn
 
+# Stops program when a semantic error occurs
 def semanticErrorHalt(error):
 	print("Semantic Error: " + error)
 
@@ -211,18 +218,21 @@ def semanticErrorHalt(error):
 # OPERACIONES
 # ---------------------------------------
 
+# Performs addition, given operands addresses and where to save it
 def add(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
 
 	saveValueToAddress(leftValue + rightValue, result)
 
+# Performs substraction, given operands addresses and where to save it
 def substract(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
 	
 	saveValueToAddress(leftValue - rightValue, result)
 
+# Performs multiplication, given operands addresses and where to save it
 def multiply(leftOp, rightOp, result):
 	if isinstance(leftOp, list):
 		leftValue = leftOp[0]
@@ -236,23 +246,27 @@ def multiply(leftOp, rightOp, result):
 	
 	saveValueToAddress(leftValue * rightValue, result)
 
+# Performs division, given operands addresses and where to save it
 def divide(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
 	
 	saveValueToAddress(leftValue / rightValue, result)
 
+# Performs residue, given operands addresses and where to save it
 def residue(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
 	
 	saveValueToAddress(leftValue % rightValue, result)
 
+# Performs assign, given operand address and where to save it
 def assign(rightOp, result):
 	value = getValueForAddress(rightOp)
 
 	saveValueToAddress(value, result)
 
+# Performs <, given operands addresses and where to save it
 def lessThan(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
@@ -262,6 +276,7 @@ def lessThan(leftOp, rightOp, result):
 	else:
 		saveValueToAddress(False, result)
 
+# Performs <=, given operands addresses and where to save it
 def lessThanEqual(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
@@ -271,6 +286,7 @@ def lessThanEqual(leftOp, rightOp, result):
 	else:
 		saveValueToAddress(False, result)
 
+# Performs >, given operands addresses and where to save it
 def greaterThan(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
@@ -280,6 +296,7 @@ def greaterThan(leftOp, rightOp, result):
 	else:
 		saveValueToAddress(False, result)
 
+# Performs >=, given operands addresses and where to save it
 def greaterThanEqual(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
@@ -289,6 +306,7 @@ def greaterThanEqual(leftOp, rightOp, result):
 	else:
 		saveValueToAddress(False, result)
 
+# Performs ==, given operands addresses and where to save it
 def equal(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
@@ -298,6 +316,7 @@ def equal(leftOp, rightOp, result):
 	else:
 		saveValueToAddress(False, result)
 
+# Performs !=, given operands addresses and where to save it
 def different(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
@@ -307,6 +326,7 @@ def different(leftOp, rightOp, result):
 	else:
 		saveValueToAddress(False, result)
 
+# Performs AND, given operands addresses and where to save it
 def andOp(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
@@ -316,6 +336,7 @@ def andOp(leftOp, rightOp, result):
 	else:
 		saveValueToAddress(False, result)
 
+# Performs OR, given operands addresses and where to save it
 def orOp(leftOp, rightOp, result):
 	leftValue = getValueForAddress(leftOp)
 	rightValue = getValueForAddress(rightOp)
@@ -325,6 +346,7 @@ def orOp(leftOp, rightOp, result):
 	else:
 		saveValueToAddress(False, result)
 
+# Creates new memory given an array containing number of ints, floats, bools, strings, tempInts, tempFloats, tempBools, tempStrings
 def era(size):
 	global local_next_memory
 
@@ -356,6 +378,7 @@ def era(size):
 
 	# print(local_next_memory)
 
+# Initializes global memory
 def initMemoriaGlobal():
 	global global_memory
 
@@ -383,7 +406,7 @@ def initMemoriaGlobal():
 	for x in range(0, size[3]):
 		global_memory[3].append("")
 
-
+# Returns average of given array values
 def getAverage(initialAddress, lenght):
 	data = getArrayValues(initialAddress, lenght)
 	accum = 0.0
@@ -393,6 +416,7 @@ def getAverage(initialAddress, lenght):
 
 	return accum / lenght
 
+# Returns variance of given array values
 def getVariance(initialAddress, lenght):
 	data = getArrayValues(initialAddress, lenght)
 	accum = 0.0
@@ -404,9 +428,11 @@ def getVariance(initialAddress, lenght):
 
 	return accum / lenght
 
+# Returns standard diviation of given array values
 def getStdDeviation(initialAddress, lenght):
 	return sqrt(getVariance(initialAddress, lenght))
 
+# Returns summatory of given array values
 def getSum(initialAddress, lenght):
 	data = getArrayValues(initialAddress, lenght)
 	accum = 0.0
@@ -416,6 +442,7 @@ def getSum(initialAddress, lenght):
 
 	return accum
 
+# Returns multiplicatory of given array values
 def getMul(initialAddress, lenght):
 	data = getArrayValues(initialAddress, lenght)
 	accum = 1.0
@@ -425,6 +452,7 @@ def getMul(initialAddress, lenght):
 
 	return accum
 
+# Draws line graph for given data
 def line(dataA, dataB):
 	plt.plot(dataA, dataB)
 	plt.ylabel('Data')
@@ -432,6 +460,7 @@ def line(dataA, dataB):
 
 	return
 
+# Draws bars graph for given data
 def bars(dataA, arrLabels, length, labelGroup):
 	fig, ax = plt.subplots()
 	index = np.arange(length)
@@ -453,6 +482,7 @@ def bars(dataA, arrLabels, length, labelGroup):
 
 	return
 
+# Draws stacked graph for given data
 def stacked(dataA, dataB, length, labelA, labelB):
 	ind = np.arange(length)
 	width = 0.35  
@@ -470,6 +500,7 @@ def stacked(dataA, dataB, length, labelA, labelB):
 	plt.savefig('graphs/stacked.png', bbox_inches='tight')
 	return
 
+# Draws double bars graph for given data
 def dBars(dataA, dataB, labels, length, labelA, labelB):
 
 	ind = np.arange(length)  # the x locations for the groups
@@ -503,6 +534,7 @@ def dBars(dataA, dataB, labels, length, labelA, labelB):
 
 	return
 
+# Draws pie graph for given data
 def pie(dataA, arrLabels, length):
 	the_grid = GridSpec(2, 2)
 	plt.pie(dataA, labels=arrLabels, autopct='%.0f%%', shadow=True)
@@ -527,6 +559,7 @@ def pie(dataA, arrLabels, length):
 
 	return
 
+# Draws histogram graph for given data
 def histo(dataA, length, numGroups):
 	fig, ax = plt.subplots()
 	# Crear histograma con NUMPY
@@ -557,7 +590,8 @@ def histo(dataA, length, numGroups):
 
 def run(fileName):
 
-	CT.compile(fileName)
+	# Calls Parser
+	CT.compile(fileName) 
 
 	global instructionPointer
 	global pointersStack
@@ -565,6 +599,7 @@ def run(fileName):
 	global local_actual_memory
 	global local_next_memory
 
+	# Final Quadruple for halt
 	cuadruplo = (END, "", "", "")
 	CT.cuadruplos.append(cuadruplo)
 
@@ -576,13 +611,16 @@ def run(fileName):
 	actualCode = currentQuadruple[0]
 	instructionPointer += 1
 
+	# Initializes global memory
 	initMemoriaGlobal()
 
 	# print(global_memory)
 
+	# Read quaruples
 	while actualCode != END:
 		# print(local_actual_memory)
 
+		# Main switch
 		if actualCode == ADD:
 			add(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
@@ -920,7 +958,3 @@ def run(fileName):
 	# print(local_actual_memory)
 
 	print("\nEND OF PROGRAM\n\n")
-
-#run("tests/input4.txt")
-
-
