@@ -180,7 +180,7 @@ pTipos = []
 pSaltos = []
 pDimensionadas = []
 
-# Tokens
+# Tokens - Scanner
 
 t_ignore = " \t"
 
@@ -366,10 +366,12 @@ lexer = lex.lex()
 
 # Parsing rules
 
+# Initial Rule
 def p_program(p):
 	'''program : errorProgram PROGRAM saveType ID saveProc "{" opVars changeCurrentScope opFunctions main "}" printTables'''
 	# print("program")
 
+# Changes scope for vars declaration
 def p_changeCurrentScope(p):
 	'''changeCurrentScope : '''
 	global currentScope
@@ -379,7 +381,7 @@ def p_changeCurrentScope(p):
 	dir_procs[-1].append(0)
 	dir_procs[-1].append([contIntGlobal - MIN_INT_GLOBAL, contFloatGlobal - MIN_FLOAT_GLOBAL, contBoolGlobal - MIN_BOOL_GLOBAL, contStringGlobal - MIN_STRING_GLOBAL, 0, 0, 0, 0])
 
-
+# Saves type of current declaring var
 def p_saveType(p):
 	'''saveType : '''
 	global currentScope
@@ -387,6 +389,7 @@ def p_saveType(p):
 	global currentType
 	currentType = currentToken
 
+# Saves proc into dir_procs
 def p_saveProc(p):
 	'''saveProc : '''
 	global dir_procs
@@ -420,23 +423,23 @@ def p_errorProgram(p):
 	global errorMsg
 	errorMsg = "Error in rule PROGRAM"
 
-
+# Decides if vars block exists
 def p_opVars(p):
 	'''opVars : vars
 			| empty'''
 	# print("optional vars")
 
-
+# Decides if there is a function declaration in the program
 def p_opFunctions(p):
 	'''opFunctions : function opFunctions
 				| empty'''
 
-
+# Initialize vars declaration block
 def p_vars(p):
 	'''vars : errorVars VARS declare '''
 	# print("vars")
 
-
+# Saves ID for a new variable into vars table (global or local)
 def p_saveID(p):
 	'''saveID : '''
 	global currentScope
@@ -474,6 +477,7 @@ def p_saveID(p):
 		if declaringParameters:
 			param_types[-1] = vars_local[tokenToUse]
 
+# Halts the program if any semantic error occurs
 def semanticErrorHalt():
 	global semanticError
 	global line
@@ -486,7 +490,7 @@ def p_errorVars(p):
 	global errorMsg
 	errorMsg = "Error in rule VARS"
 
-
+# Possible types for declaring variables
 def p_type(p):
 	'''type : errorType INT
 			| FLOAT
@@ -494,17 +498,17 @@ def p_type(p):
 			| BOOL'''
 	# print("type")
 
-
 def p_errorType(p):
 	'''errorType : '''
 	global errorMsg
 	errorMsg = "Error in rule TYPE"
 
-
+# Main function block
 def p_main(p):
 	'''main : errorMain MAIN saveCurrentTemps saveMain "{" opVars generateInitialQuadruple body "}" clearVarsTable'''
 	# print("main")
 
+# Saves initial quadruple, once compiler knows where the Main block starts
 def p_generateInitialQuadruple(p):
 	'''generateInitialQuadruple : '''
 	global contQuadruples
@@ -514,6 +518,7 @@ def p_generateInitialQuadruple(p):
 	cuadruplo = (GOSUB, "main", "", contQuadruples)
 	cuadruplos[1] = cuadruplo
 
+# Saves Main block to dir_procs
 def p_saveMain(p):
 	'''saveMain : '''
 	global dir_procs
@@ -522,13 +527,12 @@ def p_saveMain(p):
 	newProc = [currentToken, MAIN, None, None, vars_local, contQuadruples]
 	dir_procs += [newProc]
 
-
 def p_errorMain(p):
 	'''errorMain : '''
 	global errorMsg
 	errorMsg = "Error in rule MAIN"
 
-
+# Possible instructions in the program
 def p_instr(p):
 	'''instr : basicStatements ";"
 			| graphFunctions ";"
@@ -536,6 +540,7 @@ def p_instr(p):
 			| cycle '''
 	# print("instr")
 
+# Graph Functions
 def p_graphFunctions(p):
 	'''graphFunctions : STACKED PARINI putFondo ID saveStructID "," ID saveStructID "," expresion "," expresion "," expresion takeFondo PARFIN performStacked
 					|  BARS PARINI putFondo ID saveStructID "," ID saveStringStructID "," expresion "," expresion takeFondo PARFIN performBars
@@ -544,6 +549,7 @@ def p_graphFunctions(p):
 					| HISTO PARINI putFondo ID saveStructID "," expresion "," expresion takeFondo PARFIN performHisto 
 					| LINE PARINI putFondo ID saveStructID "," ID saveStructID "," expresion takeFondo PARFIN performLine'''
 
+# Checks semantic and saves quadruple for Line Function
 def p_performLine(p):
 	'''performLine : '''
 	global semanticError
@@ -565,7 +571,7 @@ def p_performLine(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
-
+# Checks semantic and saves quadruple for Stacked Function
 def p_performStacked(p):
 	'''performStacked : '''
 	global semanticError
@@ -601,6 +607,7 @@ def p_performStacked(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
+# Checks semantic and saves quadruple for Bars Function
 def p_performBars(p):
 	'''performBars : '''
 	global semanticError
@@ -629,6 +636,7 @@ def p_performBars(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
+# Checks semantic and saves quadruple for DBars Function
 def p_performDBars(p):
 	'''performDBars : '''
 	global semanticError
@@ -666,6 +674,7 @@ def p_performDBars(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
+# Checks semantic and saves quadruple for Pie Function
 def p_performPie(p):
 	'''performPie : '''
 	global semanticError
@@ -687,6 +696,7 @@ def p_performPie(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
+# Checks semantic and saves quadruple for Histo Function
 def p_performHisto(p):
 	'''performHisto : '''
 	global semanticError
@@ -713,6 +723,7 @@ def p_performHisto(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
+# Checks semantic and saves ID for struct var
 def p_saveStringStructID(p):
 	'''saveStringStructID : '''
 	global semanticError
@@ -744,22 +755,27 @@ def p_saveStringStructID(p):
 	pOper.append(address)
 	pTipos.append(tipo)
 
+# Basic statements within an instruction
 def p_basicStatements(p):
 	'''basicStatements : assign
 					| funcCall
 					| print
 					| read '''
 
+# Print function
 def p_print(p):
 	'''print : PRINT PARINI exp performPrint cyPrint PARFIN '''
 
+# Multiple prints in one line
 def p_cyPrint(p):
 	'''cyPrint : "," fix exp performPrint cyPrint
 				| empty '''
 
+# Read function
 def p_read(p):
 	'''read : READ PARINI ID saveVariable performRead cyRead PARFIN '''
 
+# Multiple reads in one line
 def p_cyRead(p):
 	'''cyRead : "," fix ID saveVariable performRead cyRead
 				| empty '''
@@ -769,12 +785,13 @@ def p_fix(p):
 	global previousToken
 	previousToken = ","
 
+# Declare variable, either atomic or struct
 def p_declare(p):
 	'''declare : basicDeclare
 			| structDeclare '''
 	# print("declare")
 
-
+# Initialize variable with value
 def p_init(p):
 	'''init : ASGN saveOperator errorInit initWith '''
 	# print("init")
@@ -784,35 +801,35 @@ def p_errorInit(p):
 	global errorMsg
 	errorMsg = "Error in rule INIT"
 
-
+# Initializes variable with expresion or funcCall
 def p_initWith(p):
 	'''initWith : expresion
 		| funcCall '''
 	# print("init with")
 
-
+# Declare parameter when declaring a function
 def p_param(p):
 	'''param : saveType type errorParam ID cyTypeParam cyParam '''
 	# print("param")
-
 
 def p_errorParam(p):
 	'''errorParam : '''
 	global errorMsg
 	errorMsg = "Error in rule PARAM"
 
-
+# Multiple parameters for different types
 def p_cyParam(p):
 	'''cyParam : errorCyParam saveTypeParam saveID ";"  param
 		| empty saveTypeParam saveID '''
 	# print("cycle param")
 
-
+# Multiple parameters for same type
 def p_cyTypeParam(p):
 	'''cyTypeParam : "," saveTypeParam saveID ID cyTypeParam
 		| empty '''
 	# print("cycle type param")
 
+# Saves current type when declaring function parameters
 def p_saveTypeParam(p):
 		'''saveTypeParam : '''
 		global declaringParameters
@@ -822,17 +839,17 @@ def p_saveTypeParam(p):
 			global param_types
 			param_types.append(typeToCode(currentType))
 
-
 def p_errorCyParam(p):
 	'''errorCyParam : '''
 	global errorMsg
 	errorMsg = "Error in rule CYPARAM. Missing ; "
 
-
+# Function declaration
 def p_function(p):
 	'''function : errorFunction saveCurrentTemps FUNC saveType ID saveProc flagParameters PARINI opParameters PARFIN flagParameters opReturns "}" clearVarsTable '''
 	# print("function")
 
+# Saves current counter for temporals, to know whow many are used into a function
 def p_saveCurrentTemps(p):
 	'''saveCurrentTemps : '''
 	global currentTempInt
@@ -850,6 +867,7 @@ def p_errorFunction(p):
 	global errorMsg
 	errorMsg = "Error in rule FUNCTION"
 
+# Re initializes local vars table when function declaration ends
 def p_clearVarsTable(p):
 	'''clearVarsTable : '''
 	global vars_local
@@ -893,10 +911,12 @@ def p_clearVarsTable(p):
 	contTempBool = MIN_TEMP_BOOL
 	contTempString = MIN_TEMP_STRING
 
+# Return statement for function 
 def p_return(p):
 	'''return : errorReturn RETURN expresion saveReturnValue ";" '''
 	# print("return")
 
+# Saves return value into a global var related to the function name
 def p_saveReturnValue(p):
 	'''saveReturnValue : '''
 	global contQuadruples
@@ -917,13 +937,12 @@ def p_saveReturnValue(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
-
 def p_errorReturn(p):
 	'''errorReturn : '''
 	global errorMsg
 	errorMsg = "Error in rule RETURN"
 
-
+# Parameters for function declaration
 def p_opParameters(p):
 	'''opParameters : param saveParamToDirProc errorOpParameters
 					| empty '''
@@ -934,6 +953,7 @@ def p_flagParameters(p):
 	global declaringParameters
 	declaringParameters = not declaringParameters
 
+# Saves read param into dir_procs
 def p_saveParamToDirProc(p):
 	'''saveParamToDirProc : '''
 	global param_types
@@ -946,18 +966,20 @@ def p_errorOpParameters(p):
 	global errorMsg
 	errorMsg = "Error in rule OPPARAMETERS"
 
-
+# Decission for optiona returns for function declaration
 def p_opReturns(p):
 	'''opReturns : errorOpReturns RETURNS type saveReturnType "{" opVars saveQuadruple body return
 		| "{" opVars saveQuadruple body '''
 	# print("returns")
 
+# Saves quadruple number where function starts
 def p_saveQuadruple(p):
 	'''saveQuadruple : '''
 	currentProc = dir_procs[len(dir_procs) - 1]
 	currentProc += [contQuadruples]
 	dir_procs[len(dir_procs) - 1] = currentProc
 
+# Saves return type into dir_procs entry
 def p_saveReturnType(p):
 	'''saveReturnType : '''
 	global dir_procs
@@ -972,7 +994,7 @@ def p_errorOpReturns(p):
 	global errorMsg
 	errorMsg = "Error in rule OPRETURNS"
 
-
+# Declare for atomic variables
 def p_basicDeclare(p):
 	'''basicDeclare : saveType type errorBasicDeclare ID cyTypeParam saveID ";" cyDeclare '''
 	# print("basic declare")
@@ -983,50 +1005,50 @@ def p_errorBasicDeclare(p):
 	global errorMsg
 	errorMsg = "Error in rule BASICDECLARE"
 
-
+# Declare for struct variables
 def p_structDeclare(p):
 	'''structDeclare : errorStructDeclare STRUCT struct ";" cyDeclare '''
 	# print("struct declare")
-
 
 def p_errorStructDeclare(p):
 	'''errorStructDeclare : '''
 	global errorMsg
 	errorMsg = "Error in rule STRUCTDECLARE"
 
+# Multiple declares
 def p_cyDeclare(p):
 	'''cyDeclare : declare
 		| empty '''
 	# print("cycle declare")
 
-
+# Body for blocks
 def p_body(p):
 	'''body : errorBody cyInstruction
 			| empty '''
 	# print("body")
-
 
 def p_errorBody(p):
 	'''errorBody : '''
 	global errorMsg
 	errorMsg = "Error in rule BODY"
 
-
+# Multiple instructions
 def p_cyInstruction(p):
 	'''cyInstruction : instr body '''
 	# print("cycleInstruction")
 
-
+# Cycles statements
 def p_cycle(p):
 	'''cycle : forCycle
 			| whileCycle '''
 	# print("cycle")
 
-
+# While cycle
 def p_whileCycle(p):
 	'''whileCycle : errorWhileCycle WHILE saveReturn PARINI expresion PARFIN saveFalso "{" body "}" repeatWhile'''
 	# print("while")
 
+# Last quadruple for while return
 def p_repeatWhile(p):
 	'''repeatWhile : '''
 	falso = pSaltos.pop()
@@ -1034,6 +1056,7 @@ def p_repeatWhile(p):
 	generateJump('s', retorno)
 	rellena(falso, contQuadruples)
 
+# Saves where to return on while cycle
 def p_saveReturn(p):
 	'''saveReturn : '''
 	pSaltos.append(contQuadruples)
@@ -1043,17 +1066,19 @@ def p_errorWhileCycle(p):
 	global errorMsg
 	errorMsg = "Error in rule WHILECYCLE"
 
-
+# For cycle
 def p_forCycle(p):
 	'''forCycle : errorForCycle FOR PARINI assign ";" saveReturn expresion saveFalso ";" saltoBody assign returnFor PARFIN "{" rellenaBody body "}" returnAssign '''
 	# print("for")
 
+# Jump to body of For
 def p_saltoBody(p):
 	'''saltoBody : '''
 	generateJump('s', None)
 	pSaltos.append(contQuadruples - 1)
 	pSaltos.append(contQuadruples)
 
+# Jump to init of For
 def p_returnFor(p):
 	'''returnFor : '''
 	aux = pSaltos.pop()
@@ -1066,6 +1091,7 @@ def p_returnFor(p):
 	pSaltos.append(aux2)
 	pSaltos.append(aux)
 
+# Detects where Dor body starts
 def p_rellenaBody(p):
 	'''rellenaBody : '''
 	aux = pSaltos.pop()
@@ -1074,6 +1100,7 @@ def p_rellenaBody(p):
 
 	pSaltos.append(aux)
 
+# Jump to update For variable
 def p_returnAssign(p):
 	'''returnAssign : '''
 	generateJump('s', pSaltos.pop())
@@ -1084,38 +1111,39 @@ def p_errorForCycle(p):
 	global errorMsg
 	errorMsg = "Error in rule FORCYCLE"
 
-
+# Assign to variable
 def p_assign(p):
 	'''assign : ID saveVariable errorAssign assignOptions performAssign'''
 	# print("assign")
-
 
 def p_errorAssign(p):
 	'''errorAssign : '''
 	global errorMsg
 	errorMsg = "Error in rule ASSIGN"
 
-
+# Assign to atomic variable or struct variable
 def p_assignOptions(p):
 	'''assignOptions : init
 					| saveToDimensionStacks "[" expresion verifyIndex "]" assignMatrix accessStruct init '''
 	# print("assignOptions")
 
+# Assign to matrix
 def p_assignMatrix(p):
 	'''assignMatrix : updateDimension "[" expresion verifyIndex "]" errorAssignMatrix
 					| empty '''
 	# print("assignMatrix")
-
 
 def p_errorAssignMatrix(p):
 	'''errorAssignMatrix : '''
 	global errorMsg
 	errorMsg = "Error in rule ASSIGNMATRIX"
 
+# Function call
 def p_funcCall(p):
 	'''funcCall : ID checkFunction PARINI putFondo opParamCall takeFondo PARFIN checkNumParams '''
 	# print("funcCall")
 
+# Semantic for check num params coincidence
 def p_checkNumParams(p):
 	'''checkNumParams : '''
 	global contQuadruples
@@ -1147,7 +1175,7 @@ def p_checkNumParams(p):
 		pOper.append(temp)
 		pTipos.append(typeAddress)
 
-
+# Checks if function exists
 def p_checkFunction(p):
 	'''checkFunction : '''
 	global currentProc
@@ -1163,19 +1191,19 @@ def p_checkFunction(p):
 	semanticError = "Undeclared function " + previousToken
 	semanticErrorHalt()
 
-
+# Funciton call with parameters
 def p_opParamCall(p):
 	'''opParamCall : expresion checkParamType cyParamCall
 				| empty '''
 	# print("function parameter")
 
-
+# Multiple parameters
 def p_cyParamCall(p):
 	'''cyParamCall :  "," expresion checkParamType cyParamCall
 				| empty '''
 	# print("cycle parameter call")
 
-
+# Semantic validation for param type coincidence
 def p_checkParamType(p):
 	'''checkParamType : '''
 	global paramCounter
@@ -1202,11 +1230,12 @@ def p_checkParamType(p):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
-
+# Struct declaration
 def p_struct(p):
 	'''struct : structType ID saveID createDimension "[" CTED saveDimensionSize "]" optionalMatrix secondLap '''
 	# print("struct")
 
+# Calculations for struct tables
 def p_secondLap(p):
 	'''secondLap : '''
 	global dim
@@ -1283,6 +1312,7 @@ def p_secondLap(p):
 	varR = 1
 	dim = 1
 
+# Save size of current dimension when declaring struct
 def p_saveDimensionSize(p):
 	'''saveDimensionSize : '''
 	global vars_global
@@ -1307,6 +1337,7 @@ def p_saveDimensionSize(p):
 		vars_local[currentDimensionedVariable][1] = dimensionTable
 		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
 
+# New dimension on variable
 def p_createDimension(p):
 	'''createDimension : '''
 	global vars_global
@@ -1326,16 +1357,18 @@ def p_createDimension(p):
 		dimensionTable.append([0])
 		vars_local[currentDimensionedVariable] = dimensionTable
 
+# Type for structs
 def p_structType(p):
 	'''structType : saveType type'''
 	# print("struct type")
 
-
+# Matrix declaration
 def p_optionalMatrix(p):
 	'''optionalMatrix : createSecondDimension "[" CTED saveSecondDimensionSize "]"
 					| empty '''
 	# print("matrix")
 
+# Save size of second dimension
 def p_saveSecondDimensionSize(p):
 	'''saveSecondDimensionSize : '''
 	global vars_global
@@ -1362,7 +1395,7 @@ def p_saveSecondDimensionSize(p):
 		vars_local[currentDimensionedVariable][1][3] = dimensionTable
 		varR = varR * (currentToken - 1 - dimensionTable[0] + 1)
 
-
+# Creates second dimension for struct variable
 def p_createSecondDimension(p):
 	'''createSecondDimension : '''
 	global dim
@@ -1380,54 +1413,51 @@ def p_createSecondDimension(p):
 		dimensionTable = address
 		dimensionTable[1][3] = [0]
 		vars_local[currentDimensionedVariable] = dimensionTable
-	
+
+# IF statement
 def p_condition(p):
 	'''condition : errorCondition IF PARINI expresion PARFIN saveFalso "{" body "}" optionalElse rellenaFalso '''
 	# print("condition")
-
 
 def p_errorCondition(p):
 	'''errorCondition : '''
 	global errorMsg
 	errorMsg = "Error in rule CONDITION"
 
-
+# ELSE statement
 def p_optionalElse(p):
 	'''optionalElse : errorElse ELSE saveVerdadero "{" body "}"
 					| empty '''
 	# print("else")
-
 
 def p_errorElse(p):
 	'''errorElse : '''
 	global errorMsg
 	errorMsg = "Error in rule OPTIONALELSE"
 
-
+# Expresion firs level
 def p_expresion(p):
 	'''expresion : sExp performAndOr cyExpresion errorExpresion '''
 	# print("expresion")
-
-
 
 def p_errorExpresion(p):
 	'''errorExpresion : '''
 	global errorMsg
 	errorMsg = "Error in rule EXPRESION"
 
-
+# Logical operators
 def p_cyExpresion(p):
 	'''cyExpresion : AND saveOperator expresion
 				| OR saveOperator expresion
 				| empty '''
 	# print("cycle expresion")
 
-
+# First level of expresions
 def p_sExp(p):
 	'''sExp : exp errorOpSExp opSExp performRelational'''
 	# print("super expresion")
 
-
+# Relational operators
 def p_opSExp(p):
 	'''opSExp : EQ saveOperator exp
 			| DIF saveOperator exp
@@ -1443,29 +1473,29 @@ def p_errorOpSExp(p):
 	global errorMsg
 	errorMsg = "Error in rule OPSEXP"
 
-
+# Third level of operation
 def p_exp(p):
 	'''exp : term performAddSub errorCyExp cyExp '''
 	# print("exp")
 
-
+# Plus and Minus
 def p_cyExp(p):
 	'''cyExp : PLUS saveOperator exp
 			| MINUS saveOperator exp
 			| empty '''
 	# print("cycle exp")
 
-
 def p_errorCyExp(p):
 	'''errorCyExp : '''
 	global errorMsg
 	errorMsg = "Error in rule CYEXP"
 
+# Fourth level of operation
 def p_term(p):
 	'''term : fact performMulDiv cyTerm '''
 	# print("term")
 
-
+# Mult, division, residue
 def p_cyTerm(p):
 	'''cyTerm : MULT saveOperator errorFact term
 			| DIV saveOperator term
@@ -1473,7 +1503,7 @@ def p_cyTerm(p):
 			| empty '''
 	# print("cycle term")
 
-
+# Fifth level of operation, constans, parenthesis, funcCall, ID
 def p_fact(p):
 	'''fact : putFondo basicLanguageFunctions takeFondo
 			| CTES saveConstantString
@@ -1483,7 +1513,7 @@ def p_fact(p):
 			| ID saveVariable opAccess errorOpAccess '''
 	# print("fact")
 
-
+# Basic proper language functions 
 def p_basicLanguageFunctions(p):
 	'''basicLanguageFunctions : NEG PARINI expresion performNeg PARFIN
 						| AVERAGE basicFunc performAvg
@@ -1492,9 +1522,11 @@ def p_basicLanguageFunctions(p):
 						| SUM basicFunc performSum
 						| MUL basicFunc performMul '''
 
+# Parameters for basic proper language functions
 def p_basicFunc(p):
 	'''basicFunc : PARINI ID saveStructID "," expresion PARFIN '''
 
+# Saves ID of struct (must be INT)
 def p_saveStructID(p):
 	'''saveStructID : '''
 	global semanticError
@@ -1526,6 +1558,7 @@ def p_saveStructID(p):
 	pOper.append(address)
 	pTipos.append(tipo)
 
+# Validates semantic and performs SUM function
 def p_performSum(p):
 	'''performSum : '''
 	global semanticError
@@ -1550,6 +1583,7 @@ def p_performSum(p):
 	pOper.append(newAddress)
 	pTipos.append(tipo)
 
+# Validates semantic and performs MUL function
 def p_performMul(p):
 	'''performMul : '''
 	global semanticError
@@ -1574,6 +1608,7 @@ def p_performMul(p):
 	pOper.append(newAddress)
 	pTipos.append(tipo)
 
+# Validates semantic and performs AVG function
 def p_performAvg(p):
 	'''performAvg : '''
 	global semanticError
@@ -1598,6 +1633,7 @@ def p_performAvg(p):
 	pOper.append(newAddress)
 	pTipos.append(FLOAT)
 
+# Validates semantic and performs VARIANCE function
 def p_performVariance(p):
 	'''performVariance : '''
 	global semanticError
@@ -1622,6 +1658,7 @@ def p_performVariance(p):
 	pOper.append(newAddress)
 	pTipos.append(FLOAT)
 
+# Validates semantic and performs STDEV function
 def p_performStdDev(p):
 	'''performStdDev : '''
 	global semanticError
@@ -1646,6 +1683,7 @@ def p_performStdDev(p):
 	pOper.append(newAddress)
 	pTipos.append(FLOAT)
 
+# Validates semantic and performs NEG function
 def p_performNeg(p):
 	'''performNeg : '''
 	global semanticError
@@ -1672,22 +1710,23 @@ def p_errorFact(p):
 	global errorMsg
 	errorMsg = "Error in rule ERRORFACT"
 
-
+# Access to struct
 def p_opAccess(p):
 	'''opAccess : opStruct
 				| empty '''
 	# print("optional access")
-
 
 def p_errorOpAccess(p):
 	'''errorOpAccess : '''
 	global errorMsg
 	errorMsg = "Error in rule ERROROPACCESS"
 
+# Access to struct
 def p_opStruct(p):          
 	'''opStruct : errorOpStruct saveToDimensionStacks "[" expresion verifyIndex "]" opMatrix accessStruct '''
 	# print("optional struct")
 
+# Saves quadruple of final address
 def p_accessStruct(p):
 	'''accessStruct : '''
 	global contQuadruples
@@ -1716,6 +1755,7 @@ def p_accessStruct(p):
 	pilaO.pop()
 	pDimensionadas.pop()
 
+# Verifies index into dimension size
 def p_verifyIndex(p):
 	'''verifyIndex : '''
 	global currentDimensionedVariable
@@ -1755,7 +1795,7 @@ def p_verifyIndex(p):
 		pOper.append(temp)
 		pTipos.append(getTypeForAddress(temp))
 
-
+# Dimension Stacks update
 def p_saveToDimensionStacks(p):
 	'''saveToDimensionStacks : '''
 	global semanticError
@@ -1790,18 +1830,18 @@ def p_saveToDimensionStacks(p):
 
 	pilaO.append(FONDO_FALSO)
 
-
 def p_errorOpStruct(p):
 	'''errorOpStruct : '''
 	global errorMsg
 	errorMsg = "Error in rule OPSTRUCT"
 
-
+# Access to Matrix
 def p_opMatrix(p):
 	'''opMatrix : errorOpMatrix updateDimension "[" expresion verifyIndex "]"
 				| empty '''
 	# print("optional matrix")
 
+# Updates current dimension
 def p_updateDimension(p):
 	'''updateDimension : '''
 	global dim
@@ -1817,12 +1857,12 @@ def p_updateDimension(p):
 
 	currentStructDimension = currentStructDimension[3]
 
-
 def p_errorOpMatrix(p):
 	'''errorOpMatrix : '''
 	global errorMsg
 	errorMsg = "Error in rule ERROROPMATRIX"
 
+# Constants
 def p_cte(p):
 	'''cte : CTED saveConstantInt
 		| CTEF saveConstantFloat
@@ -1830,10 +1870,10 @@ def p_cte(p):
 		| FALSE saveConstantBool '''
 	# print("cte")
 
+# Empty rule
 def p_empty(p):
 	'''empty : '''
 	# print("EMPTY")
-
 
 def p_printTables(p):
 	'''printTables : '''
@@ -1857,8 +1897,7 @@ def p_error(p):
 	print('%s' % errorMsg)
 	sys.exit()
 
-# Save in Stacks
-
+# Save in Stacks - Next procedures work for IF-ELSE and CYCLE statements
 def p_rellenaFalso(p):
 	'''rellenaFalso : '''
 	falso = pSaltos.pop()
@@ -1884,6 +1923,7 @@ def p_saveVerdadero(p):
 	rellena(falso, contQuadruples)
 	pSaltos.append(contQuadruples - 1)
 
+# Saves constant INT to stacks and constant_table
 def p_saveConstantInt(p):
 		'''saveConstantInt : '''
 		tokenToUse = currentToken
@@ -1900,7 +1940,8 @@ def p_saveConstantInt(p):
 
 		pOper.append(address)
 		pTipos.append(INT)
-		
+
+# Saves constant FLOAT to stacks and constant_table
 def p_saveConstantFloat(p):
 		'''saveConstantFloat : '''
 		tokenToUse = currentToken
@@ -1917,7 +1958,8 @@ def p_saveConstantFloat(p):
 
 		pOper.append(address)
 		pTipos.append(FLOAT)
-		
+
+# Saves constant BOOL to stacks and constant_table
 def p_saveConstantBool(p):
 		'''saveConstantBool : '''
 		tokenToUse = currentToken
@@ -1934,7 +1976,8 @@ def p_saveConstantBool(p):
 
 		pOper.append(address)
 		pTipos.append(BOOL)
-		
+
+# Saves constant STRING to stacks and constant_table	
 def p_saveConstantString(p):
 		'''saveConstantString : '''
 		tokenToUse = currentToken
@@ -1954,6 +1997,7 @@ def p_saveConstantString(p):
 		pOper.append(address)
 		pTipos.append(STRING)
 
+# Save Variable to table - Validates existance
 def p_saveVariable(p):
 	'''saveVariable : '''
 
@@ -1977,6 +2021,7 @@ def p_saveVariable(p):
 	pOper.append(address)
 	pTipos.append(getTypeForAddress(address))
 
+# Saves operator to stack
 def p_saveOperator(p):
 	'''saveOperator : '''
 
@@ -2019,7 +2064,7 @@ def p_takeFondo(p):
 
 	pilaO.pop()
 
-# Perform Semantic Actions Rules
+# Perform Semantic Actions Rules - Validate Semantic and save quadruple for specific operator
 
 def p_performAssign(p):
 	'''performAssign : '''
@@ -2134,6 +2179,7 @@ def p_performRead(p):
 	'''performRead : '''
 	generateQuadruple(READ)	
 
+# General Quadruple generator given an operator
 def generateQuadruple(operator):
 	global contQuadruples
 
@@ -2199,6 +2245,7 @@ def generateQuadruple(operator):
 	cuadruplos.append(cuadruplo)
 	contQuadruples += 1
 
+# Resaves pending quadruples
 def rellena(salto, add):
 	cuadruplo = cuadruplos[salto]
 	operator = cuadruplo[0]
@@ -2208,6 +2255,7 @@ def rellena(salto, add):
 	aux = (operator, falso, opDer, add)
 	cuadruplos[salto] = aux
 
+# Generates JUMP quadruple
 def generateJump(tipo, cond):
 	global contQuadruples
 
@@ -2223,6 +2271,7 @@ def generateJump(tipo, cond):
 
 # Helper Methods
 
+# String to Int value of type variables
 def typeToCode(type):
 	switcher = {
 		"int": 10,
@@ -2232,6 +2281,7 @@ def typeToCode(type):
 	}
 	return switcher.get(type, 50)
 
+# String to Int value of operators
 def operatorToCode(operator):
 	switcher = {
 		"+": 100,
@@ -2250,6 +2300,7 @@ def operatorToCode(operator):
 	}
 	return switcher.get(operator, 50)
 
+# Gets a new global address for specified type
 def getGlobalAddressForType(type):
 	global contIntGlobal
 	global contFloatGlobal
@@ -2274,6 +2325,7 @@ def getGlobalAddressForType(type):
 		contStringGlobal += 1
 		return contStringGlobal - 1
 
+# Gets a new local address for specified type
 def getAddressForType(type):
 	global contInt
 	global contFloat
@@ -2319,6 +2371,7 @@ def getAddressForType(type):
 			contString += 1
 			return contString - 1
 
+# Gets a new constant address for specified type
 def getAddressForConstant(type):
 	global contConstInt
 	global contConstFloat
@@ -2341,6 +2394,7 @@ def getAddressForConstant(type):
 		contConstString += 1
 		return contConstString - 1
 
+# Gets a new temporal address for specified type
 def getTempForType(type):
 	global contTempInt
 	global contTempFloat
@@ -2363,6 +2417,7 @@ def getTempForType(type):
 		contTempString += 1
 		return contTempString - 1
 
+# Returns the type of a given address
 def getTypeForAddress(address):
 	if (address >= MIN_INT_GLOBAL and address <= MAX_INT_GLOBAL) or (address >= MIN_INT and address <= MAX_INT) or (address >= MIN_TEMP_INT and address <= MAX_TEMP_INT) or (address >= MIN_CONST_INT and address <= MAX_CONST_INT):
 		return INT
@@ -2376,6 +2431,7 @@ def getTypeForAddress(address):
 	if (address >= MIN_STRING_GLOBAL and address <= MAX_STRING_GLOBAL) or (address >= MIN_STRING and address <= MAX_STRING) or (address >= MIN_TEMP_STRING and address <= MAX_TEMP_STRING) or (address >= MIN_CONST_STRING and address <= MAX_CONST_STRING):
 		return STRING
 
+# Validates that an operation can be perfomes with the given operands
 def typesValidator(left, right, operator):
 	opMap = operator / 10 % 10
 
