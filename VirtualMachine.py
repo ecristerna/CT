@@ -428,7 +428,7 @@ def getMul(initialAddress, lenght):
 def line(dataA, dataB):
 	plt.plot(dataA, dataB)
 	plt.ylabel('Data')
-	plt.show()
+	plt.savefig('graphs/line.png')
 
 	return
 
@@ -449,7 +449,7 @@ def bars(dataA, arrLabels, length, labelGroup):
 	plt.legend()
 
 	plt.tight_layout()
-	plt.show()
+	plt.savefig('graphs/bars.png')
 
 	return
 
@@ -467,7 +467,7 @@ def stacked(dataA, dataB, length, labelA, labelB):
 	plt.yticks(np.arange(0, 100, 300))
 	plt.legend((p1[0], p2[0]), (labelA, labelB))
 
-	plt.show()
+	plt.savefig('graphs/stacked.png', bbox_inches='tight')
 	return
 
 def dBars(dataA, dataB, labels, length, labelA, labelB):
@@ -499,7 +499,7 @@ def dBars(dataA, dataB, labels, length, labelA, labelB):
 	autolabel(rects1)
 	autolabel(rects2)
 
-	plt.show()
+	plt.savefig('graphs/dBars.png')
 
 	return
 
@@ -523,7 +523,7 @@ def pie(dataA, arrLabels, length):
 	    t.set_size('x-small')
 	autotexts[0].set_color('y')
 
-	plt.show()
+	plt.savefig('graphs/pie.png')
 
 	return
 
@@ -547,7 +547,7 @@ def histo(dataA, length, numGroups):
 	ax.set_xlim(left[0], right[-1])
 	ax.set_ylim(bottom.min(), top.max())
 
-	plt.show()
+	plt.savefig('graphs/histo.png')
 	
 	return
 
@@ -922,3 +922,5 @@ def run(fileName):
 	print("\nEND OF PROGRAM\n\n")
 
 #run("tests/input4.txt")
+
+

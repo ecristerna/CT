@@ -6,6 +6,7 @@ program prog {
 	main {
 		vars float op, aux3;
 			bool h, aux;
+			int aux0;
 			int aux2;
 			string let, aux4;
 			struct int a[5];
@@ -44,16 +45,14 @@ program prog {
 		l[3] = "dato4";
 		l[4] = "dato5";
 
-
-		line(a, a, 5);
 		stacked(a, a, 5, "hola", "hola2");
 		bars(a, l, 5, "hola");
 		dbars(a, a, l, 5, "hola", "hola2");
 		pie(a, l, 5);
 		histo(a, 5, 5);
 
-		print(sum(a, 5));
-		print(mul(a, 5));
+		print(sum(a, 5), "%n");
+		print(mul(a, 5), "%n");
 
 		op = average(a, 5);
 		print(op, "%n");
@@ -81,5 +80,13 @@ program prog {
 		print(aux4, "%n");
 	}
 }
+
+
+
+
+
+
+
+
 
 

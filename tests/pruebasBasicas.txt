@@ -90,6 +90,39 @@ program Pruebas_Basicas {
 		print("%n");
 	}
 
+	func find() returns int{
+		vars struct int array2[4];
+			int pos, z, return_num, elem, number;
+
+		pos = 4;
+		return_num = neg(1);
+
+		for(z = 0; z < pos; z = z + 1){
+			print("Elemento ", z + 1, ": ");
+			read(elem);
+			array2[(z)] = elem;
+		}
+
+		print("Number to find: ");
+		read(number);
+
+		for(z = 0; z < pos; z = z + 1){
+			if(array2[(z)] == number){
+				print(z);
+				print("%n");
+				return_num = z;
+			}
+		}
+
+		if(return_num == neg(1)){
+			print("No existe el numero en el arreglo");
+			print("%n");
+		}
+		
+		return return_num;
+
+	}
+
 	func matrixMult() {
 		vars int i, j, k, accum, m, n, o, p, elem;
 
@@ -183,6 +216,9 @@ program Pruebas_Basicas {
 
 		print("Bubble Sort: ", "%n");
 		bubbleSort();
+
+		print("Find: ", "%n");
+		find();
 
 		print("Matrix Mult: ", "%n");
 		matrixMult();

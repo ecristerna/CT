@@ -11,11 +11,13 @@ import VirtualMachine as VM
 fileName = "./default.txt"
 data = ""
 
-def delprof(): Popen(["cmd.exe"], creationflags=CREATE_NEW_CONSOLE)
+def delprof():
+	Popen(["cmd.exe"], creationflags=CREATE_NEW_CONSOLE)
+	call(['python', '-i', 'VirtualMachine.py'] )
 
 def executeFile():
 	global fileName
-
+	#delprof()
 	saveFile()
 
 	VM.run(fileName)
@@ -23,7 +25,7 @@ def executeFile():
 def saveFile():
 	global fileName
 
-	data = T.get('1.0', END)
+	data = T.get("1.0", 'end-1c')
 
 	data_file = open(fileName, 'w')
 	data_file.write(data)
@@ -33,17 +35,18 @@ def loadFile():
 	global data
 	global fileName
 
-	Tk().withdraw()
+	#Tk().withdraw()
 	data_file = open(askopenfilename())
-	fileName = data_file.name
 
+	fileName = data_file.name
+	#print(fileName)
 	root.wm_title("CT - " + data_file.name)
 
 	data = data_file.read()
 	data_file.close()
 
-	T.delete('1.0', END)
-	T.insert(END, data)
+	T.pack()
+	T.insert("1.0", data)
 
 root = Tk()
 root.wm_title("CT")
