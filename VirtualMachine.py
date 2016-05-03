@@ -1,6 +1,6 @@
 from __future__ import print_function
 from math import sqrt
-import CT as compiler
+import CT as CT
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -88,47 +88,45 @@ def getValueForAddress(address):
 		if '(' in address:
 			address = getValueForAddress(int(address[1:-1]))
 
-	if address >= compiler.MIN_INT_GLOBAL and address <= compiler.MAX_INT_GLOBAL:
-		return global_memory[0][address - compiler.MIN_INT_GLOBAL]
-	elif address >= compiler.MIN_FLOAT_GLOBAL and address <= compiler.MAX_FLOAT_GLOBAL:
-		print(address - compiler.MIN_BOOL_GLOBAL)
-		print(global_memory)
-		return global_memory[1][address - compiler.MIN_FLOAT_GLOBAL]
-	elif address >= compiler.MIN_BOOL_GLOBAL and address <= compiler.MAX_BOOL_GLOBAL:
-		return global_memory[2][address - compiler.MIN_BOOL_GLOBAL]
-	elif address >= compiler.MIN_STRING_GLOBAL and address <= compiler.MAX_STRING_GLOBAL:
-		return global_memory[3][address - compiler.MIN_STRING_GLOBAL]
+	if address >= CT.MIN_INT_GLOBAL and address <= CT.MAX_INT_GLOBAL:
+		return global_memory[0][address - CT.MIN_INT_GLOBAL]
+	elif address >= CT.MIN_FLOAT_GLOBAL and address <= CT.MAX_FLOAT_GLOBAL:
+		return global_memory[1][address - CT.MIN_FLOAT_GLOBAL]
+	elif address >= CT.MIN_BOOL_GLOBAL and address <= CT.MAX_BOOL_GLOBAL:
+		return global_memory[2][address - CT.MIN_BOOL_GLOBAL]
+	elif address >= CT.MIN_STRING_GLOBAL and address <= CT.MAX_STRING_GLOBAL:
+		return global_memory[3][address - CT.MIN_STRING_GLOBAL]
 
-	if address >= compiler.MIN_INT and address <= compiler.MAX_INT:
-		return local_actual_memory[0][address - compiler.MIN_INT]
-	elif address >= compiler.MIN_FLOAT and address <= compiler.MAX_FLOAT:
-		return local_actual_memory[1][address - compiler.MIN_FLOAT]
-	elif address >= compiler.MIN_BOOL and address <= compiler.MAX_BOOL:
-		return local_actual_memory[2][address - compiler.MIN_BOOL]
-	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
-		return local_actual_memory[3][address - compiler.MIN_STRING]
+	if address >= CT.MIN_INT and address <= CT.MAX_INT:
+		return local_actual_memory[0][address - CT.MIN_INT]
+	elif address >= CT.MIN_FLOAT and address <= CT.MAX_FLOAT:
+		return local_actual_memory[1][address - CT.MIN_FLOAT]
+	elif address >= CT.MIN_BOOL and address <= CT.MAX_BOOL:
+		return local_actual_memory[2][address - CT.MIN_BOOL]
+	elif address >= CT.MIN_STRING and address <= CT.MAX_STRING:
+		return local_actual_memory[3][address - CT.MIN_STRING]
 
-	if address >= compiler.MIN_TEMP_INT and address <= compiler.MAX_TEMP_INT:
-		return local_actual_memory[4][address - compiler.MIN_TEMP_INT]
-	elif address >= compiler.MIN_TEMP_FLOAT and address <= compiler.MAX_TEMP_FLOAT:
-		return local_actual_memory[5][address - compiler.MIN_TEMP_FLOAT]
-	elif address >= compiler.MIN_TEMP_BOOL and address <= compiler.MAX_TEMP_BOOL:
-		return local_actual_memory[6][address - compiler.MIN_TEMP_BOOL]
-	elif address >= compiler.MIN_TEMP_STRING and address <= compiler.MAX_TEMP_STRING:
-		return local_actual_memory[7][address - compiler.MIN_TEMP_STRING]
+	if address >= CT.MIN_TEMP_INT and address <= CT.MAX_TEMP_INT:
+		return local_actual_memory[4][address - CT.MIN_TEMP_INT]
+	elif address >= CT.MIN_TEMP_FLOAT and address <= CT.MAX_TEMP_FLOAT:
+		return local_actual_memory[5][address - CT.MIN_TEMP_FLOAT]
+	elif address >= CT.MIN_TEMP_BOOL and address <= CT.MAX_TEMP_BOOL:
+		return local_actual_memory[6][address - CT.MIN_TEMP_BOOL]
+	elif address >= CT.MIN_TEMP_STRING and address <= CT.MAX_TEMP_STRING:
+		return local_actual_memory[7][address - CT.MIN_TEMP_STRING]
 
-	value = list(compiler.constants_table.keys())[list(compiler.constants_table.values()).index(address)]
+	value = list(CT.constants_table.keys())[list(CT.constants_table.values()).index(address)]
 	
-	if address >= compiler.MIN_CONST_INT and address <= compiler.MAX_CONST_INT:
+	if address >= CT.MIN_CONST_INT and address <= CT.MAX_CONST_INT:
 		return value
-	elif address >= compiler.MIN_CONST_FLOAT and address <= compiler.MAX_CONST_FLOAT:
+	elif address >= CT.MIN_CONST_FLOAT and address <= CT.MAX_CONST_FLOAT:
 		return float(value)
-	elif address >= compiler.MIN_CONST_BOOL and address <= compiler.MAX_CONST_BOOL:
+	elif address >= CT.MIN_CONST_BOOL and address <= CT.MAX_CONST_BOOL:
 		if value == 'true':
 			return True
 
 		return False
-	elif address >= compiler.MIN_CONST_STRING and address <= compiler.MAX_CONST_STRING:
+	elif address >= CT.MIN_CONST_STRING and address <= CT.MAX_CONST_STRING:
 		return value
 
 def saveValueToAddress(value, address):
@@ -137,73 +135,71 @@ def saveValueToAddress(value, address):
 		if '(' in address:
 			address = getValueForAddress(int(address[1:-1]))
 
-	if address >= compiler.MIN_INT_GLOBAL and address <= compiler.MAX_INT_GLOBAL:
-		global_memory[0][address - compiler.MIN_INT_GLOBAL] = value
-	elif address >= compiler.MIN_FLOAT_GLOBAL and address <= compiler.MAX_FLOAT_GLOBAL:
-		global_memory[1][address - compiler.MIN_FLOAT_GLOBAL] = value
-	elif address >= compiler.MIN_BOOL_GLOBAL and address <= compiler.MAX_BOOL_GLOBAL:
-		global_memory[2][address - compiler.MIN_BOOL_GLOBAL] = value
-	elif address >= compiler.MIN_STRING_GLOBAL and address <= compiler.MAX_STRING_GLOBAL:
-		global_memory[3][address - compiler.MIN_STRING_GLOBAL] = value
+	if address >= CT.MIN_INT_GLOBAL and address <= CT.MAX_INT_GLOBAL:
+		global_memory[0][address - CT.MIN_INT_GLOBAL] = value
+	elif address >= CT.MIN_FLOAT_GLOBAL and address <= CT.MAX_FLOAT_GLOBAL:
+		global_memory[1][address - CT.MIN_FLOAT_GLOBAL] = value
+	elif address >= CT.MIN_BOOL_GLOBAL and address <= CT.MAX_BOOL_GLOBAL:
+		global_memory[2][address - CT.MIN_BOOL_GLOBAL] = value
+	elif address >= CT.MIN_STRING_GLOBAL and address <= CT.MAX_STRING_GLOBAL:
+		global_memory[3][address - CT.MIN_STRING_GLOBAL] = value
 
-	if address >= compiler.MIN_INT and address <= compiler.MAX_INT:
-		local_actual_memory[0][address - compiler.MIN_INT] = value
-	elif address >= compiler.MIN_FLOAT and address <= compiler.MAX_FLOAT:
-		local_actual_memory[1][address - compiler.MIN_FLOAT] = value
-	elif address >= compiler.MIN_BOOL and address <= compiler.MAX_BOOL:
-		local_actual_memory[2][address - compiler.MIN_BOOL] = value
-	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
-		local_actual_memory[3][address - compiler.MIN_STRING] = value
+	if address >= CT.MIN_INT and address <= CT.MAX_INT:
+		local_actual_memory[0][address - CT.MIN_INT] = value
+	elif address >= CT.MIN_FLOAT and address <= CT.MAX_FLOAT:
+		local_actual_memory[1][address - CT.MIN_FLOAT] = value
+	elif address >= CT.MIN_BOOL and address <= CT.MAX_BOOL:
+		local_actual_memory[2][address - CT.MIN_BOOL] = value
+	elif address >= CT.MIN_STRING and address <= CT.MAX_STRING:
+		local_actual_memory[3][address - CT.MIN_STRING] = value
 
-	if address >= compiler.MIN_TEMP_INT and address <= compiler.MAX_TEMP_INT:
-		local_actual_memory[4][address - compiler.MIN_TEMP_INT] = value
-	elif address >= compiler.MIN_TEMP_FLOAT and address <= compiler.MAX_TEMP_FLOAT:
-		local_actual_memory[5][address - compiler.MIN_TEMP_FLOAT] = value
-	elif address >= compiler.MIN_TEMP_BOOL and address <= compiler.MAX_TEMP_BOOL:
-		local_actual_memory[6][address - compiler.MIN_TEMP_BOOL] = value
-	elif address >= compiler.MIN_TEMP_STRING and address <= compiler.MAX_TEMP_STRING:
-		local_actual_memory[7][address - compiler.MIN_TEMP_STRING] = value
+	if address >= CT.MIN_TEMP_INT and address <= CT.MAX_TEMP_INT:
+		local_actual_memory[4][address - CT.MIN_TEMP_INT] = value
+	elif address >= CT.MIN_TEMP_FLOAT and address <= CT.MAX_TEMP_FLOAT:
+		local_actual_memory[5][address - CT.MIN_TEMP_FLOAT] = value
+	elif address >= CT.MIN_TEMP_BOOL and address <= CT.MAX_TEMP_BOOL:
+		local_actual_memory[6][address - CT.MIN_TEMP_BOOL] = value
+	elif address >= CT.MIN_TEMP_STRING and address <= CT.MAX_TEMP_STRING:
+		local_actual_memory[7][address - CT.MIN_TEMP_STRING] = value
 
 def saveValueToNewMemory(value, address):
-	if address >= compiler.MIN_INT and address <= compiler.MAX_INT:
-		local_next_memory[0][address - compiler.MIN_INT] = value
-	elif address >= compiler.MIN_FLOAT and address <= compiler.MAX_FLOAT:
-		local_next_memory[1][address - compiler.MIN_FLOAT] = value
-	elif address >= compiler.MIN_BOOL and address <= compiler.MAX_BOOL:
-		local_next_memory[2][address - compiler.MIN_BOOL] = value
-	elif address >= compiler.MIN_STRING and address <= compiler.MAX_STRING:
-		local_next_memory[3][address - compiler.MIN_STRING] = value
+	if address >= CT.MIN_INT and address <= CT.MAX_INT:
+		local_next_memory[0][address - CT.MIN_INT] = value
+	elif address >= CT.MIN_FLOAT and address <= CT.MAX_FLOAT:
+		local_next_memory[1][address - CT.MIN_FLOAT] = value
+	elif address >= CT.MIN_BOOL and address <= CT.MAX_BOOL:
+		local_next_memory[2][address - CT.MIN_BOOL] = value
+	elif address >= CT.MIN_STRING and address <= CT.MAX_STRING:
+		local_next_memory[3][address - CT.MIN_STRING] = value
 
 def getArrayValues(initialAddress, lenght):
 	arrayToReturn = []
 
-	if initialAddress >= compiler.MIN_INT_GLOBAL and initialAddress <= compiler.MAX_INT_GLOBAL:
+	if initialAddress >= CT.MIN_INT_GLOBAL and initialAddress <= CT.MAX_INT_GLOBAL:
 		for x in range(0, lenght):
-			arrayToReturn.append(global_memory[0][initialAddress + x - compiler.MIN_INT_GLOBAL])
-	elif initialAddress >= compiler.MIN_FLOAT_GLOBAL and initialAddress <= compiler.MAX_FLOAT_GLOBAL:
+			arrayToReturn.append(global_memory[0][initialAddress + x - CT.MIN_INT_GLOBAL])
+	elif initialAddress >= CT.MIN_FLOAT_GLOBAL and initialAddress <= CT.MAX_FLOAT_GLOBAL:
 		for x in range(0, lenght):
-			arrayToReturn.append(global_memory[1][initialAddress + x - compiler.MIN_FLOAT_GLOBAL])
-	elif initialAddress >= compiler.MIN_STRING_GLOBAL and initialAddress <= compiler.MAX_STRING_GLOBAL:
+			arrayToReturn.append(global_memory[1][initialAddress + x - CT.MIN_FLOAT_GLOBAL])
+	elif initialAddress >= CT.MIN_STRING_GLOBAL and initialAddress <= CT.MAX_STRING_GLOBAL:
 		for x in range(0, lenght):
-			arrayToReturn.append(global_memory[3][initialAddress + x - compiler.MIN_STRING_GLOBAL])
-	elif initialAddress >= compiler.MIN_BOOL_GLOBAL and initialAddress <= compiler.MAX_BOOL_GLOBAL:
+			arrayToReturn.append(global_memory[3][initialAddress + x - CT.MIN_STRING_GLOBAL])
+	elif initialAddress >= CT.MIN_BOOL_GLOBAL and initialAddress <= CT.MAX_BOOL_GLOBAL:
 		for x in range(0, lenght):
-			arrayToReturn.append(global_memory[2][initialAddress + x - compiler.MIN_BOOL_GLOBAL])
-	elif initialAddress >= compiler.MIN_INT and initialAddress <= compiler.MAX_INT:
+			arrayToReturn.append(global_memory[2][initialAddress + x - CT.MIN_BOOL_GLOBAL])
+	elif initialAddress >= CT.MIN_INT and initialAddress <= CT.MAX_INT:
 		for x in range(0, lenght):
-			arrayToReturn.append(local_actual_memory[0][initialAddress + x - compiler.MIN_INT])
-	elif initialAddress >= compiler.MIN_FLOAT and initialAddress <= compiler.MAX_FLOAT:
+			arrayToReturn.append(local_actual_memory[0][initialAddress + x - CT.MIN_INT])
+	elif initialAddress >= CT.MIN_FLOAT and initialAddress <= CT.MAX_FLOAT:
 		for x in range(0, lenght):
-			arrayToReturn.append(local_actual_memory[1][initialAddress + x - compiler.MIN_FLOAT])
-	elif initialAddress >= compiler.MIN_STRING and initialAddress <= compiler.MAX_STRING:
+			arrayToReturn.append(local_actual_memory[1][initialAddress + x - CT.MIN_FLOAT])
+	elif initialAddress >= CT.MIN_STRING and initialAddress <= CT.MAX_STRING:
 		for x in range(0, lenght):
-			arrayToReturn.append(local_actual_memory[3][initialAddress + x - compiler.MIN_STRING])
-	elif initialAddress >= compiler.MIN_BOOL and initialAddress <= compiler.MAX_BOOL:
+			arrayToReturn.append(local_actual_memory[3][initialAddress + x - CT.MIN_STRING])
+	elif initialAddress >= CT.MIN_BOOL and initialAddress <= CT.MAX_BOOL:
 		for x in range(0, lenght):
-			arrayToReturn.append(local_actual_memory[2][initialAddress + x - compiler.MIN_BOOL])
-
-	print("toReturn ", arrayToReturn)
-
+			arrayToReturn.append(local_actual_memory[2][initialAddress + x - CT.MIN_BOOL])
+			
 	return arrayToReturn
 
 def semanticErrorHalt(error):
@@ -363,7 +359,7 @@ def era(size):
 def initMemoriaGlobal():
 	global global_memory
 
-	for proc in compiler.dir_procs:
+	for proc in CT.dir_procs:
 		if proc[3] == 10:
 			global_memory[0].append(0)
 		if proc[3] == 20:
@@ -373,7 +369,7 @@ def initMemoriaGlobal():
 		if proc[3] == 40:
 			global_memory[3].append(0)
 	
-	size = compiler.dir_procs[0][6]
+	size = CT.dir_procs[0][6]
 	
 	for x in range(0, size[0]):
 		global_memory[0].append(0)
@@ -432,7 +428,7 @@ def getMul(initialAddress, lenght):
 def line(dataA, dataB):
 	plt.plot(dataA, dataB)
 	plt.ylabel('Data')
-	plt.show()
+	plt.savefig('graphs/line.png')
 
 	return
 
@@ -453,7 +449,7 @@ def bars(dataA, arrLabels, length, labelGroup):
 	plt.legend()
 
 	plt.tight_layout()
-	plt.show()
+	plt.savefig('graphs/bars.png')
 
 	return
 
@@ -471,7 +467,7 @@ def stacked(dataA, dataB, length, labelA, labelB):
 	plt.yticks(np.arange(0, 100, 300))
 	plt.legend((p1[0], p2[0]), (labelA, labelB))
 
-	plt.show()
+	plt.savefig('graphs/stacked.png', bbox_inches='tight')
 	return
 
 def dBars(dataA, dataB, labels, length, labelA, labelB):
@@ -503,14 +499,12 @@ def dBars(dataA, dataB, labels, length, labelA, labelB):
 	autolabel(rects1)
 	autolabel(rects2)
 
-	plt.show()
+	plt.savefig('graphs/dBars.png')
 
 	return
 
 def pie(dataA, arrLabels, length):
 	the_grid = GridSpec(2, 2)
-	print('-----------------------------------------')
-	print(arrLabels)
 	plt.pie(dataA, labels=arrLabels, autopct='%.0f%%', shadow=True)
 	plt.subplot(the_grid[1, 0], aspect=1)
 	patches, texts, autotexts = plt.pie(dataA, labels=arrLabels,
@@ -529,7 +523,7 @@ def pie(dataA, arrLabels, length):
 	    t.set_size('x-small')
 	autotexts[0].set_color('y')
 
-	plt.show()
+	plt.savefig('graphs/pie.png')
 
 	return
 
@@ -553,7 +547,7 @@ def histo(dataA, length, numGroups):
 	ax.set_xlim(left[0], right[-1])
 	ax.set_ylim(bottom.min(), top.max())
 
-	plt.show()
+	plt.savefig('graphs/histo.png')
 	
 	return
 
@@ -563,7 +557,7 @@ def histo(dataA, length, numGroups):
 
 def run(fileName):
 
-	compiler.compile(fileName)
+	CT.compile(fileName)
 
 	global instructionPointer
 	global pointersStack
@@ -572,13 +566,13 @@ def run(fileName):
 	global local_next_memory
 
 	cuadruplo = (END, "", "", "")
-	compiler.cuadruplos.append(cuadruplo)
+	CT.cuadruplos.append(cuadruplo)
 
 	print("---------------")
-	print("Virtual Machine")
+	print(CT.dir_procs[0][0])
 	print("---------------")
 
-	currentQuadruple = compiler.cuadruplos[instructionPointer]
+	currentQuadruple = CT.cuadruplos[instructionPointer]
 	actualCode = currentQuadruple[0]
 	instructionPointer += 1
 
@@ -592,85 +586,85 @@ def run(fileName):
 		if actualCode == ADD:
 			add(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == SUBSTRACT:
 			substract(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == MULTIPLY:
 			multiply(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == DIVISION:
 			divide(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == RESIDUE:
 			residue(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == LESS_THAN:
 			lessThan(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GREATER_THAN:
 			greaterThan(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == LESS_EQUAL:
 			lessThanEqual(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GREATER_EQUAL:
 			greaterThanEqual(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == EQUAL:
 			equal(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == DIFFERENT:
 			different(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == AND:
 			andOp(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == OR:
 			orOp(currentQuadruple[1], currentQuadruple[2], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == ASSIGN:
 			assign(currentQuadruple[1], currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == PRINT:
@@ -688,14 +682,14 @@ def run(fileName):
 				
 					print(toPrint, end='')
 			
-				currentQuadruple = compiler.cuadruplos[instructionPointer]
+				currentQuadruple = CT.cuadruplos[instructionPointer]
 				actualCode = currentQuadruple[0]
 				instructionPointer += 1
 
 		elif actualCode == READ:
 			toRead = raw_input()
 
-			addressType = compiler.getTypeForAddress(currentQuadruple[3])
+			addressType = CT.getTypeForAddress(currentQuadruple[3])
 
 			if addressType == INT:
 				try:
@@ -722,35 +716,35 @@ def run(fileName):
 			elif addressType == STRING:
 				saveValueToAddress(str(toRead), currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GOTOF:
 			if not getValueForAddress(currentQuadruple[1]):
 				instructionPointer = currentQuadruple[3]
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GOTOV:
 			if getValueForAddress(currentQuadruple[1]):
 				instructionPointer = currentQuadruple[3]
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GOTO:
 			toAddress = currentQuadruple[3]
 			instructionPointer = toAddress
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == ERA:
 			procName = currentQuadruple[1]
 			size = []
 
-			for proc in compiler.dir_procs:
+			for proc in CT.dir_procs:
 				if proc[0] == procName:
 					size = proc[6]
 
@@ -758,7 +752,7 @@ def run(fileName):
 
 			era(size)
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == GOSUB:
@@ -768,27 +762,27 @@ def run(fileName):
 
 			instructionPointer = currentQuadruple[3]
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == RETORNO:
 			instructionPointer = pointersStack.pop()
 			local_actual_memory = memoriesStack.pop()
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == PARAM:
 			saveValueToNewMemory(getValueForAddress(currentQuadruple[1]), currentQuadruple[3])
 			
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == FUNCRETURN:
 			value = getValueForAddress(currentQuadruple[1])
 			saveValueToAddress(value, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == VER:
@@ -797,61 +791,61 @@ def run(fileName):
 			if value < currentQuadruple[1] or value > currentQuadruple[2]:
 				semanticErrorHalt("Array index out of range")
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == NEG:
 			value = getValueForAddress(currentQuadruple[1])
 
-			if compiler.getTypeForAddress(currentQuadruple[3]) == BOOL:
+			if CT.getTypeForAddress(currentQuadruple[3]) == BOOL:
 				saveValueToAddress(not value, currentQuadruple[3])
 			else:
 				saveValueToAddress(-1 * value, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == AVERAGE:
 			result = getAverage(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
 			saveValueToAddress(result, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == VARIANCE:
 			result = getVariance(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
 			saveValueToAddress(result, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == STDEV:
 			result = getStdDeviation(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
 			saveValueToAddress(result, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == SUM:
 			result = getSum(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
 			
-			if compiler.getTypeForAddress(currentQuadruple[3]) == INT:
+			if CT.getTypeForAddress(currentQuadruple[3]) == INT:
 				result = int(result)
 			
 			saveValueToAddress(result, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 		elif actualCode == MUL:
 			result = getMul(currentQuadruple[1], getValueForAddress(currentQuadruple[2]))
 
-			if compiler.getTypeForAddress(currentQuadruple[3]) == INT:
+			if CT.getTypeForAddress(currentQuadruple[3]) == INT:
 				result = int(result)
 			
 			saveValueToAddress(result, currentQuadruple[3])
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
@@ -862,22 +856,18 @@ def run(fileName):
 
 			stacked(dataA, dataB, length, getValueForAddress(currentQuadruple[4]), getValueForAddress(currentQuadruple[5]))
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
 		elif actualCode == BARS:
 			length = getValueForAddress(currentQuadruple[3])
 			dataA = getArrayValues(currentQuadruple[1], length)
-			print(local_actual_memory)
-			print(currentQuadruple[2])
 			labels = getArrayValues(currentQuadruple[2], length)
-
-
 
 			bars(dataA, labels, length, getValueForAddress(currentQuadruple[4]))
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
@@ -889,7 +879,7 @@ def run(fileName):
 
 			dBars(dataA, dataB, labels, length, getValueForAddress(currentQuadruple[5]), getValueForAddress(currentQuadruple[6]))
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
@@ -899,13 +889,9 @@ def run(fileName):
 			dataA = getArrayValues(currentQuadruple[1], length)
 			arrLabels = getArrayValues(currentQuadruple[2], length)
 
-			print("----------------")
-			print(arrLabels)
-			print(length)
-
 			pie(dataA, arrLabels, length)
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
@@ -915,7 +901,7 @@ def run(fileName):
 
 			histo(dataA, length, getValueForAddress(currentQuadruple[3]))
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
@@ -926,7 +912,7 @@ def run(fileName):
 
 			line(dataA, dataB)
 
-			currentQuadruple = compiler.cuadruplos[instructionPointer]
+			currentQuadruple = CT.cuadruplos[instructionPointer]
 			actualCode = currentQuadruple[0]
 			instructionPointer += 1
 
@@ -935,4 +921,6 @@ def run(fileName):
 
 	print("\nEND OF PROGRAM\n\n")
 
-run("tests/input4.txt")
+#run("tests/input4.txt")
+
+
