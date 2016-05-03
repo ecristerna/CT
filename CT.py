@@ -357,7 +357,7 @@ def t_newline(t):
 	line += 1
 
 def t_error(t):
-	print("Illegal character '%s'" % t.value[0])
+	# print("Illegal character '%s'" % t.value[0])
 	t.lexer.skip(1)
 
 # Build the lexer
@@ -416,9 +416,9 @@ def p_saveProc(p):
 def p_errorProgram(p):
 	'''errorProgram : '''
 
-	print("---------------")
-	print("   Compiler")
-	print("---------------")
+	# print("---------------")
+	# print("   Compiler")
+	# print("---------------")
 
 	global errorMsg
 	errorMsg = "Error in rule PROGRAM"
@@ -901,8 +901,8 @@ def p_clearVarsTable(p):
 	contBool = MIN_BOOL
 	contString = MIN_STRING
 
-	print("\nVARS " + currentProc[0])
-	print(vars_local)
+	# print("\nVARS " + currentProc[0])
+	# print(vars_local)
 
 	vars_local = {}
 
@@ -1877,18 +1877,18 @@ def p_empty(p):
 
 def p_printTables(p):
 	'''printTables : '''
-	print("\nCONSTANTS")
-	print(constants_table)
-	print("\nVARS GLOBAL")
-	print(vars_global)
-	print("\nDIR PROCS")
-	for x in range(0, len(dir_procs)):
-		print(dir_procs[x])
-	print("\nCUADRUPLOS")
-	for x in range(0, len(cuadruplos)):
-		print(x, cuadruplos[x])
+	# print("\nCONSTANTS")
+	# print(constants_table)
+	# print("\nVARS GLOBAL")
+	# print(vars_global)
+	# print("\nDIR PROCS")
+	# for x in range(0, len(dir_procs)):
+	# 	print(dir_procs[x])
+	# print("\nCUADRUPLOS")
+	# for x in range(0, len(cuadruplos)):
+	# 	print(x, cuadruplos[x])
 
-	print("\n")
+	# print("\n")
 
 def p_error(p):
 	global line
